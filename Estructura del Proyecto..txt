@@ -1,0 +1,15 @@
+Estructura
+
+D:\Sistema de Recomendación\curso-recomendador
+│
+├── app/
+│   ├── main.py
+│   └── templates/
+│       └── index.html
+│   └── static/
+│       └── Logo AprendoYa.png
+│   ├── recommender.py
+│
+├── requirements.txt
+├── Dockerfile
+├── ngrok.exe
