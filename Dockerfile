@@ -11,6 +11,9 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+# **NUEVA LÍNEA CLAVE**
+ENV FLASK_APP=main.py
+
 # Expón el puerto donde Flask se ejecutará
 EXPOSE 5000
 
