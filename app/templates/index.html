@@ -2,98 +2,455 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>AprendoYA!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AprendoYA! - Descubre Cursos en Línea</title>
     <link rel="icon" href="{{ url_for('static', filename='Logo AprendoYa.png') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
+        /* Variables CSS para facilitar cambios de color */
+        :root {
+            --primary-color: #2F80ED; /* Azul principal */
+            --secondary-color: #27AE60; /* Verde para acciones */
+            --light-bg: #f5f7fa; /* Fondo claro general */
+            --dark-text: #333; /* Texto oscuro */
+            --light-text: #fff; /* Texto claro */
+            --card-bg: #ffffff; /* Fondo de tarjetas/secciones */
+            --border-color: #e0e0e0; /* Color de borde suave */
+            --shadow-light: rgba(0, 0, 0, 0.08); /* Sombra suave */
+        }
+
         body {
-            background-color: #f9f9f9;
-            font-family: Arial, sans-serif;
-            color: #333;
-            text-align: center;
-            padding: 2em;
-        }
-        header {
-            background-color: #2F80ED;
-            color: white;
-            padding: 1em;
-            border-radius: 12px;
-        }
-        h1 {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            /* Nuevo: Patrón de puntos sutil en el fondo */
+            background-image: radial-gradient(circle at 1px 1px, #d9e2ec 1px, transparent 0);
+            background-size: 25px 25px; /* Espaciado de los puntos */
+            color: var(--dark-text);
             margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra el contenido en el cuerpo */
         }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 1.8em 1em; /* Más reducido */
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 5px var(--shadow-light); /* Sombra más discreta */
+            border-bottom-left-radius: 12px; /* Radios más pequeños */
+            border-bottom-right-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(47, 128, 237, 0.9), rgba(39, 174, 96, 0.9));
+            z-index: -1;
+        }
+
+        img.logo {
+            max-width: 70px; /* Logo más pequeño */
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            margin: 0.3em 0 0.15em;
+            font-size: 1.8em; /* H1 más pequeño */
+            font-weight: 700;
+        }
+
+        p.tagline {
+            font-size: 0.95em; /* Párrafo principal más pequeño */
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 1em;
+        }
+
         .container {
-            margin-top: 30px;
+            width: 90%;
+            max-width: 800px; /* Ancho máximo para el contenedor principal */
+            margin: 1.8em auto; /* Márgenes ajustados */
+            background-color: var(--card-bg);
+            padding: 1.8em; /* Padding ajustado */
+            border-radius: 10px; /* Radio más pequeño */
+            box-shadow: 0 3px 8px var(--shadow-light); /* Sombra más sutil */
+            text-align: center;
         }
+
+        /* Nuevo: Contenedor específico para el área de búsqueda */
+        .search-area {
+            max-width: 500px; /* Ancho máximo para el formulario de búsqueda */
+            margin: 0 auto; /* Centrar el formulario */
+        }
+
         input[type="text"] {
-            width: 60%;
+            width: calc(100% - 16px); /* Ancho ajustado para padding */
             padding: 10px;
-            margin: 10px 0;
+            margin-bottom: 10px; /* Margen más pequeño */
             border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1em;
+            border: 1px solid var(--border-color);
+            font-size: 0.95em; /* Texto de input más pequeño */
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.2); /* Sombra de enfoque más pequeña */
+        }
+
         form button {
-            background-color: #27AE60;
-            color: white;
-            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            padding: 9px 18px; /* Padding ajustado */
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 0.95em; /* Texto de botón más pequeño */
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3); /* Sombra más sutil */
         }
-        .resultado {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 12px;
+        form button:hover {
+            background-color: #2196F3;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(33, 150, 243, 0.4);
+        }
+        form button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(33, 150, 243, 0.2);
+        }
+
+        /* Sección de Banner de Promoción */
+        .promotion-banner {
+            background: linear-gradient(135deg, #FF6B6B, #FFD166);
+            color: var(--light-text);
+            padding: 1.2em; /* Padding ajustado */
+            border-radius: 10px; /* Radio ajustado */
+            margin-top: 1.8em;
+            box-shadow: 0 5px 12px rgba(255, 107, 107, 0.4);
+            animation: pulse 2s infinite ease-in-out;
+            text-align: center;
+            max-width: 700px; /* Ancho máximo para el banner */
+            width: 90%;
+        }
+
+        .promotion-banner h2 {
+            margin-top: 0;
+            font-size: 1.4em; /* H2 del banner más pequeño */
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .promotion-banner p {
+            font-size: 0.9em; /* Párrafo del banner más pequeño */
+            margin-bottom: 0.8em;
+        }
+
+        .promo-button {
             display: inline-block;
+            background-color: var(--light-text);
+            color: #FF6B6B;
+            padding: 8px 16px; /* Padding ajustado */
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85em; /* Texto de botón más pequeño */
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .promo-button:hover {
+            background-color: #eee;
+            color: #FF8E66;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Animación para el banner */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.002); } /* Pulse aún más sutil */
+            100% { transform: scale(1); }
+        }
+
+        /* Sección de Resultados */
+        .resultado {
+            background-color: var(--card-bg);
+            margin-top: 1.8em;
+            padding: 1.4em; /* Padding ajustado */
+            border-radius: 10px;
             text-align: left;
-            max-width: 600px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 3px 8px var(--shadow-light);
+            border: 1px solid var(--border-color);
+        }
+        .resultado h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.4em; /* H2 de resultados más pequeño */
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+            margin-bottom: 0.7em;
         }
         .resultado ul {
-            padding-left: 20px;
+            list-style: none;
+            padding: 0;
         }
         .resultado li {
-            margin-bottom: 8px;
+            margin-bottom: 0.7em;
+            padding-bottom: 0.7em;
+            border-bottom: 1px dashed var(--border-color);
+            display: flex;
+            align-items: center;
         }
-        img.logo {
-            max-width: 120px;
-            margin-top: 1em;
+        .resultado li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .resultado li a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em; /* Enlace de curso más pequeño */
+            flex-grow: 1;
+        }
+        .resultado li a:hover {
+            text-decoration: underline;
+            color: #1a6ac9;
+        }
+        .resultado li span.subscribers {
+            margin-left: 0.7em;
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 0.85em; /* Suscriptores más pequeños */
+            white-space: nowrap;
+        }
+
+        /* Secciones Quiénes Somos y Contáctanos */
+        .about-us, .contact-us {
+            width: 90%;
+            max-width: 700px;
+            background-color: var(--card-bg);
+            padding: 1.4em; /* Padding ajustado */
+            margin: 1.8em auto; /* Márgenes ajustados */
+            border-radius: 10px;
+            box-shadow: 0 3px 8px var(--shadow-light);
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .about-us h2, .contact-us h2 {
+            color: var(--primary-color);
+            font-size: 1.3em; /* H2 de estas secciones más pequeño */
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+            margin-bottom: 0.7em;
+        }
+        .about-us p, .contact-us p {
+            font-size: 0.9em; /* Párrafos de estas secciones más pequeños */
+            line-height: 1.6;
+        }
+        .contact-us p a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        .contact-us p a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3em; /* Espacio superior para separar */
+            padding: 1.5em; /* Padding para el contenido del footer */
+            background-color: #333;
+            color: var(--light-text);
+            text-align: center;
+            width: 100%;
+            font-size: 0.85em; /* Texto del footer más pequeño */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Sombra superior */
+        }
+        footer p {
+            margin: 0.5em 0;
+            opacity: 0.8;
+        }
+        footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #5cb85c;
+            text-decoration: underline;
+        }
+
+
+        /* Media Queries Ajustados para Responsividad (todos los tamaños reducidos) */
+        @media (max-width: 768px) {
+            header {
+                padding: 1.2em 0.5em;
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+            }
+            h1 {
+                font-size: 1.6em;
+            }
+            p.tagline {
+                font-size: 0.85em;
+                margin-bottom: 0.8em;
+            }
+            .container, .promotion-banner, .resultado, .about-us, .contact-us {
+                width: 95%;
+                padding: 1em;
+                margin: 1.2em auto;
+                border-radius: 8px;
+            }
+            input[type="text"] {
+                padding: 8px;
+                font-size: 0.85em;
+                border-radius: 5px;
+            }
+            form button, .promo-button {
+                padding: 7px 14px;
+                font-size: 0.85em;
+                border-radius: 5px;
+            }
+            .promotion-banner h2 {
+                font-size: 1.3em;
+            }
+            .promotion-banner p {
+                font-size: 0.8em;
+            }
+            .resultado h2, .about-us h2, .contact-us h2 {
+                font-size: 1.2em;
+            }
+            .resultado li {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 0.5em;
+                padding-bottom: 0.5em;
+            }
+            .resultado li span.subscribers {
+                margin-left: 0;
+                margin-top: 0.2em;
+                font-size: 0.8em;
+            }
+            .about-us p, .contact-us p {
+                font-size: 0.85em;
+            }
+            footer {
+                padding: 1em;
+                font-size: 0.75em;
+            }
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            p.tagline {
+                font-size: 0.8em;
+            }
+            .container, .promotion-banner, .resultado, .about-us, .contact-us {
+                padding: 0.8em;
+                margin: 0.8em auto;
+                border-radius: 6px;
+            }
+            .promotion-banner h2 {
+                font-size: 1.1em;
+            }
+            .promotion-banner p {
+                font-size: 0.75em;
+            }
+            .promo-button {
+                padding: 5px 10px;
+                font-size: 0.7em;
+            }
+            .resultado h2, .about-us h2, .contact-us h2 {
+                font-size: 1.1em;
+            }
+            .resultado li a {
+                font-size: 0.85em;
+            }
+            .resultado li span.subscribers {
+                font-size: 0.75em;
+            }
+            .about-us p, .contact-us p {
+                font-size: 0.8em;
+            }
+            footer {
+                padding: 0.8em;
+                font-size: 0.7em;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='Logo AprendoYa.png') }}" alt="Logo" style="height: 60px;">
-        <h1>RecomiendaFácil</h1>
-        <p>Tu recomendador inteligente de cursos</p>
+        <img src="{{ url_for('static', filename='Logo AprendoYa.png') }}" alt="Logo AprendoYA!" class="logo">
+        <h1>AprendoYA!</h1>
+        <p class="tagline">Tu guía inteligente para descubrir cursos en línea.</p>
     </header>
 
     <div class="container">
-        <form method="POST">
-            <input type="text" name="interes" placeholder="Ingresa palabra clave para buscar cursos" value="{{ query | default('') }}" required>
-            <br>
-            <button type="submit">Buscar</button>
-        </form>
-
-        {% if cursos %}
-        <div class="resultado">
-            <h2>Resultados para: "{{ query }}"</h2>
-            <ul>
-                {% for curso in cursos %}
-                    <li><a href="{{ curso['url'] }}" target="_blank">{{ curso['course_title'] }}</a> - {{ curso['num_subscribers'] }} suscriptores</li>
-                {% endfor %}
-            </ul>
+        <h2>Encuentra tu Próximo Curso</h2>
+        <div class="search-area">
+            <form method="POST">
+                <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." value="{{ query | default('') }}" required>
+                <br>
+                <button type="submit">Buscar Cursos</button>
+            </form>
         </div>
-        {% elif query %}
-        <div class="resultado">
-            <h2>No se encontraron cursos para: "{{ query }}"</h2>
-        </div>
-        {% endif %}
     </div>
+
+    <div class="promotion-banner">
+        <h2>¡Cursos Gratis te Esperan!</h2>
+        <p>Descubre nuestra selección especial de cursos 100% gratuitos para empezar a aprender hoy mismo.</p>
+        <a href="#" class="promo-button">Explorar Cursos Gratis</a>
+    </div>
+
+    {% if cursos %}
+    <div class="resultado">
+        <h2>Resultados para: "{{ query }}"</h2>
+        <ul>
+            {% for curso in cursos %}
+                <li>
+                    <a href="{{ curso['url'] }}" target="_blank">{{ curso['course_title'] }}</a>
+                    <span class="subscribers">{{ "{:,}".format(curso['num_subscribers']) }} suscriptores</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="about-us">
+        <h2>Quiénes Somos</h2>
+        <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad. Buscamos simplificar el proceso de búsqueda en la vasta oferta educativa digital, destacando los cursos más populares y, en el futuro, ofreciendo recomendaciones personalizadas basadas en tus intereses y preferencias de aprendizaje. Nuestra misión es transformar la sobrecarga de información en oportunidades de aprendizaje claras y accesibles para todos.</p>
+    </div>
+
+    <div class="contact-us">
+        <h2>Contáctanos</h2>
+        <p>Si tienes alguna pregunta, sugerencia o deseas colaborar con nuestro proyecto de investigación, no dudes en contactarnos. Estamos abiertos a nuevas ideas y al feedback de nuestra comunidad.</p>
+        <p>Puedes escribirnos a: <a href="mailto:aprendoya.investigacion@example.com">aprendoya.investigacion@example.com</a></p>
+        <p>¡Esperamos saber de ti!</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 AprendoYA! Todos los derechos reservados. | Proyecto de Investigación</p>
+        <p>Desarrollado con ❤️ y Python.</p>
+    </footer>
 </body>
 </html>
-
-
-
