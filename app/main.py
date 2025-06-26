@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 import pandas as pd
 
 app = Flask(__name__)
-df = pd.read_csv("app/data/udemy_online_education_courses_dataset.csv") # Ruta corregida
+df = pd.read_csv("data/udemy_online_education_courses_dataset.csv") # Ruta corregida
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
