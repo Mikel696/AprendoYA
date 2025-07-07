@@ -5,397 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprendoYA! - Descubre Cursos en Línea</title>
     <link rel="icon" href="{{ url_for('static', filename='Logo AprendoYa.png') }}">
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
-        /* Variables CSS para facilitar cambios de color */
+        /* Estilos generales (los tuyos, ligeramente ajustados) */
         :root {
-            --primary-color: #2F80ED; /* Azul principal */
-            --secondary-color: #27AE60; /* Verde para acciones */
-            --light-bg: #f5f7fa; /* Fondo claro general */
-            --dark-text: #333; /* Texto oscuro */
-            --light-text: #fff; /* Texto claro */
-            --card-bg: #ffffff; /* Fondo de tarjetas/secciones */
-            --border-color: #e0e0e0; /* Color de borde suave */
-            --shadow-light: rgba(0, 0, 0, 0.08); /* Sombra suave */
+            --primary-color: #2F80ED;
+            --secondary-color: #27AE60;
+            --light-bg: #f5f7fa;
+            --dark-text: #333;
+            --light-text: #fff;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow-light: rgba(0, 0, 0, 0.08);
         }
-
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--light-bg);
-            /* Nuevo: Patrón de puntos sutil en el fondo */
-            background-image: radial-gradient(circle at 1px 1px, #d9e2ec 1px, transparent 0);
-            background-size: 25px 25px; /* Espaciado de los puntos */
             color: var(--dark-text);
             margin: 0;
             padding: 0;
-            line-height: 1.5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centra el contenido en el cuerpo */
+            line-height: 1.6;
         }
-
-        header {
-            background-color: var(--primary-color);
-            color: var(--light-text);
-            padding: 1.8em 1em; /* Más reducido */
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 2px 5px var(--shadow-light); /* Sombra más discreta */
-            border-bottom-left-radius: 12px; /* Radios más pequeños */
-            border-bottom-right-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(47, 128, 237, 0.9), rgba(39, 174, 96, 0.9));
-            z-index: -1;
-        }
-
-        img.logo {
-            max-width: 70px; /* Logo más pequeño */
-            margin-bottom: 0.5em;
-        }
-
-        h1 {
-            margin: 0.3em 0 0.15em;
-            font-size: 1.8em; /* H1 más pequeño */
-            font-weight: 700;
-        }
-
-        p.tagline {
-            font-size: 0.95em; /* Párrafo principal más pequeño */
-            font-weight: 300;
-            opacity: 0.9;
-            margin-bottom: 1em;
-        }
-
         .container {
             width: 90%;
-            max-width: 800px; /* Ancho máximo para el contenedor principal */
-            margin: 1.8em auto; /* Márgenes ajustados */
+            max-width: 800px;
+            margin: 2em auto;
             background-color: var(--card-bg);
-            padding: 1.8em; /* Padding ajustado */
-            border-radius: 10px; /* Radio más pequeño */
-            box-shadow: 0 3px 8px var(--shadow-light); /* Sombra más sutil */
+            padding: 2em;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--shadow-light);
             text-align: center;
         }
-
-        /* Nuevo: Contenedor específico para el área de búsqueda */
-        .search-area {
-            max-width: 500px; /* Ancho máximo para el formulario de búsqueda */
-            margin: 0 auto; /* Centrar el formulario */
+        header {
+            background: linear-gradient(to right, #2F80ED, #27AE60);
+            color: var(--light-text);
+            padding: 2em 1em;
+            text-align: center;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
         }
-
-        input[type="text"] {
-            width: calc(100% - 16px); /* Ancho ajustado para padding */
-            padding: 10px;
-            margin-bottom: 10px; /* Margen más pequeño */
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 0.95em; /* Texto de input más pequeño */
-            outline: none;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        input[type="text"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.2); /* Sombra de enfoque más pequeña */
-        }
-
+        img.logo { max-width: 80px; margin-bottom: 0.5em; }
+        h1 { margin: 0.3em 0; font-size: 2.2em; }
+        p.tagline { font-size: 1.1em; opacity: 0.9; }
         form button {
             background-color: var(--secondary-color);
             color: var(--light-text);
-            padding: 9px 18px; /* Padding ajustado */
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.95em; /* Texto de botón más pequeño */
+            font-size: 1em;
             font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3); /* Sombra más sutil */
-        }
-        form button:hover {
-            background-color: #2196F3;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(33, 150, 243, 0.4);
-        }
-        form button:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 2px rgba(33, 150, 243, 0.2);
-        }
-
-        /* Sección de Banner de Promoción */
-        .promotion-banner {
-            background: linear-gradient(135deg, #FF6B6B, #FFD166);
-            color: var(--light-text);
-            padding: 1.2em; /* Padding ajustado */
-            border-radius: 10px; /* Radio ajustado */
-            margin-top: 1.8em;
-            box-shadow: 0 5px 12px rgba(255, 107, 107, 0.4);
-            animation: pulse 2s infinite ease-in-out;
-            text-align: center;
-            max-width: 700px; /* Ancho máximo para el banner */
-            width: 90%;
-        }
-
-        .promotion-banner h2 {
-            margin-top: 0;
-            font-size: 1.4em; /* H2 del banner más pequeño */
-            font-weight: 700;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .promotion-banner p {
-            font-size: 0.9em; /* Párrafo del banner más pequeño */
-            margin-bottom: 0.8em;
-        }
-
-        .promo-button {
-            display: inline-block;
-            background-color: var(--light-text);
-            color: #FF6B6B;
-            padding: 8px 16px; /* Padding ajustado */
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85em; /* Texto de botón más pequeño */
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .promo-button:hover {
-            background-color: #eee;
-            color: #FF8E66;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        form button:hover { background-color: #219653; transform: translateY(-2px); }
+        input[type="text"] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 1em;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1em;
         }
-
-        /* Animación para el banner */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.002); } /* Pulse aún más sutil */
-            100% { transform: scale(1); }
-        }
-
-        /* Sección de Resultados */
         .resultado {
             background-color: var(--card-bg);
-            margin-top: 1.8em;
-            padding: 1.4em; /* Padding ajustado */
-            border-radius: 10px;
+            margin-top: 2em;
+            padding: 1.5em;
+            border-radius: 12px;
             text-align: left;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-            box-shadow: 0 3px 8px var(--shadow-light);
+            box-shadow: 0 4px 15px var(--shadow-light);
             border: 1px solid var(--border-color);
         }
-        .resultado h2 {
-            margin-top: 0;
-            color: var(--primary-color);
-            font-size: 1.4em; /* H2 de resultados más pequeño */
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.3em;
-            margin-bottom: 0.7em;
-        }
-        .resultado ul {
-            list-style: none;
-            padding: 0;
-        }
+        .resultado h2 { margin-top: 0; color: var(--primary-color); }
+        .resultado ul { list-style: none; padding: 0; }
         .resultado li {
-            margin-bottom: 0.7em;
-            padding-bottom: 0.7em;
+            margin-bottom: 0.8em;
+            padding-bottom: 0.8em;
             border-bottom: 1px dashed var(--border-color);
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
-        .resultado li:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-        .resultado li a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95em; /* Enlace de curso más pequeño */
-            flex-grow: 1;
-        }
-        .resultado li a:hover {
-            text-decoration: underline;
-            color: #1a6ac9;
-        }
-        .resultado li span.subscribers {
-            margin-left: 0.7em;
-            color: var(--secondary-color);
-            font-weight: 700;
-            font-size: 0.85em; /* Suscriptores más pequeños */
-            white-space: nowrap;
-        }
+        .resultado li:last-child { border-bottom: none; }
+        .resultado li a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        .resultado li a:hover { text-decoration: underline; }
+        .resultado li span.subscribers { color: var(--secondary-color); font-weight: 700; font-size: 0.9em; }
+        footer { margin-top: 3em; padding: 2em; background-color: #333; color: var(--light-text); text-align: center; width: 100%; box-sizing: border-box; }
 
-        /* Secciones Quiénes Somos y Contáctanos */
-        .about-us, .contact-us {
-            width: 90%;
-            max-width: 700px;
-            background-color: var(--card-bg);
-            padding: 1.4em; /* Padding ajustado */
-            margin: 1.8em auto; /* Márgenes ajustados */
-            border-radius: 10px;
-            box-shadow: 0 3px 8px var(--shadow-light);
-            border: 1px solid var(--border-color);
-            text-align: left;
-        }
-        .about-us h2, .contact-us h2 {
-            color: var(--primary-color);
-            font-size: 1.3em; /* H2 de estas secciones más pequeño */
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.3em;
-            margin-bottom: 0.7em;
-        }
-        .about-us p, .contact-us p {
-            font-size: 0.9em; /* Párrafos de estas secciones más pequeños */
-            line-height: 1.6;
-        }
-        .contact-us p a {
-            color: var(--secondary-color);
-            text-decoration: none;
-        }
-        .contact-us p a:hover {
-            text-decoration: underline;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 3em; /* Espacio superior para separar */
-            padding: 1.5em; /* Padding para el contenido del footer */
-            background-color: #333;
-            color: var(--light-text);
-            text-align: center;
+        /* ========= ESTILOS PARA EL MODAL ========= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            font-size: 0.85em; /* Texto del footer más pequeño */
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Sombra superior */
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none; /* Oculto por defecto */
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
         }
-        footer p {
-            margin: 0.5em 0;
-            opacity: 0.8;
+        .modal-content {
+            background: white;
+            padding: 2.5em;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative;
+            animation: slide-down 0.4s ease-out;
         }
-        footer a {
-            color: var(--secondary-color);
+        @keyframes slide-down {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close-button:hover { color: #333; }
+        .modal-content h2 { margin-top: 0; color: var(--primary-color); }
+        .modal-content .question { margin-bottom: 1.5em; }
+        .modal-content label { display: block; font-weight: 600; margin-bottom: 0.5em; }
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1em;
+            background-color: #fdfdfd;
+        }
+        #quiz-button {
+            display: inline-block;
+            background-color: #FF758C;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
         }
-        footer a:hover {
-            color: #5cb85c;
-            text-decoration: underline;
-        }
-
-
-        /* Media Queries Ajustados para Responsividad (todos los tamaños reducidos) */
-        @media (max-width: 768px) {
-            header {
-                padding: 1.2em 0.5em;
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
-            }
-            h1 {
-                font-size: 1.6em;
-            }
-            p.tagline {
-                font-size: 0.85em;
-                margin-bottom: 0.8em;
-            }
-            .container, .promotion-banner, .resultado, .about-us, .contact-us {
-                width: 95%;
-                padding: 1em;
-                margin: 1.2em auto;
-                border-radius: 8px;
-            }
-            input[type="text"] {
-                padding: 8px;
-                font-size: 0.85em;
-                border-radius: 5px;
-            }
-            form button, .promo-button {
-                padding: 7px 14px;
-                font-size: 0.85em;
-                border-radius: 5px;
-            }
-            .promotion-banner h2 {
-                font-size: 1.3em;
-            }
-            .promotion-banner p {
-                font-size: 0.8em;
-            }
-            .resultado h2, .about-us h2, .contact-us h2 {
-                font-size: 1.2em;
-            }
-            .resultado li {
-                flex-direction: column;
-                align-items: flex-start;
-                margin-bottom: 0.5em;
-                padding-bottom: 0.5em;
-            }
-            .resultado li span.subscribers {
-                margin-left: 0;
-                margin-top: 0.2em;
-                font-size: 0.8em;
-            }
-            .about-us p, .contact-us p {
-                font-size: 0.85em;
-            }
-            footer {
-                padding: 1em;
-                font-size: 0.75em;
-            }
-        }
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            p.tagline {
-                font-size: 0.8em;
-            }
-            .container, .promotion-banner, .resultado, .about-us, .contact-us {
-                padding: 0.8em;
-                margin: 0.8em auto;
-                border-radius: 6px;
-            }
-            .promotion-banner h2 {
-                font-size: 1.1em;
-            }
-            .promotion-banner p {
-                font-size: 0.75em;
-            }
-            .promo-button {
-                padding: 5px 10px;
-                font-size: 0.7em;
-            }
-            .resultado h2, .about-us h2, .contact-us h2 {
-                font-size: 1.1em;
-            }
-            .resultado li a {
-                font-size: 0.85em;
-            }
-            .resultado li span.subscribers {
-                font-size: 0.75em;
-            }
-            .about-us p, .contact-us p {
-                font-size: 0.8em;
-            }
-            footer {
-                padding: 0.8em;
-                font-size: 0.7em;
-            }
-        }
+        #quiz-button:hover { background-color: #ff5c77; transform: translateY(-2px); }
+        #recommendation-results { display: none; } /* Oculto por defecto */
     </style>
 </head>
 <body>
@@ -407,21 +169,20 @@
 
     <div class="container">
         <h2>Encuentra tu Próximo Curso</h2>
-        <div class="search-area">
-            <form method="POST">
-                <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." value="{{ query | default('') }}" required>
-                <br>
-                <button type="submit">Buscar Cursos</button>
-            </form>
-        </div>
+        <form method="POST">
+            <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." value="{{ query | default('') }}" required>
+            <button type="submit">Buscar Cursos</button>
+        </form>
+    </div>
+    
+    <!-- ========= SECCIÓN PARA EL TEST VOCACIONAL ========= -->
+    <div class="container" style="background: linear-gradient(135deg, #6DD5FA, #FF758C); color: white;">
+        <h2 style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">¿No sabes qué estudiar?</h2>
+        <p>Responde unas pocas preguntas y te daremos una recomendación al instante.</p>
+        <button id="quiz-button">¡Comenzar el test!</button>
     </div>
 
-    <div class="promotion-banner">
-        <h2>¡Cursos Gratis te Esperan!</h2>
-        <p>Descubre nuestra selección especial de cursos 100% gratuitos para empezar a aprender hoy mismo.</p>
-        <a href="#" class="promo-button">Explorar Cursos Gratis</a>
-    </div>
-
+    <!-- Resultados del buscador principal -->
     {% if cursos %}
     <div class="resultado">
         <h2>Resultados para: "{{ query }}"</h2>
@@ -436,21 +197,137 @@
     </div>
     {% endif %}
 
-    <div class="about-us">
-        <h2>Quiénes Somos</h2>
-        <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad. Buscamos simplificar el proceso de búsqueda en la vasta oferta educativa digital, destacando los cursos más populares y, en el futuro, ofreciendo recomendaciones personalizadas basadas en tus intereses y preferencias de aprendizaje. Nuestra misión es transformar la sobrecarga de información en oportunidades de aprendizaje claras y accesibles para todos.</p>
+    <!-- Contenedor para los resultados del test (modal) -->
+    <div id="recommendation-results" class="resultado">
+        <h2>Cursos recomendados para ti</h2>
+        <ul id="recommendation-list"></ul>
     </div>
 
-    <div class="contact-us">
+    <!-- El resto de tu página (About-us, Contact, etc.) -->
+    <div class="container about-us" style="text-align: left;">
+        <h2>Quiénes Somos</h2>
+        <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad...</p>
+    </div>
+    <div class="container contact-us" style="text-align: left;">
         <h2>Contáctanos</h2>
-        <p>Si tienes alguna pregunta, sugerencia o deseas colaborar con nuestro proyecto de investigación, no dudes en contactarnos. Estamos abiertos a nuevas ideas y al feedback de nuestra comunidad.</p>
         <p>Puedes escribirnos a: <a href="mailto:aprendoya.investigacion@example.com">aprendoya.investigacion@example.com</a></p>
-        <p>¡Esperamos saber de ti!</p>
     </div>
 
     <footer>
-        <p>&copy; 2025 AprendoYA! Todos los derechos reservados. | Proyecto de Investigación</p>
-        <p>Desarrollado con ❤️ y Python.</p>
+        <p>&copy; 2025 AprendoYA! Todos los derechos reservados.</p>
     </footer>
+
+    <!-- ========= HTML DEL MODAL (OCULTO POR DEFECTO) ========= -->
+    <div id="quizModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Descubre tu curso ideal</h2>
+            <form id="quizForm">
+                <div class="question">
+                    <label for="interest_modal">¿En qué área te gustaría aprender?</label>
+                    <select id="interest_modal" name="interest_modal" required>
+                        <option value="" disabled selected>Selecciona un área</option>
+                        <option value="python">Programación con Python</option>
+                        <option value="web development">Desarrollo Web (HTML, CSS, JavaScript)</option>
+                        <option value="data science">Ciencia de Datos y Analítica</option>
+                        <option value="marketing">Marketing Digital</option>
+                        <option value="excel">Excel y Hojas de Cálculo</option>
+                        <option value="graphic design">Diseño Gráfico</option>
+                    </select>
+                </div>
+                <div class="question">
+                    <label for="level_modal">¿Cuál es tu nivel de experiencia?</label>
+                    <select id="level_modal" name="level_modal" required>
+                        <option value="" disabled selected>Selecciona tu nivel</option>
+                        <option value="beginner">Soy principiante</option>
+                        <option value="intermediate">Tengo algo de experiencia</option>
+                    </select>
+                </div>
+                <button type="submit">Ver Recomendaciones</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========= JAVASCRIPT PARA EL MODAL Y RESULTADOS ========= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('quizModal');
+            const openBtn = document.getElementById('quiz-button');
+            const closeBtn = document.querySelector('.close-button');
+            const quizForm = document.getElementById('quizForm');
+            const recommendationResultsDiv = document.getElementById('recommendation-results');
+            const recommendationList = document.getElementById('recommendation-list');
+
+            // Función para abrir el modal
+            openBtn.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+
+            // Función para cerrar el modal
+            const closeModal = () => {
+                modal.style.display = 'none';
+            };
+
+            closeBtn.addEventListener('click', closeModal);
+            // Cerrar si se hace clic fuera del contenido del modal
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Manejar el envío del formulario del test
+            quizForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Evitar el envío tradicional
+                
+                const formData = new FormData(quizForm);
+                const submitButton = quizForm.querySelector('button[type="submit"]');
+                submitButton.textContent = 'Buscando...';
+                submitButton.disabled = true;
+
+                fetch("{{ url_for('recommend') }}", {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    closeModal(); // Cerrar el modal
+                    displayRecommendations(data.cursos);
+                    submitButton.textContent = 'Ver Recomendaciones';
+                    submitButton.disabled = false;
+                    quizForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al buscar las recomendaciones.');
+                    submitButton.textContent = 'Ver Recomendaciones';
+                    submitButton.disabled = false;
+                });
+            });
+
+            // Función para mostrar los resultados en la página
+            function displayRecommendations(cursos) {
+                recommendationList.innerHTML = ''; // Limpiar resultados anteriores
+
+                if (cursos && cursos.length > 0) {
+                    cursos.forEach(curso => {
+                        const li = document.createElement('li');
+                        const subscribers = curso.num_subscribers.toLocaleString('es-ES');
+                        li.innerHTML = `
+                            <a href="${curso.url}" target="_blank">${curso.course_title}</a>
+                            <span class="subscribers">${subscribers} suscriptores</span>
+                        `;
+                        recommendationList.appendChild(li);
+                    });
+                    recommendationResultsDiv.style.display = 'block';
+                    // Scroll suave hacia los resultados
+                    recommendationResultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    recommendationResultsDiv.style.display = 'none';
+                    alert('No se encontraron cursos para tu selección. ¡Inténtalo de nuevo!');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
