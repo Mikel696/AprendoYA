@@ -4,20 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprendoYA! - Descubre Cursos en Línea</title>
-    <!-- Apunta a tu nuevo logo -->
     <link rel="icon" href="{{ url_for('static', filename='AprendoYA!.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Librería para convertir Markdown a HTML -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
         :root {
             --primary-color: #2F80ED;
             --secondary-color: #27AE60;
-            --accent-color: #FF758C;
             --light-bg: #f5f7fa;
             --dark-text: #333;
-            --light-text: #fff;
             --card-bg: #ffffff;
             --border-color: #e0e0e0;
-            --shadow-light: rgba(0, 0, 0, 0.08);
+            --gemini-purple: #8A2BE2;
         }
         body {
             font-family: 'Poppins', sans-serif;
@@ -27,30 +26,74 @@
             padding: 0;
             line-height: 1.6;
         }
+        
+        /* --- NUEVO DISEÑO DE CABECERA PROFESIONAL --- */
+        header {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 75vh; /* Ocupa 3/4 de la altura de la pantalla */
+            background: 
+                radial-gradient(ellipse at center, rgba(245, 247, 250, 0) 0%, rgba(245, 247, 250, 1) 70%),
+                var(--light-bg);
+            text-align: center;
+            padding: 2em;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .logo-container {
+            max-width: 600px; /* Aumenta el tamaño máximo del logo */
+            width: 90%;
+            animation: fadeInLogo 1.5s ease-out;
+        }
+
+        @keyframes fadeInLogo {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+        }
+
+        .tagline {
+            font-size: 1.4em;
+            font-weight: 300;
+            color: #555;
+            margin-top: 1.5em;
+            animation: fadeInTagline 2s ease-out;
+        }
+
+        @keyframes fadeInTagline {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* --- FIN DEL NUEVO DISEÑO --- */
+
+        .main-content {
+            /* Sube el contenido para que se solape ligeramente con la cabecera */
+            transform: translateY(-80px); 
+            z-index: 10;
+            position: relative;
+        }
+
         .container {
             width: 90%;
             max-width: 800px;
             margin: 2em auto;
             background-color: var(--card-bg);
-            padding: 2em;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px var(--shadow-light);
+            padding: 2.5em;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
             text-align: center;
         }
-        header {
-            background: linear-gradient(to right, #2F80ED, #27AE60);
-            color: var(--light-text);
-            padding: 2em 1em;
-            text-align: center;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-        }
-        img.logo { max-width: 120px; margin-bottom: 0.5em; }
-        h1 { margin: 0.3em 0; font-size: 2.2em; }
-        p.tagline { font-size: 1.1em; opacity: 0.9; }
+        
         .main-form button, .modal-content button {
             background-color: var(--secondary-color);
-            color: var(--light-text);
+            color: #fff;
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
@@ -79,7 +122,7 @@
             margin-right: auto;
             box-shadow: 0 4px 15px var(--shadow-light);
             border: 1px solid var(--border-color);
-            display: none; /* Oculto por defecto */
+            display: none;
         }
         .results-container h2 { margin-top: 0; color: var(--primary-color); }
         .results-container ul { list-style: none; padding: 0; }
@@ -97,7 +140,7 @@
         .course-meta { display: flex; gap: 1em; align-items: center; font-size: 0.85em; }
         .course-meta .subscribers { color: var(--secondary-color); font-weight: 700; }
         .course-meta .source-badge { background-color: #eee; padding: 3px 8px; border-radius: 5px; font-weight: 500; }
-        footer { margin-top: 3em; padding: 2em; background-color: #333; color: var(--light-text); text-align: center; width: 100%; box-sizing: border-box; }
+        footer { margin-top: 3em; padding: 2em; background-color: #333; color: #fff; text-align: center; width: 100%; box-sizing: border-box; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -106,8 +149,9 @@
         }
         .modal-content {
             background: white; padding: 2.5em; border-radius: 15px; width: 90%;
-            max-width: 550px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            max-width: 650px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             position: relative; animation: slide-down 0.4s ease-out;
+            max-height: 80vh; overflow-y: auto;
         }
         @keyframes slide-down { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .close-button { position: absolute; top: 15px; right: 20px; font-size: 2em; color: #aaa; cursor: pointer; line-height: 1; }
@@ -118,53 +162,115 @@
         .modal-content select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1em; background-color: #fdfdfd; }
         
         .action-button {
-            display: inline-block; background-color: var(--accent-color); color: white;
+            display: inline-block; background-color: #FF758C; color: white;
             padding: 12px 25px; border-radius: 8px; text-decoration: none;
             font-weight: 700; transition: all 0.3s ease; cursor: pointer; border: none;
         }
         .action-button:hover { background-color: #ff5c77; transform: translateY(-2px); }
         .action-button.green { background-color: var(--secondary-color); }
         .action-button.green:hover { background-color: #219653; }
+
+        #gemini-cta-container {
+            margin-top: 2em;
+            padding-top: 1.5em;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            display: none;
+        }
+        #gemini-cta-button {
+            background: linear-gradient(45deg, var(--gemini-purple), var(--primary-color));
+            color: white;
+            font-weight: 700;
+            font-size: 1em;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+        #gemini-cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        }
+        #learning-path-modal .modal-content {
+            text-align: left;
+        }
+        #learning-path-modal h2 {
+            color: var(--gemini-purple);
+        }
+        #learning-path-content h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.3em;
+            margin-top: 1.5em;
+        }
+        #learning-path-content ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        #learning-path-content li {
+            margin-bottom: 0.5em;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid var(--gemini-purple);
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 2em auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <header>
-        <!-- Apunta a tu nuevo logo -->
-        <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="Logo AprendoYA!" class="logo">
-        <h1>AprendoYA!</h1>
+        <div class="logo-container">
+            <!-- Usando tu nuevo logo -->
+            <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="Logo AprendoYA!">
+        </div>
         <p class="tagline">Tu guía inteligente para descubrir cursos en línea.</p>
     </header>
 
-    <div class="container">
-        <h2>Encuentra tu Próximo Curso</h2>
-        <form id="mainSearchForm" class="main-form">
-            <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." required>
-            <button type="submit">Buscar Cursos</button>
-        </form>
-    </div>
-    
-    <div class="container" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1em;">
-        <div style="background: linear-gradient(135deg, #6DD5FA, #FF758C); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
-            <h3 style="margin-top: 0;">¿No sabes qué estudiar?</h3>
-            <p style="font-size: 0.9em;">Responde un par de preguntas y te guiaremos.</p>
-            <button id="openQuizBtn" class="action-button">¡Comenzar el test!</button>
+    <div class="main-content">
+        <div class="container">
+            <h2>Encuentra tu Próximo Curso</h2>
+            <form id="mainSearchForm" class="main-form">
+                <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." required>
+                <button type="submit">Buscar Cursos</button>
+            </form>
         </div>
-        <div style="background: linear-gradient(135deg, #56ab2f, #a8e063); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
-            <h3 style="margin-top: 0;">¡Explora Cursos Gratis!</h3>
-            <p style="font-size: 0.9em;">Accede a una selección de cursos sin costo.</p>
-            <button id="freeCoursesBtn" class="action-button green">Ver Cursos Gratis</button>
+        
+        <div class="container" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1em;">
+            <div style="background: linear-gradient(135deg, #6DD5FA, #FF758C); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
+                <h3 style="margin-top: 0;">¿No sabes qué estudiar?</h3>
+                <p style="font-size: 0.9em;">Responde un par de preguntas y te guiaremos.</p>
+                <button id="openQuizBtn" class="action-button">¡Comenzar el test!</button>
+            </div>
+            <div style="background: linear-gradient(135deg, #56ab2f, #a8e063); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
+                <h3 style="margin-top: 0;">¡Explora Cursos Gratis!</h3>
+                <p style="font-size: 0.9em;">Accede a una selección de cursos sin costo.</p>
+                <button id="freeCoursesBtn" class="action-button green">Ver Cursos Gratis</button>
+            </div>
         </div>
-    </div>
 
-    <div id="results" class="results-container">
-        <h2 id="results-title">Resultados</h2>
-        <ul id="results-list"></ul>
-        <p id="no-results-msg" style="display: none; text-align: center;">No se encontraron cursos para tu selección. ¡Inténtalo de nuevo!</p>
-    </div>
+        <div id="results" class="results-container">
+            <h2 id="results-title">Resultados</h2>
+            <ul id="results-list"></ul>
+            <div id="gemini-cta-container">
+                <button id="gemini-cta-button">✨ Generar Ruta de Aprendizaje</button>
+            </div>
+            <p id="no-results-msg" style="display: none; text-align: center;">No se encontraron cursos para tu selección. ¡Inténtalo de nuevo!</p>
+        </div>
 
-    <div class="container about-us" style="text-align: left;">
-        <h2>Quiénes Somos</h2>
-        <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad...</p>
+        <div class="container about-us" style="text-align: left;">
+            <h2>Quiénes Somos</h2>
+            <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad...</p>
+        </div>
     </div>
 
     <footer>
@@ -203,27 +309,47 @@
         </div>
     </div>
 
+    <div id="learning-path-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Ruta de Aprendizaje Personalizada</h2>
+            <div id="learning-path-content">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const mainSearchForm = document.getElementById('mainSearchForm');
             const quizForm = document.getElementById('quizForm');
             const freeCoursesBtn = document.getElementById('freeCoursesBtn');
+            const geminiBtn = document.getElementById('gemini-cta-button');
             
-            const modal = document.getElementById('quizModal');
+            const quizModal = document.getElementById('quizModal');
             const openQuizBtn = document.getElementById('openQuizBtn');
-            const closeBtn = document.querySelector('.close-button');
+            const closeQuizBtn = quizModal.querySelector('.close-button');
+
+            const learningPathModal = document.getElementById('learning-path-modal');
+            const learningPathContent = document.getElementById('learning-path-content');
+            const closeLearningPathBtn = learningPathModal.querySelector('.close-button');
 
             const resultsDiv = document.getElementById('results');
             const resultsTitle = document.getElementById('results-title');
             const resultsList = document.getElementById('results-list');
             const noResultsMsg = document.getElementById('no-results-msg');
+            const geminiCtaContainer = document.getElementById('gemini-cta-container');
 
-            openQuizBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
-            const closeModal = () => { modal.style.display = 'none'; };
-            closeBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            let currentQuery = '';
 
-            const performSearch = (endpoint, formData, title) => {
+            openQuizBtn.addEventListener('click', () => { quizModal.style.display = 'flex'; });
+            closeQuizBtn.addEventListener('click', () => { quizModal.style.display = 'none'; });
+            quizModal.addEventListener('click', (e) => { if (e.target === quizModal) quizModal.style.display = 'none'; });
+
+            closeLearningPathBtn.addEventListener('click', () => { learningPathModal.style.display = 'none'; });
+            learningPathModal.addEventListener('click', (e) => { if (e.target === learningPathModal) learningPathModal.style.display = 'none'; });
+
+            const performSearch = (endpoint, formData, title, event) => {
                 const submitButton = event.target.querySelector('button');
                 const originalText = submitButton ? submitButton.textContent : '';
                 if(submitButton) {
@@ -237,7 +363,7 @@
                     .then(response => response.json())
                     .then(data => {
                         displayResults(data.cursos, title);
-                        if (modal.style.display === 'flex') closeModal();
+                        if (quizModal.style.display === 'flex') quizModal.style.display = 'none';
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -250,27 +376,76 @@
                         }
                     });
             };
-
+            
             mainSearchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const formData = new FormData(mainSearchForm);
                 const query = formData.get('interes');
-                performSearch("{{ url_for('search') }}", formData, `Resultados para: "${query}"`);
+                currentQuery = query;
+                performSearch("{{ url_for('search') }}", formData, `Resultados para: "${query}"`, e);
             });
 
-            quizForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                performSearch("{{ url_for('recommend') }}", new FormData(quizForm), 'Cursos recomendados para ti');
-            });
+            geminiBtn.addEventListener('click', async () => {
+                if (!currentQuery) {
+                    alert('Por favor, realiza una búsqueda primero.');
+                    return;
+                }
 
-            freeCoursesBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares');
+                learningPathModal.style.display = 'flex';
+                learningPathContent.innerHTML = '<div class="loader"></div>';
+
+                const prompt = `Como un experto en educación y tecnología, crea una ruta de aprendizaje detallada y motivadora para un principiante que quiere aprender sobre "${currentQuery}". La respuesta debe estar en español y en formato Markdown.
+
+                Incluye los siguientes puntos:
+
+                ### 🚀 1. Primeros Pasos (Fundamentos)
+                - Una lista de 3 a 5 conceptos clave que debe dominar primero. Explica brevemente cada uno.
+
+                ### 🛠️ 2. Proyectos Prácticos para Empezar
+                - Sugiere 2 o 3 proyectos simples pero impactantes para aplicar los conocimientos. Describe el objetivo de cada proyecto.
+
+                ### 📚 3. Recursos Adicionales Recomendados
+                - Menciona 2 o 3 recursos útiles como blogs, canales de YouTube, o documentación oficial.
+
+                Usa un tono amigable y alentador.`;
+
+                try {
+                    let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                    const payload = { contents: chatHistory };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Error en la API: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates[0].content.parts[0].text) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        const converter = new showdown.Converter();
+                        const html = converter.makeHtml(text);
+                        learningPathContent.innerHTML = html;
+                    } else {
+                        throw new Error('Respuesta inesperada de la API.');
+                    }
+
+                } catch (error) {
+                    console.error('Error al llamar a la API de Gemini:', error);
+                    learningPathContent.innerHTML = '<p style="color: red;">Lo sentimos, no se pudo generar la ruta de aprendizaje en este momento. Por favor, inténtalo de nuevo más tarde.</p>';
+                }
             });
 
             function displayResults(cursos, title) {
                 resultsList.innerHTML = '';
                 noResultsMsg.style.display = 'none';
+                geminiCtaContainer.style.display = 'none';
                 resultsTitle.textContent = title;
 
                 if (cursos && cursos.length > 0) {
@@ -287,12 +462,23 @@
                         resultsList.appendChild(li);
                     });
                     resultsDiv.style.display = 'block';
+                    geminiCtaContainer.style.display = 'block';
                 } else {
                     noResultsMsg.style.display = 'block';
                     resultsDiv.style.display = 'block';
                 }
                 resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+
+            quizForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                performSearch("{{ url_for('recommend') }}", new FormData(quizForm), 'Cursos recomendados para ti', e);
+            });
+
+            freeCoursesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares', e);
+            });
         });
     </script>
 </body>

@@ -7,12 +7,6 @@ app = Flask(__name__)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-def build_coursera_url(path):
-    """Construye una URL completa y válida para Coursera."""
-    if not isinstance(path, str) or path.startswith('http'):
-        return path
-    return f"https://www.coursera.org{path}" if path.startswith('/learn/') else f"https://www.coursera.org/learn/{path}"
-
 def safe_load_and_process(path, column_map, default_source, url_builder=None):
     """
     Carga un archivo CSV de forma ultra robusta, mapeando columnas de forma flexible
@@ -49,6 +43,12 @@ def safe_load_and_process(path, column_map, default_source, url_builder=None):
     except Exception as e:
         print(f"ERROR INESPERADO al procesar {path}: {e}")
     return pd.DataFrame()
+
+def build_coursera_url(path):
+    """Construye una URL completa y válida para Coursera."""
+    if not isinstance(path, str) or path.startswith('http'):
+        return path
+    return f"https://www.coursera.org{path}" if path.startswith('/learn/') else f"https://www.coursera.org/learn/{path}"
 
 def load_all_data():
     """Carga y combina todas las fuentes de datos."""
