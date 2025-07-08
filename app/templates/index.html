@@ -7,10 +7,10 @@
     <link rel="icon" href="{{ url_for('static', filename='Logo AprendoYa.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos generales (los tuyos, ligeramente ajustados) */
         :root {
             --primary-color: #2F80ED;
             --secondary-color: #27AE60;
+            --accent-color: #FF758C;
             --light-bg: #f5f7fa;
             --dark-text: #333;
             --light-text: #fff;
@@ -47,7 +47,7 @@
         img.logo { max-width: 80px; margin-bottom: 0.5em; }
         h1 { margin: 0.3em 0; font-size: 2.2em; }
         p.tagline { font-size: 1.1em; opacity: 0.9; }
-        form button {
+        .main-form button, .modal-content button {
             background-color: var(--secondary-color);
             color: var(--light-text);
             padding: 12px 25px;
@@ -58,7 +58,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
         }
-        form button:hover { background-color: #219653; transform: translateY(-2px); }
+        .main-form button:hover, .modal-content button:hover { background-color: #219653; transform: translateY(-2px); }
         input[type="text"] {
             width: calc(100% - 24px);
             padding: 12px;
@@ -67,7 +67,7 @@
             border: 1px solid var(--border-color);
             font-size: 1em;
         }
-        .resultado {
+        .results-container {
             background-color: var(--card-bg);
             margin-top: 2em;
             padding: 1.5em;
@@ -78,86 +78,52 @@
             margin-right: auto;
             box-shadow: 0 4px 15px var(--shadow-light);
             border: 1px solid var(--border-color);
+            display: none; /* Oculto por defecto */
         }
-        .resultado h2 { margin-top: 0; color: var(--primary-color); }
-        .resultado ul { list-style: none; padding: 0; }
-        .resultado li {
-            margin-bottom: 0.8em;
-            padding-bottom: 0.8em;
+        .results-container h2 { margin-top: 0; color: var(--primary-color); }
+        .results-container ul { list-style: none; padding: 0; }
+        .results-container li {
+            margin-bottom: 1em;
+            padding-bottom: 1em;
             border-bottom: 1px dashed var(--border-color);
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: flex-start;
         }
-        .resultado li:last-child { border-bottom: none; }
-        .resultado li a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
-        .resultado li a:hover { text-decoration: underline; }
-        .resultado li span.subscribers { color: var(--secondary-color); font-weight: 700; font-size: 0.9em; }
+        .results-container li:last-child { border-bottom: none; }
+        .results-container li a { color: var(--primary-color); text-decoration: none; font-weight: 600; margin-bottom: 0.25em; }
+        .results-container li a:hover { text-decoration: underline; }
+        .course-meta { display: flex; gap: 1em; align-items: center; font-size: 0.85em; }
+        .course-meta .subscribers { color: var(--secondary-color); font-weight: 700; }
+        .course-meta .source-badge { background-color: #eee; padding: 3px 8px; border-radius: 5px; font-weight: 500; }
         footer { margin-top: 3em; padding: 2em; background-color: #333; color: var(--light-text); text-align: center; width: 100%; box-sizing: border-box; }
 
-        /* ========= ESTILOS PARA EL MODAL ========= */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            display: none; /* Oculto por defecto */
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); display: none; align-items: center;
+            justify-content: center; z-index: 1000; backdrop-filter: blur(5px);
         }
         .modal-content {
-            background: white;
-            padding: 2.5em;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 550px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            position: relative;
-            animation: slide-down 0.4s ease-out;
+            background: white; padding: 2.5em; border-radius: 15px; width: 90%;
+            max-width: 550px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative; animation: slide-down 0.4s ease-out;
         }
-        @keyframes slide-down {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2em;
-            color: #aaa;
-            cursor: pointer;
-            line-height: 1;
-        }
+        @keyframes slide-down { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-button { position: absolute; top: 15px; right: 20px; font-size: 2em; color: #aaa; cursor: pointer; line-height: 1; }
         .close-button:hover { color: #333; }
         .modal-content h2 { margin-top: 0; color: var(--primary-color); }
         .modal-content .question { margin-bottom: 1.5em; }
         .modal-content label { display: block; font-weight: 600; margin-bottom: 0.5em; }
-        .modal-content select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 1em;
-            background-color: #fdfdfd;
+        .modal-content select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1em; background-color: #fdfdfd; }
+        
+        .action-button {
+            display: inline-block; background-color: var(--accent-color); color: white;
+            padding: 12px 25px; border-radius: 8px; text-decoration: none;
+            font-weight: 700; transition: all 0.3s ease; cursor: pointer; border: none;
         }
-        #quiz-button {
-            display: inline-block;
-            background-color: #FF758C;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-        }
-        #quiz-button:hover { background-color: #ff5c77; transform: translateY(-2px); }
-        #recommendation-results { display: none; } /* Oculto por defecto */
+        .action-button:hover { background-color: #ff5c77; transform: translateY(-2px); }
+        .action-button.green { background-color: var(--secondary-color); }
+        .action-button.green:hover { background-color: #219653; }
     </style>
 </head>
 <body>
@@ -169,55 +135,40 @@
 
     <div class="container">
         <h2>Encuentra tu Próximo Curso</h2>
-        <form method="POST">
-            <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." value="{{ query | default('') }}" required>
+        <form id="mainSearchForm" class="main-form">
+            <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." required>
             <button type="submit">Buscar Cursos</button>
         </form>
     </div>
     
-    <!-- ========= SECCIÓN PARA EL TEST VOCACIONAL ========= -->
-    <div class="container" style="background: linear-gradient(135deg, #6DD5FA, #FF758C); color: white;">
-        <h2 style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">¿No sabes qué estudiar?</h2>
-        <p>Responde unas pocas preguntas y te daremos una recomendación al instante.</p>
-        <button id="quiz-button">¡Comenzar el test!</button>
+    <div class="container" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1em;">
+        <div style="background: linear-gradient(135deg, #6DD5FA, #FF758C); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
+            <h3 style="margin-top: 0;">¿No sabes qué estudiar?</h3>
+            <p style="font-size: 0.9em;">Responde un par de preguntas y te guiaremos.</p>
+            <button id="openQuizBtn" class="action-button">¡Comenzar el test!</button>
+        </div>
+        <div style="background: linear-gradient(135deg, #56ab2f, #a8e063); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
+            <h3 style="margin-top: 0;">¡Explora Cursos Gratis!</h3>
+            <p style="font-size: 0.9em;">Accede a una selección de cursos sin costo.</p>
+            <button id="freeCoursesBtn" class="action-button green">Ver Cursos Gratis</button>
+        </div>
     </div>
 
-    <!-- Resultados del buscador principal -->
-    {% if cursos %}
-    <div class="resultado">
-        <h2>Resultados para: "{{ query }}"</h2>
-        <ul>
-            {% for curso in cursos %}
-                <li>
-                    <a href="{{ curso['url'] }}" target="_blank">{{ curso['course_title'] }}</a>
-                    <span class="subscribers">{{ "{:,}".format(curso['num_subscribers']) }} suscriptores</span>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
-
-    <!-- Contenedor para los resultados del test (modal) -->
-    <div id="recommendation-results" class="resultado">
-        <h2>Cursos recomendados para ti</h2>
-        <ul id="recommendation-list"></ul>
+    <div id="results" class="results-container">
+        <h2 id="results-title">Resultados</h2>
+        <ul id="results-list"></ul>
+        <p id="no-results-msg" style="display: none; text-align: center;">No se encontraron cursos para tu selección. ¡Inténtalo de nuevo!</p>
     </div>
 
-    <!-- El resto de tu página (About-us, Contact, etc.) -->
     <div class="container about-us" style="text-align: left;">
         <h2>Quiénes Somos</h2>
         <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad...</p>
-    </div>
-    <div class="container contact-us" style="text-align: left;">
-        <h2>Contáctanos</h2>
-        <p>Puedes escribirnos a: <a href="mailto:aprendoya.investigacion@example.com">aprendoya.investigacion@example.com</a></p>
     </div>
 
     <footer>
         <p>&copy; 2025 AprendoYA! Todos los derechos reservados.</p>
     </footer>
 
-    <!-- ========= HTML DEL MODAL (OCULTO POR DEFECTO) ========= -->
     <div id="quizModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -225,19 +176,21 @@
             <form id="quizForm">
                 <div class="question">
                     <label for="interest_modal">¿En qué área te gustaría aprender?</label>
-                    <select id="interest_modal" name="interest_modal" required>
+                    <select name="interest_modal" required>
                         <option value="" disabled selected>Selecciona un área</option>
                         <option value="python">Programación con Python</option>
-                        <option value="web development">Desarrollo Web (HTML, CSS, JavaScript)</option>
-                        <option value="data science">Ciencia de Datos y Analítica</option>
+                        <option value="web_development">Desarrollo Web (HTML, CSS, JS)</option>
+                        <option value="data_science">Ciencia de Datos y Analítica</option>
+                        <option value="cybersecurity">Ciberseguridad</option>
+                        <option value="ai">Inteligencia Artificial</option>
                         <option value="marketing">Marketing Digital</option>
                         <option value="excel">Excel y Hojas de Cálculo</option>
-                        <option value="graphic design">Diseño Gráfico</option>
+                        <option value="design">Diseño Gráfico</option>
                     </select>
                 </div>
                 <div class="question">
                     <label for="level_modal">¿Cuál es tu nivel de experiencia?</label>
-                    <select id="level_modal" name="level_modal" required>
+                    <select name="level_modal" required>
                         <option value="" disabled selected>Selecciona tu nivel</option>
                         <option value="beginner">Soy principiante</option>
                         <option value="intermediate">Tengo algo de experiencia</option>
@@ -248,84 +201,98 @@
         </div>
     </div>
 
-    <!-- ========= JAVASCRIPT PARA EL MODAL Y RESULTADOS ========= -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('quizModal');
-            const openBtn = document.getElementById('quiz-button');
-            const closeBtn = document.querySelector('.close-button');
+            const mainSearchForm = document.getElementById('mainSearchForm');
             const quizForm = document.getElementById('quizForm');
-            const recommendationResultsDiv = document.getElementById('recommendation-results');
-            const recommendationList = document.getElementById('recommendation-list');
+            const freeCoursesBtn = document.getElementById('freeCoursesBtn');
+            
+            const modal = document.getElementById('quizModal');
+            const openQuizBtn = document.getElementById('openQuizBtn');
+            const closeBtn = document.querySelector('.close-button');
 
-            // Función para abrir el modal
-            openBtn.addEventListener('click', () => {
-                modal.style.display = 'flex';
-            });
+            const resultsDiv = document.getElementById('results');
+            const resultsTitle = document.getElementById('results-title');
+            const resultsList = document.getElementById('results-list');
+            const noResultsMsg = document.getElementById('no-results-msg');
 
-            // Función para cerrar el modal
-            const closeModal = () => {
-                modal.style.display = 'none';
+            // --- MANEJO DEL MODAL ---
+            openQuizBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
+            const closeModal = () => { modal.style.display = 'none'; };
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            // --- FUNCIONES DE BÚSQUEDA ---
+            const performSearch = (url, formData, title) => {
+                const submitButton = event.target.querySelector('button[type="submit"]');
+                if(submitButton) {
+                    submitButton.textContent = 'Buscando...';
+                    submitButton.disabled = true;
+                }
+
+                const options = formData ? { method: 'POST', body: formData } : { method: 'GET' };
+
+                fetch(url, options)
+                    .then(response => response.json())
+                    .then(data => {
+                        displayResults(data.cursos, title);
+                        if (modal.style.display === 'flex') closeModal();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Hubo un error al procesar tu solicitud.');
+                    })
+                    .finally(() => {
+                        if(submitButton) {
+                            submitButton.textContent = 'Buscar Cursos'; // O el texto original del botón
+                            submitButton.disabled = false;
+                        }
+                    });
             };
 
-            closeBtn.addEventListener('click', closeModal);
-            // Cerrar si se hace clic fuera del contenido del modal
-            modal.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    closeModal();
-                }
+            // --- EVENT LISTENERS ---
+            mainSearchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(mainSearchForm);
+                const query = formData.get('interes');
+                performSearch("{{ url_for('search') }}", formData, `Resultados para: "${query}"`);
             });
 
-            // Manejar el envío del formulario del test
-            quizForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Evitar el envío tradicional
-                
-                const formData = new FormData(quizForm);
-                const submitButton = quizForm.querySelector('button[type="submit"]');
-                submitButton.textContent = 'Buscando...';
-                submitButton.disabled = true;
-
-                fetch("{{ url_for('recommend') }}", {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    closeModal(); // Cerrar el modal
-                    displayRecommendations(data.cursos);
-                    submitButton.textContent = 'Ver Recomendaciones';
-                    submitButton.disabled = false;
-                    quizForm.reset();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Hubo un error al buscar las recomendaciones.');
-                    submitButton.textContent = 'Ver Recomendaciones';
-                    submitButton.disabled = false;
-                });
+            quizForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                performSearch("{{ url_for('recommend') }}", new FormData(quizForm), 'Cursos recomendados para ti');
             });
 
-            // Función para mostrar los resultados en la página
-            function displayRecommendations(cursos) {
-                recommendationList.innerHTML = ''; // Limpiar resultados anteriores
+            freeCoursesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares');
+            });
+
+            // --- FUNCIÓN PARA MOSTRAR RESULTADOS ---
+            function displayResults(cursos, title) {
+                resultsList.innerHTML = '';
+                noResultsMsg.style.display = 'none';
+                resultsTitle.textContent = title;
 
                 if (cursos && cursos.length > 0) {
                     cursos.forEach(curso => {
                         const li = document.createElement('li');
-                        const subscribers = curso.num_subscribers.toLocaleString('es-ES');
+                        const subscribers = curso.subscribers ? curso.subscribers.toLocaleString('es-ES') : 'N/A';
                         li.innerHTML = `
-                            <a href="${curso.url}" target="_blank">${curso.course_title}</a>
-                            <span class="subscribers">${subscribers} suscriptores</span>
+                            <a href="${curso.url}" target="_blank">${curso.title}</a>
+                            <div class="course-meta">
+                                <span class="source-badge">${curso.source || 'N/A'}</span>
+                                <span class="subscribers">⭐ ${subscribers}</span>
+                            </div>
                         `;
-                        recommendationList.appendChild(li);
+                        resultsList.appendChild(li);
                     });
-                    recommendationResultsDiv.style.display = 'block';
-                    // Scroll suave hacia los resultados
-                    recommendationResultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    resultsDiv.style.display = 'block';
                 } else {
-                    recommendationResultsDiv.style.display = 'none';
-                    alert('No se encontraron cursos para tu selección. ¡Inténtalo de nuevo!');
+                    noResultsMsg.style.display = 'block';
+                    resultsDiv.style.display = 'block'; // Mostrar el contenedor para ver el mensaje
                 }
+                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
     </script>

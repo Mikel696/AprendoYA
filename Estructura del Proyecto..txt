@@ -1,15 +1,15 @@
 Estructura
 
-D:\Sistema de Recomendación\curso-recomendador
+D:\Sistema de Recomendación\curso-recomendador\
 │
-├── app/
+├── app\
+│   ├── data\
+│   │   └── udemy_online_education_courses_dataset.csv
 │   ├── main.py
-│   └── templates/
-│       └── index.html
-│   └── static/
-│       └── Logo AprendoYa.png
 │   ├── recommender.py
-│
+│   └── templates\
+│       └── index.html
+│   └── static\
+│       └── Logo AprendoYa.png
 ├── requirements.txt
 ├── Dockerfile
-├── ngrok.exe
