@@ -6,7 +6,6 @@
     <title>AprendoYA! - Descubre Cursos en Línea</title>
     <link rel="icon" href="{{ url_for('static', filename='AprendoYA!.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Librería para convertir Markdown a HTML -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
         :root {
@@ -27,13 +26,12 @@
             line-height: 1.6;
         }
         
-        /* --- DISEÑO DE CABECERA FINAL --- */
         header {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 60vh; /* Altura mínima para asegurar espacio */
+            min-height: 60vh;
             background: 
                 radial-gradient(ellipse at center, rgba(245, 247, 250, 0) 0%, rgba(245, 247, 250, 1) 75%),
                 var(--light-bg);
@@ -44,9 +42,9 @@
         }
 
         .logo-container {
-            max-width: 700px; /* Ajusta el tamaño máximo del logo */
+            max-width: 700px;
             width: 80%; 
-            margin-bottom: 1.5em; /* Espacio entre el logo y el eslogan */
+            margin-bottom: 1.5em;
             animation: fadeInLogo 1.5s ease-out;
         }
 
@@ -71,10 +69,8 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        /* --- FIN DEL NUEVO DISEÑO --- */
 
         .main-content {
-            /* El contenido ya no se solapa, se posiciona de forma natural */
             z-index: 10;
             position: relative;
             padding-top: 1em;
@@ -361,6 +357,8 @@
                 fetch(endpoint, options)
                     .then(response => response.json())
                     .then(data => {
+                        // --- DIAGNÓSTICO EN EL NAVEGADOR ---
+                        console.log("Datos recibidos del backend:", data.cursos);
                         displayResults(data.cursos, title);
                         if (quizModal.style.display === 'flex') quizModal.style.display = 'none';
                     })
@@ -450,11 +448,12 @@
                 if (cursos && cursos.length > 0) {
                     cursos.forEach(curso => {
                         const li = document.createElement('li');
-                        const subscribers = curso.subscribers ? curso.subscribers.toLocaleString('es-ES') : 'N/A';
+                        // --- SINCRONIZACIÓN FINAL DE NOMBRES DE COLUMNA ---
+                        const subscribers = curso.num_subscribers ? curso.num_subscribers.toLocaleString('es-ES') : 'N/A';
                         li.innerHTML = `
-                            <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.title}</a>
+                            <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.course_title}</a>
                             <div class="course-meta">
-                                <span class="source-badge">${curso.source || 'N/A'}</span>
+                                <span class="source-badge">${curso.site || 'N/A'}</span>
                                 <span class="subscribers">⭐ ${subscribers}</span>
                             </div>
                         `;
