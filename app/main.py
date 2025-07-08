@@ -47,6 +47,11 @@ def load_and_prepare_courses2(path):
         rename_map = {'Course Name': 'title', 'Course URL': 'url', 'University': 'source'}
         df.rename(columns=rename_map, inplace=True)
         
+        # Verificación post-renombrado
+        if 'title' not in df.columns or 'url' not in df.columns:
+            print("ERROR: El renombrado de columnas para courses_2.csv falló. No se encontraron 'Course Name' o 'Course URL'.")
+            return None
+            
         standard_columns = ['title', 'url', 'subscribers', 'price', 'source']
         
         for col in standard_columns:
@@ -79,13 +84,14 @@ def load_data():
     if df_courses2 is not None:
         all_dfs.append(df_courses2)
 
+    # CORRECCIÓN: Lista de videos de YouTube actualizada y verificada
     youtube_tutorials = [
-        {'title': 'Curso de Python desde Cero para Principiantes 2024', 'url': 'https://www.youtube.com/watch?v=nKPbfIU442g', 'subscribers': 1500000, 'price': 0, 'source': 'YouTube'},
-        {'title': 'Aprende HTML y CSS - Curso Completo Desde Cero 2024', 'url': 'https://www.youtube.com/watch?v=MJkdaVFHrto', 'subscribers': 950000, 'price': 0, 'source': 'YouTube'},
-        {'title': 'Curso de JavaScript desde Cero para Principiantes', 'url': 'https://www.youtube.com/watch?v=z95mZodzlhI', 'subscribers': 1200000, 'price': 0, 'source': 'YouTube'},
-        {'title': 'Curso de Inteligencia Artificial para Principiantes', 'url': 'https://www.youtube.com/watch?v=iX_on3hZ_q8', 'subscribers': 550000, 'price': 0, 'source': 'YouTube'},
-        {'title': 'Curso de Ciberseguridad y Hacking Ético desde Cero', 'url': 'https://www.youtube.com/watch?v=GmyyI_G4z4o', 'subscribers': 800000, 'price': 0, 'source': 'YouTube'},
-        {'title': 'Curso Completo de Marketing Digital Desde Cero', 'url': 'https://www.youtube.com/watch?v=9m5t-bV3Y6c', 'subscribers': 650000, 'price': 0, 'source': 'YouTube'}
+        {'title': 'Curso de Python desde Cero para Principiantes 2025', 'url': 'https://www.youtube.com/watch?v=nKPbfIU442g', 'subscribers': 1500000, 'price': 0, 'source': 'YouTube'},
+        {'title': 'Curso HTML y CSS Desde Cero 2025', 'url': 'https://www.youtube.com/watch?v=MJkdaVFHrto', 'subscribers': 950000, 'price': 0, 'source': 'YouTube'},
+        {'title': 'Curso de JavaScript para Principiantes - Desde Cero', 'url': 'https://www.youtube.com/watch?v=z95mZodzlhI', 'subscribers': 1200000, 'price': 0, 'source': 'YouTube'},
+        {'title': 'Curso de INTELIGENCIA ARTIFICIAL desde CERO', 'url': 'https://www.youtube.com/watch?v=s_wz9j-2-sI', 'subscribers': 600000, 'price': 0, 'source': 'YouTube'},
+        {'title': 'Curso de Hacking Ético 2025 desde Cero', 'url': 'https://www.youtube.com/watch?v=GmyyI_G4z4o', 'subscribers': 800000, 'price': 0, 'source': 'YouTube'},
+        {'title': 'CURSO DE MARKETING DIGITAL Gratis y Completo 2025', 'url': 'https://www.youtube.com/watch?v=9m5t-bV3Y6c', 'subscribers': 650000, 'price': 0, 'source': 'YouTube'}
     ]
     df_youtube = pd.DataFrame(youtube_tutorials)
     all_dfs.append(df_youtube)
@@ -101,9 +107,12 @@ def load_data():
     master_df['title_lower'] = master_df['title'].str.lower()
     master_df['subscribers'] = pd.to_numeric(master_df['subscribers'], errors='coerce').fillna(0).astype(int)
     
+    print("\nDIAGNÓSTICO FINAL DE CARGA:")
+    print(master_df['source'].value_counts())
+    
     excel_courses_count = master_df[master_df['title_lower'].str.contains('excel')].shape[0]
-    print(f"DIAGNÓSTICO: Se encontraron {excel_courses_count} cursos que contienen 'excel' en el DataFrame maestro.")
-    print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.")
+    print(f"Se encontraron {excel_courses_count} cursos que contienen 'excel'.")
+    print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.\n")
     return master_df
 
 master_df = load_data()
