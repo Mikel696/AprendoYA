@@ -5,9 +5,10 @@ import os
 app = Flask(__name__)
 
 def load_and_prepare_udemy(path):
-    """Carga y procesa el dataset de Udemy."""
+    """Carga y procesa el dataset de Udemy de forma robusta."""
     try:
-        df = pd.read_csv(path)
+        # CORRECCIÓN: Se añade encoding='utf-8' para compatibilidad en servidores
+        df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
         print(f"Cargando {path}. Columnas encontradas: {list(df.columns)}")
         df = df.rename(columns={'course_title': 'title', 'num_subscribers': 'subscribers'})
         df['source'] = 'Udemy'
@@ -23,9 +24,10 @@ def load_and_prepare_udemy(path):
     return None
 
 def load_and_prepare_courses2(path):
-    """Carga y procesa el dataset de Coursera/edX."""
+    """Carga y procesa el dataset de Coursera/edX de forma robusta."""
     try:
-        df = pd.read_csv(path)
+        # CORRECCIÓN: Se añade encoding='utf-8' para compatibilidad en servidores
+        df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
         print(f"Cargando {path}. Columnas encontradas: {list(df.columns)}")
         df.columns = df.columns.str.strip()
         df = df.rename(columns={'Course Name': 'title', 'Course URL': 'url', 'University': 'source'})
@@ -76,11 +78,15 @@ def load_data():
     master_df = pd.concat(all_dfs, ignore_index=True)
     
     # Limpieza Final
-    master_df['title'] = master_df['title'].fillna('')
+    master_df['title'] = master_df['title'].fillna('').astype(str)
     master_df['title_lower'] = master_df['title'].str.lower()
     master_df['subscribers'] = pd.to_numeric(master_df['subscribers'], errors='coerce').fillna(0).astype(int)
     
-    print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados en el DataFrame maestro.")
+    # Diagnóstico Adicional
+    excel_courses_count = master_df[master_df['title_lower'].str.contains('excel')].shape[0]
+    print(f"DIAGNÓSTICO: Se encontraron {excel_courses_count} cursos que contienen 'excel' en el DataFrame maestro.")
+    
+    print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.")
     return master_df
 
 master_df = load_data()
