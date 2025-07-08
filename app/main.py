@@ -9,23 +9,32 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def safe_load_and_process(path, column_map, default_source):
     """
-    Carga un archivo CSV de forma ultra robusta, mapeando columnas de forma flexible
-    y creando una tabla estandarizada sin fallar.
+    Carga un archivo CSV de forma ultra robusta, ignorando mayúsculas/minúsculas
+    y espacios en los nombres de las columnas.
     """
     try:
         df_original = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
-        df_original.columns = df_original.columns.str.strip()
+        
+        # --- NORMALIZACIÓN DE COLUMNAS A PRUEBA DE ERRORES ---
+        # Crea un mapa de nombres de columna en minúsculas y sin espacios a los nombres originales
+        col_map_lower = {col.strip().lower(): col for col in df_original.columns}
+        
         print(f"Cargando {path}. Columnas originales encontradas: {list(df_original.columns)}")
 
         df_clean = pd.DataFrame()
         standard_columns = ['title', 'url', 'subscribers', 'price', 'source']
 
+        # Mapea columnas usando la versión en minúsculas para evitar errores
         for standard_col, possible_original_cols in column_map.items():
-            for original_col in possible_original_cols:
-                if original_col in df_original.columns:
-                    df_clean[standard_col] = df_original[original_col]
+            for original_col_variant in possible_original_cols:
+                if original_col_variant.lower() in col_map_lower:
+                    # Usa el nombre original del mapa para obtener los datos
+                    original_col_name = col_map_lower[original_col_variant.lower()]
+                    df_clean[standard_col] = df_original[original_col_name]
+                    print(f"  -> Mapeado '{original_col_name}' a '{standard_col}'")
                     break
 
+        # Asegura que todas las columnas estándar existan
         for col in standard_columns:
             if col not in df_clean.columns:
                 df_clean[col] = default_source if col == 'source' else 0 if col in ['subscribers', 'price'] else ''
@@ -77,6 +86,7 @@ def load_data():
 
     master_df = pd.concat(all_dfs, ignore_index=True)
     master_df['title_lower'] = master_df['title'].str.lower()
+    master_df['source_lower'] = master_df['source'].str.lower()
     
     print("\nDIAGNÓSTICO FINAL DE CARGA:")
     print(master_df['source'].value_counts().head())
@@ -90,16 +100,9 @@ def rank_by_relevance(df, query):
     Calcula un puntaje de relevancia y ordena el DataFrame.
     La coincidencia en el título es lo más importante.
     """
-    # Puntaje base: 1 si la consulta está en el título, 0 si no.
-    df['score'] = df['title_lower'].str.contains(query, na=False).astype(int)
-    
-    # Puntaje de precisión: bonificación por qué tan preciso es el título.
-    # Un título más corto y preciso obtiene una mayor bonificación.
-    df['precision'] = len(query) / df['title_lower'].str.len().replace(0, 1)
-    
-    # El puntaje final combina ambos. La coincidencia en el título vale mucho más.
-    df['final_score'] = df['score'] + df['precision']
-    
+    df['relevance_score'] = len(query) / df['title_lower'].str.len().replace(0, 1)
+    df['starts_with_bonus'] = df['title_lower'].str.startswith(query).astype(int) * 0.5
+    df['final_score'] = df['relevance_score'] + df['starts_with_bonus']
     return df.sort_values(by='final_score', ascending=False)
 
 def perform_search(query):
@@ -109,7 +112,6 @@ def perform_search(query):
     if master_df.empty or not query:
         return []
         
-    # Crea una máscara booleana buscando en todas las columnas de tipo 'object' (texto)
     mask = master_df.select_dtypes(include=['object']).apply(
         lambda col: col.str.lower().str.contains(query, na=False)
     ).any(axis=1)
