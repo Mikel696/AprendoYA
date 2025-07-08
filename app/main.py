@@ -10,12 +10,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def load_all_data():
     """
-    Carga y combina los dos archivos CSV con la nueva estructura de columnas.
+    Carga y combina los dos archivos CSV con la nueva estructura de columnas,
+    manejando explícitamente la codificación de texto.
     """
     all_dfs = []
     print("--- INICIANDO CARGA DE DATOS CON NUEVA ESTRUCTURA ---")
 
-    # Lista de archivos a cargar
     files_to_load = [
         "udemy_online_education_courses_dataset.csv",
         "courses_2.csv"
@@ -24,11 +24,11 @@ def load_all_data():
     for file_name in files_to_load:
         try:
             path = os.path.join(basedir, "data", file_name)
-            df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
+            # --- CORRECCIÓN DEFINITIVA: Se especifica la codificación 'latin1' ---
+            df = pd.read_csv(path, encoding='latin1', on_bad_lines='skip')
             df.columns = df.columns.str.strip().str.lower()
             print(f"[{file_name}] Columnas encontradas: {list(df.columns)}")
             
-            # Asegurar que las columnas necesarias existan
             required_cols = ['course_title', 'url', 'num_subscribers', 'site']
             if all(col in df.columns for col in required_cols):
                 all_dfs.append(df[required_cols])
@@ -45,8 +45,7 @@ def load_all_data():
 
     master_df = pd.concat(all_dfs, ignore_index=True)
     
-    # Limpieza final de datos
-    master_df.fillna({'title': '', 'url': '', 'site': 'Desconocida'}, inplace=True)
+    master_df.fillna({'course_title': '', 'url': '', 'site': 'Desconocida'}, inplace=True)
     master_df['num_subscribers'] = pd.to_numeric(master_df['num_subscribers'], errors='coerce').fillna(0).astype(int)
     master_df['title_lower'] = master_df['course_title'].str.lower()
     
@@ -76,23 +75,25 @@ def perform_search(query):
         
     # --- CÁLCULO DE RANKING HÍBRIDO ---
     
-    # 1. Puntuación de Relevancia (qué tan preciso es el título)
-    results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x else 0)
-    
-    # 2. Puntuación de Popularidad (suscriptores normalizados)
-    scaler = MinMaxScaler()
-    # Se añade .values.reshape(-1, 1) para que el scaler funcione correctamente
-    results_df['popularity_score'] = scaler.fit_transform(results_df[['num_subscribers']]).flatten()
-    
-    # 3. Puntuación Final (combinando ambos, dando más peso a la relevancia)
-    results_df['final_score'] = (results_df['relevance_score'] * 0.7) + (results_df['popularity_score'] * 0.3)
-    
-    ranked_results = results_df.sort_values(by='final_score', ascending=False)
-    
+    if len(results_df) > 1:
+        # 1. Puntuación de Relevancia (qué tan preciso es el título)
+        results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x else 0)
+        
+        # 2. Puntuación de Popularidad (suscriptores normalizados)
+        scaler = MinMaxScaler()
+        results_df['popularity_score'] = scaler.fit_transform(results_df[['num_subscribers']]).flatten()
+        
+        # 3. Puntuación Final (combinando ambos, dando más peso a la relevancia)
+        results_df['final_score'] = (results_df['relevance_score'] * 0.7) + (results_df['popularity_score'] * 0.3)
+        
+        ranked_results = results_df.sort_values(by='final_score', ascending=False)
+    else:
+        # Si solo hay un resultado, no es necesario calcular el ranking
+        ranked_results = results_df
+
     print(f"Top 5 resultados por puntuación final:")
-    print(ranked_results[['course_title', 'site', 'num_subscribers', 'final_score']].head())
+    print(ranked_results[['course_title', 'site', 'num_subscribers']].head())
     
-    # Devolver 7 sugerencias
     return ranked_results.head(7).to_dict(orient='records')
 
 @app.route('/')
@@ -120,8 +121,6 @@ def recommend():
 
 @app.route('/free_courses', methods=['GET'])
 def free_courses():
-    # Esta función ahora puede ser más simple o eliminarse si ya no es necesaria
-    # Por ahora, la dejamos con una lógica simple de muestra aleatoria
     if master_df.empty:
         return jsonify(cursos=[])
     
