@@ -4,10 +4,13 @@ import os
 
 app = Flask(__name__)
 
+# --- CONSTRUCCIÓN DE RUTAS A PRUEBA DE ERRORES ---
+# Obtiene la ruta absoluta del directorio donde se encuentra este script (main.py)
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 def load_and_prepare_udemy(path):
     """Carga y procesa el dataset de Udemy de forma robusta."""
     try:
-        # CORRECCIÓN: Se añade encoding='utf-8' para compatibilidad en servidores
         df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
         print(f"Cargando {path}. Columnas encontradas: {list(df.columns)}")
         df = df.rename(columns={'course_title': 'title', 'num_subscribers': 'subscribers'})
@@ -18,7 +21,7 @@ def load_and_prepare_udemy(path):
         print(f"Procesado {path}: {len(df)} filas.")
         return df
     except FileNotFoundError:
-        print(f"ADVERTENCIA: Archivo no encontrado en {path}. Se omitirá.")
+        print(f"ERROR CRÍTICO: Archivo no encontrado en {path}. Asegúrate de que el archivo exista y se haya subido a Git.")
     except Exception as e:
         print(f"ERROR al procesar {path}: {e}")
     return None
@@ -26,7 +29,6 @@ def load_and_prepare_udemy(path):
 def load_and_prepare_courses2(path):
     """Carga y procesa el dataset de Coursera/edX de forma robusta."""
     try:
-        # CORRECCIÓN: Se añade encoding='utf-8' para compatibilidad en servidores
         df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
         print(f"Cargando {path}. Columnas encontradas: {list(df.columns)}")
         df.columns = df.columns.str.strip()
@@ -39,7 +41,7 @@ def load_and_prepare_courses2(path):
         print(f"Procesado {path}: {len(df)} filas.")
         return df
     except FileNotFoundError:
-        print(f"ADVERTENCIA: Archivo no encontrado en {path}. Se omitirá.")
+        print(f"ERROR CRÍTICO: Archivo no encontrado en {path}. Asegúrate de que el archivo exista y se haya subido a Git.")
     except Exception as e:
         print(f"ERROR al procesar {path}: {e}")
     return None
@@ -49,12 +51,14 @@ def load_data():
     all_dfs = []
     
     # Fuente 1: Udemy
-    df_udemy = load_and_prepare_udemy(os.path.join("app", "data", "udemy_online_education_courses_dataset.csv"))
+    udemy_path = os.path.join(basedir, "data", "udemy_online_education_courses_dataset.csv")
+    df_udemy = load_and_prepare_udemy(udemy_path)
     if df_udemy is not None:
         all_dfs.append(df_udemy)
 
     # Fuente 2: Coursera/edX
-    df_courses2 = load_and_prepare_courses2(os.path.join("app", "data", "courses_2.csv"))
+    courses2_path = os.path.join(basedir, "data", "courses_2.csv")
+    df_courses2 = load_and_prepare_courses2(courses2_path)
     if df_courses2 is not None:
         all_dfs.append(df_courses2)
 
@@ -77,15 +81,12 @@ def load_data():
 
     master_df = pd.concat(all_dfs, ignore_index=True)
     
-    # Limpieza Final
     master_df['title'] = master_df['title'].fillna('').astype(str)
     master_df['title_lower'] = master_df['title'].str.lower()
     master_df['subscribers'] = pd.to_numeric(master_df['subscribers'], errors='coerce').fillna(0).astype(int)
     
-    # Diagnóstico Adicional
     excel_courses_count = master_df[master_df['title_lower'].str.contains('excel')].shape[0]
     print(f"DIAGNÓSTICO: Se encontraron {excel_courses_count} cursos que contienen 'excel' en el DataFrame maestro.")
-    
     print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.")
     return master_df
 
