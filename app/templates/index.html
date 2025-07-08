@@ -357,7 +357,6 @@
                 fetch(endpoint, options)
                     .then(response => response.json())
                     .then(data => {
-                        // --- DIAGNÓSTICO EN EL NAVEGADOR ---
                         console.log("Datos recibidos del backend:", data.cursos);
                         displayResults(data.cursos, title);
                         if (quizModal.style.display === 'flex') quizModal.style.display = 'none';
@@ -448,7 +447,6 @@
                 if (cursos && cursos.length > 0) {
                     cursos.forEach(curso => {
                         const li = document.createElement('li');
-                        // --- SINCRONIZACIÓN FINAL DE NOMBRES DE COLUMNA ---
                         const subscribers = curso.num_subscribers ? curso.num_subscribers.toLocaleString('es-ES') : 'N/A';
                         li.innerHTML = `
                             <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.course_title}</a>

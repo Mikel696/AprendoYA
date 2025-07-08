@@ -57,14 +57,15 @@ def load_all_data():
 
 master_df = load_all_data()
 
-def perform_search(query):
+def perform_search(query, level=None):
     """
-    Realiza una búsqueda con un sistema de ranking híbrido (relevancia + popularidad).
+    Realiza una búsqueda con un sistema de ranking híbrido avanzado que considera
+    relevancia, popularidad y nivel del curso.
     """
     if master_df.empty or not query:
         return []
     
-    print(f"\n--- INICIANDO BÚSQUEDA HÍBRIDA PARA: '{query}' ---")
+    print(f"\n--- INICIANDO BÚSQUEDA AVANZADA PARA: '{query}' (Nivel: {level}) ---")
     
     mask = master_df['title_lower'].str.contains(query, na=False)
     results_df = master_df[mask].copy()
@@ -73,26 +74,39 @@ def perform_search(query):
     if results_df.empty:
         return []
         
-    # --- CÁLCULO DE RANKING HÍBRIDO ---
+    # --- CÁLCULO DE RANKING HÍBRIDO AVANZADO ---
     
+    # 1. Puntuación de Relevancia del Título
+    results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x else 0)
+    
+    # 2. Puntuación de Nivel (si se especifica)
+    level_score = pd.Series(0, index=results_df.index)
+    if level == 'beginner':
+        beginner_keywords = ['principiantes', 'cero', 'introduction', 'básico', 'inicial']
+        for keyword in beginner_keywords:
+            level_score += results_df['title_lower'].str.contains(keyword, na=False).astype(int)
+    elif level == 'intermediate':
+        intermediate_keywords = ['intermedio', 'avanzado', 'completo', 'masterclass', 'total']
+        for keyword in intermediate_keywords:
+            level_score += results_df['title_lower'].str.contains(keyword, na=False).astype(int)
+    results_df['level_score'] = level_score
+    
+    # 3. Puntuación de Popularidad (suscriptores normalizados)
     if len(results_df) > 1:
-        # 1. Puntuación de Relevancia (qué tan preciso es el título)
-        results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x else 0)
-        
-        # 2. Puntuación de Popularidad (suscriptores normalizados)
         scaler = MinMaxScaler()
         results_df['popularity_score'] = scaler.fit_transform(results_df[['num_subscribers']]).flatten()
-        
-        # 3. Puntuación Final (combinando ambos, dando más peso a la relevancia)
-        results_df['final_score'] = (results_df['relevance_score'] * 0.7) + (results_df['popularity_score'] * 0.3)
-        
-        ranked_results = results_df.sort_values(by='final_score', ascending=False)
     else:
-        # Si solo hay un resultado, no es necesario calcular el ranking
-        ranked_results = results_df
+        results_df['popularity_score'] = 0.5 # Valor neutral si solo hay un resultado
 
+    # 4. Puntuación Final (combinando todo, dando más peso a la relevancia y al nivel)
+    results_df['final_score'] = (results_df['relevance_score'] * 0.5) + \
+                                (results_df['level_score'] * 0.3) + \
+                                (results_df['popularity_score'] * 0.2)
+    
+    ranked_results = results_df.sort_values(by='final_score', ascending=False)
+    
     print(f"Top 5 resultados por puntuación final:")
-    print(ranked_results[['course_title', 'site', 'num_subscribers']].head())
+    print(ranked_results[['course_title', 'site', 'final_score']].head())
     
     return ranked_results.head(7).to_dict(orient='records')
 
@@ -109,6 +123,7 @@ def search():
 @app.route('/recommend', methods=['POST'])
 def recommend():
     interest_key = request.form.get('interest_modal', '')
+    level = request.form.get('level_modal', '') # Capturamos el nivel
     interest_keywords = {
         'python': ['python'], 'web_development': ['html', 'css', 'javascript'],
         'data_science': ['data science', 'analytics'], 'marketing': ['marketing'],
@@ -116,7 +131,8 @@ def recommend():
         'cybersecurity': ['cybersecurity', 'hacking'], 'ai': ['artificial intelligence', 'ia']
     }
     query = interest_keywords.get(interest_key, [""])[0]
-    cursos = perform_search(query)
+    # Pasamos el nivel a la función de búsqueda
+    cursos = perform_search(query, level=level)
     return jsonify(cursos=cursos)
 
 @app.route('/free_courses', methods=['GET'])
