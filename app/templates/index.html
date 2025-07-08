@@ -27,13 +27,13 @@
             line-height: 1.6;
         }
         
-        /* --- NUEVO DISEÑO DE CABECERA PROFESIONAL --- */
+        /* --- DISEÑO DE CABECERA ACTUALIZADO --- */
         header {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 75vh; /* Ocupa 3/4 de la altura de la pantalla */
+            height: 65vh; /* Altura ajustada */
             background: 
                 radial-gradient(ellipse at center, rgba(245, 247, 250, 0) 0%, rgba(245, 247, 250, 1) 70%),
                 var(--light-bg);
@@ -44,8 +44,9 @@
         }
 
         .logo-container {
-            max-width: 600px; /* Aumenta el tamaño máximo del logo */
-            width: 90%;
+            /* CORRECCIÓN: Logo más ancho para ocupar el área solicitada */
+            max-width: 900px; 
+            width: 85%; 
             animation: fadeInLogo 1.5s ease-out;
         }
 
@@ -60,7 +61,7 @@
         }
 
         .tagline {
-            font-size: 1.4em;
+            font-size: 1.5em; /* Letra del subtítulo más grande */
             font-weight: 300;
             color: #555;
             margin-top: 1.5em;
@@ -74,7 +75,6 @@
         /* --- FIN DEL NUEVO DISEÑO --- */
 
         .main-content {
-            /* Sube el contenido para que se solape ligeramente con la cabecera */
             transform: translateY(-80px); 
             z-index: 10;
             position: relative;
@@ -230,7 +230,6 @@
 <body>
     <header>
         <div class="logo-container">
-            <!-- Usando tu nuevo logo -->
             <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="Logo AprendoYA!">
         </div>
         <p class="tagline">Tu guía inteligente para descubrir cursos en línea.</p>
@@ -483,3 +482,4 @@
     </script>
 </body>
 </html>
+
