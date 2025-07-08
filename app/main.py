@@ -76,51 +76,45 @@ def load_data():
         return pd.DataFrame()
 
     master_df = pd.concat(all_dfs, ignore_index=True)
-    # CORRECCIÓN: Crear columnas en minúsculas para título Y fuente
     master_df['title_lower'] = master_df['title'].str.lower()
-    master_df['source_lower'] = master_df['source'].str.lower()
     
     print("\nDIAGNÓSTICO FINAL DE CARGA:")
     print(master_df['source'].value_counts().head())
-    excel_courses_count = master_df[master_df['title_lower'].str.contains('excel')].shape[0]
-    print(f"Se encontraron {excel_courses_count} cursos que contienen 'excel'.")
     print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.\n")
     return master_df
 
 master_df = load_data()
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 def rank_by_relevance(df, query):
     """
     Calcula un puntaje de relevancia y ordena el DataFrame.
-    Un puntaje más alto es mejor (la consulta es una parte más grande del título).
+    La coincidencia en el título es lo más importante.
     """
-    # Evitar división por cero si hay títulos vacíos
-    df['relevance_score'] = len(query) / df['title_lower'].str.len().replace(0, 1)
+    # Puntaje base: 1 si la consulta está en el título, 0 si no.
+    df['score'] = df['title_lower'].str.contains(query, na=False).astype(int)
     
-    # Prioridad extra si la consulta aparece al principio del título.
-    df['starts_with_bonus'] = df['title_lower'].str.startswith(query).astype(int) * 0.5
+    # Puntaje de precisión: bonificación por qué tan preciso es el título.
+    # Un título más corto y preciso obtiene una mayor bonificación.
+    df['precision'] = len(query) / df['title_lower'].str.len().replace(0, 1)
     
-    df['final_score'] = df['relevance_score'] + df['starts_with_bonus']
+    # El puntaje final combina ambos. La coincidencia en el título vale mucho más.
+    df['final_score'] = df['score'] + df['precision']
     
-    # Ordena por el nuevo puntaje final, eliminando el orden por suscriptores
     return df.sort_values(by='final_score', ascending=False)
 
 def perform_search(query):
     """
-    Realiza una búsqueda inteligente en el DataFrame maestro y la ordena por relevancia.
+    Realiza una búsqueda inteligente en todas las columnas de texto y ordena por relevancia.
     """
     if master_df.empty or not query:
         return []
         
-    # CORRECCIÓN: Buscar tanto en el título como en la fuente del curso
-    results_df = master_df[
-        master_df['title_lower'].str.contains(query, na=False) | 
-        master_df['source_lower'].str.contains(query, na=False)
-    ].copy()
+    # Crea una máscara booleana buscando en todas las columnas de tipo 'object' (texto)
+    mask = master_df.select_dtypes(include=['object']).apply(
+        lambda col: col.str.lower().str.contains(query, na=False)
+    ).any(axis=1)
+
+    results_df = master_df[mask].copy()
     
     if results_df.empty:
         return []
@@ -128,6 +122,10 @@ def perform_search(query):
     ranked_results = rank_by_relevance(results_df, query)
     
     return ranked_results.head(10).to_dict(orient='records')
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/search', methods=['POST'])
 def search():
