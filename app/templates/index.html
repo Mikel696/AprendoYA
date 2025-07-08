@@ -27,26 +27,26 @@
             line-height: 1.6;
         }
         
-        /* --- DISEÑO DE CABECERA ACTUALIZADO --- */
+        /* --- DISEÑO DE CABECERA FINAL --- */
         header {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 65vh; /* Altura ajustada */
+            min-height: 60vh; /* Altura mínima para asegurar espacio */
             background: 
-                radial-gradient(ellipse at center, rgba(245, 247, 250, 0) 0%, rgba(245, 247, 250, 1) 70%),
+                radial-gradient(ellipse at center, rgba(245, 247, 250, 0) 0%, rgba(245, 247, 250, 1) 75%),
                 var(--light-bg);
             text-align: center;
-            padding: 2em;
+            padding: 3em 1em;
             box-sizing: border-box;
             width: 100%;
         }
 
         .logo-container {
-            /* CORRECCIÓN: Logo más ancho para ocupar el área solicitada */
-            max-width: 900px; 
-            width: 85%; 
+            max-width: 700px; /* Ajusta el tamaño máximo del logo */
+            width: 80%; 
+            margin-bottom: 1.5em; /* Espacio entre el logo y el eslogan */
             animation: fadeInLogo 1.5s ease-out;
         }
 
@@ -61,10 +61,9 @@
         }
 
         .tagline {
-            font-size: 1.5em; /* Letra del subtítulo más grande */
+            font-size: 1.5em;
             font-weight: 300;
             color: #555;
-            margin-top: 1.5em;
             animation: fadeInTagline 2s ease-out;
         }
 
@@ -75,9 +74,10 @@
         /* --- FIN DEL NUEVO DISEÑO --- */
 
         .main-content {
-            transform: translateY(-80px); 
+            /* El contenido ya no se solapa, se posiciona de forma natural */
             z-index: 10;
             position: relative;
+            padding-top: 1em;
         }
 
         .container {
@@ -482,4 +482,3 @@
     </script>
 </body>
 </html>
-
