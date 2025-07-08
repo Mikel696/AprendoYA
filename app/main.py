@@ -76,10 +76,12 @@ def load_data():
         return pd.DataFrame()
 
     master_df = pd.concat(all_dfs, ignore_index=True)
+    # CORRECCIÓN: Crear columnas en minúsculas para título Y fuente
     master_df['title_lower'] = master_df['title'].str.lower()
+    master_df['source_lower'] = master_df['source'].str.lower()
     
     print("\nDIAGNÓSTICO FINAL DE CARGA:")
-    print(master_df['source'].value_counts())
+    print(master_df['source'].value_counts().head())
     excel_courses_count = master_df[master_df['title_lower'].str.contains('excel')].shape[0]
     print(f"Se encontraron {excel_courses_count} cursos que contienen 'excel'.")
     print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.\n")
@@ -99,17 +101,26 @@ def rank_by_relevance(df, query):
     # Evitar división por cero si hay títulos vacíos
     df['relevance_score'] = len(query) / df['title_lower'].str.len().replace(0, 1)
     
-    # Ordena por relevancia y luego por suscriptores para romper empates
-    return df.sort_values(by=['relevance_score', 'subscribers'], ascending=[False, False])
+    # Prioridad extra si la consulta aparece al principio del título.
+    df['starts_with_bonus'] = df['title_lower'].str.startswith(query).astype(int) * 0.5
+    
+    df['final_score'] = df['relevance_score'] + df['starts_with_bonus']
+    
+    # Ordena por el nuevo puntaje final, eliminando el orden por suscriptores
+    return df.sort_values(by='final_score', ascending=False)
 
 def perform_search(query):
     """
-    Realiza una búsqueda en el DataFrame maestro y la ordena por relevancia.
+    Realiza una búsqueda inteligente en el DataFrame maestro y la ordena por relevancia.
     """
     if master_df.empty or not query:
         return []
         
-    results_df = master_df[master_df['title_lower'].str.contains(query, na=False)].copy()
+    # CORRECCIÓN: Buscar tanto en el título como en la fuente del curso
+    results_df = master_df[
+        master_df['title_lower'].str.contains(query, na=False) | 
+        master_df['source_lower'].str.contains(query, na=False)
+    ].copy()
     
     if results_df.empty:
         return []
@@ -137,7 +148,6 @@ def recommend():
     if not search_terms:
         return jsonify(cursos=[])
         
-    # Realiza la búsqueda con el término más relevante para la categoría
     query = search_terms[0]
     cursos = perform_search(query)
     return jsonify(cursos=cursos)
@@ -149,7 +159,6 @@ def free_courses():
         
     free_courses_df = master_df[master_df['price'] == 0].copy()
     
-    # Mezcla los cursos gratuitos para dar variedad en lugar de solo los más populares
     if not free_courses_df.empty:
         shuffled_free_courses = free_courses_df.sample(frac=1).head(10)
         return jsonify(cursos=shuffled_free_courses.to_dict(orient='records'))
