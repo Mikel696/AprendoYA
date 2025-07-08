@@ -4,44 +4,63 @@ import os
 
 app = Flask(__name__)
 
-# --- CONSTRUCCIÓN DE RUTAS A PRUEBA DE ERRORES ---
-# Obtiene la ruta absoluta del directorio donde se encuentra este script (main.py)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 def load_and_prepare_udemy(path):
-    """Carga y procesa el dataset de Udemy de forma robusta."""
+    """Carga y procesa el dataset de Udemy de forma ultra robusta."""
     try:
         df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
-        print(f"Cargando {path}. Columnas encontradas: {list(df.columns)}")
-        df = df.rename(columns={'course_title': 'title', 'num_subscribers': 'subscribers'})
-        df['source'] = 'Udemy'
-        df = df[['title', 'url', 'subscribers', 'price', 'source']]
+        print(f"Cargando {path}. Columnas originales encontradas: {list(df.columns)}")
+        df.columns = df.columns.str.strip()
+
+        rename_map = {'course_title': 'title', 'num_subscribers': 'subscribers'}
+        df.rename(columns=rename_map, inplace=True)
+
+        standard_columns = ['title', 'url', 'subscribers', 'price', 'source']
+
+        if 'source' not in df.columns:
+            df['source'] = 'Udemy'
+        
+        for col in standard_columns:
+            if col not in df.columns:
+                df[col] = 0 if col in ['subscribers', 'price'] else ''
+
+        df = df[standard_columns]
         df['title'] = df['title'].astype(str)
         df['url'] = df['url'].astype(str)
-        print(f"Procesado {path}: {len(df)} filas.")
+        
+        print(f"Procesado {path}: {len(df)} filas. Columnas finales: {list(df.columns)}")
         return df
     except FileNotFoundError:
-        print(f"ERROR CRÍTICO: Archivo no encontrado en {path}. Asegúrate de que el archivo exista y se haya subido a Git.")
+        print(f"ERROR CRÍTICO: Archivo no encontrado en {path}.")
     except Exception as e:
         print(f"ERROR al procesar {path}: {e}")
     return None
 
 def load_and_prepare_courses2(path):
-    """Carga y procesa el dataset de Coursera/edX de forma robusta."""
+    """Carga y procesa el dataset de Coursera/edX de forma ultra robusta."""
     try:
         df = pd.read_csv(path, encoding='utf-8', on_bad_lines='skip')
-        print(f"Cargando {path}. Columnas encontradas: {list(df.columns)}")
+        print(f"Cargando {path}. Columnas originales encontradas: {list(df.columns)}")
         df.columns = df.columns.str.strip()
-        df = df.rename(columns={'Course Name': 'title', 'Course URL': 'url', 'University': 'source'})
-        df['subscribers'] = 0
-        df['price'] = 0
-        df = df[['title', 'url', 'subscribers', 'price', 'source']]
+        
+        rename_map = {'Course Name': 'title', 'Course URL': 'url', 'University': 'source'}
+        df.rename(columns=rename_map, inplace=True)
+        
+        standard_columns = ['title', 'url', 'subscribers', 'price', 'source']
+        
+        for col in standard_columns:
+            if col not in df.columns:
+                df[col] = 0 if col in ['subscribers', 'price'] else ''
+
+        df = df[standard_columns]
         df['title'] = df['title'].astype(str)
         df['url'] = df['url'].astype(str)
-        print(f"Procesado {path}: {len(df)} filas.")
+        
+        print(f"Procesado {path}: {len(df)} filas. Columnas finales: {list(df.columns)}")
         return df
     except FileNotFoundError:
-        print(f"ERROR CRÍTICO: Archivo no encontrado en {path}. Asegúrate de que el archivo exista y se haya subido a Git.")
+        print(f"ERROR CRÍTICO: Archivo no encontrado en {path}.")
     except Exception as e:
         print(f"ERROR al procesar {path}: {e}")
     return None
@@ -50,19 +69,16 @@ def load_data():
     """Carga y combina todas las fuentes de datos."""
     all_dfs = []
     
-    # Fuente 1: Udemy
     udemy_path = os.path.join(basedir, "data", "udemy_online_education_courses_dataset.csv")
     df_udemy = load_and_prepare_udemy(udemy_path)
     if df_udemy is not None:
         all_dfs.append(df_udemy)
 
-    # Fuente 2: Coursera/edX
     courses2_path = os.path.join(basedir, "data", "courses_2.csv")
     df_courses2 = load_and_prepare_courses2(courses2_path)
     if df_courses2 is not None:
         all_dfs.append(df_courses2)
 
-    # Fuente 3: YouTube
     youtube_tutorials = [
         {'title': 'Curso de Python desde Cero para Principiantes 2024', 'url': 'https://www.youtube.com/watch?v=nKPbfIU442g', 'subscribers': 1500000, 'price': 0, 'source': 'YouTube'},
         {'title': 'Aprende HTML y CSS - Curso Completo Desde Cero 2024', 'url': 'https://www.youtube.com/watch?v=MJkdaVFHrto', 'subscribers': 950000, 'price': 0, 'source': 'YouTube'},
