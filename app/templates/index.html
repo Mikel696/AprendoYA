@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprendoYA! - Descubre Cursos en Línea</title>
-    <link rel="icon" href="{{ url_for('static', filename='Logo AprendoYa.png') }}">
+    <!-- Apunta a tu nuevo logo -->
+    <link rel="icon" href="{{ url_for('static', filename='AprendoYA!.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -44,7 +45,7 @@
             border-bottom-left-radius: 15px;
             border-bottom-right-radius: 15px;
         }
-        img.logo { max-width: 80px; margin-bottom: 0.5em; }
+        img.logo { max-width: 120px; margin-bottom: 0.5em; }
         h1 { margin: 0.3em 0; font-size: 2.2em; }
         p.tagline { font-size: 1.1em; opacity: 0.9; }
         .main-form button, .modal-content button {
@@ -128,8 +129,9 @@
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='Logo AprendoYa.png') }}" alt="Logo AprendoYA!" class="logo">
-        <h1>AprendoYA! - v2</h1>
+        <!-- Apunta a tu nuevo logo -->
+        <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="Logo AprendoYA!" class="logo">
+        <h1>AprendoYA!</h1>
         <p class="tagline">Tu guía inteligente para descubrir cursos en línea.</p>
     </header>
 
@@ -216,15 +218,14 @@
             const resultsList = document.getElementById('results-list');
             const noResultsMsg = document.getElementById('no-results-msg');
 
-            // --- MANEJO DEL MODAL ---
             openQuizBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
             const closeModal = () => { modal.style.display = 'none'; };
             closeBtn.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-            // --- FUNCIONES DE BÚSQUEDA ---
-            const performSearch = (url, formData, title) => {
-                const submitButton = event.target.querySelector('button[type="submit"]');
+            const performSearch = (endpoint, formData, title) => {
+                const submitButton = event.target.querySelector('button');
+                const originalText = submitButton ? submitButton.textContent : '';
                 if(submitButton) {
                     submitButton.textContent = 'Buscando...';
                     submitButton.disabled = true;
@@ -232,7 +233,7 @@
 
                 const options = formData ? { method: 'POST', body: formData } : { method: 'GET' };
 
-                fetch(url, options)
+                fetch(endpoint, options)
                     .then(response => response.json())
                     .then(data => {
                         displayResults(data.cursos, title);
@@ -244,13 +245,12 @@
                     })
                     .finally(() => {
                         if(submitButton) {
-                            submitButton.textContent = 'Buscar Cursos'; // O el texto original del botón
+                            submitButton.textContent = originalText;
                             submitButton.disabled = false;
                         }
                     });
             };
 
-            // --- EVENT LISTENERS ---
             mainSearchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const formData = new FormData(mainSearchForm);
@@ -268,7 +268,6 @@
                 performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares');
             });
 
-            // --- FUNCIÓN PARA MOSTRAR RESULTADOS ---
             function displayResults(cursos, title) {
                 resultsList.innerHTML = '';
                 noResultsMsg.style.display = 'none';
@@ -279,7 +278,7 @@
                         const li = document.createElement('li');
                         const subscribers = curso.subscribers ? curso.subscribers.toLocaleString('es-ES') : 'N/A';
                         li.innerHTML = `
-                            <a href="${curso.url}" target="_blank">${curso.title}</a>
+                            <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.title}</a>
                             <div class="course-meta">
                                 <span class="source-badge">${curso.source || 'N/A'}</span>
                                 <span class="subscribers">⭐ ${subscribers}</span>
@@ -290,7 +289,7 @@
                     resultsDiv.style.display = 'block';
                 } else {
                     noResultsMsg.style.display = 'block';
-                    resultsDiv.style.display = 'block'; // Mostrar el contenedor para ver el mensaje
+                    resultsDiv.style.display = 'block';
                 }
                 resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
