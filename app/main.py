@@ -17,28 +17,19 @@ def safe_load_and_process(path, column_map, default_source):
         df_original.columns = df_original.columns.str.strip()
         print(f"Cargando {path}. Columnas originales encontradas: {list(df_original.columns)}")
 
-        # Crea un nuevo DataFrame limpio con columnas estándar
         df_clean = pd.DataFrame()
         standard_columns = ['title', 'url', 'subscribers', 'price', 'source']
 
-        # Mapea columnas una por una de forma segura
         for standard_col, possible_original_cols in column_map.items():
             for original_col in possible_original_cols:
                 if original_col in df_original.columns:
                     df_clean[standard_col] = df_original[original_col]
-                    break  # Pasa a la siguiente columna estándar
+                    break
 
-        # Asegura que todas las columnas estándar existan, rellenando si es necesario
         for col in standard_columns:
             if col not in df_clean.columns:
-                if col == 'source':
-                    df_clean[col] = default_source
-                elif col in ['subscribers', 'price']:
-                    df_clean[col] = 0
-                else:
-                    df_clean[col] = ''
+                df_clean[col] = default_source if col == 'source' else 0 if col in ['subscribers', 'price'] else ''
         
-        # Asegura el orden y los tipos de datos correctos
         df_clean = df_clean[standard_columns]
         df_clean['title'] = df_clean['title'].fillna('').astype(str)
         df_clean['url'] = df_clean['url'].fillna('').astype(str)
@@ -56,31 +47,19 @@ def safe_load_and_process(path, column_map, default_source):
     return pd.DataFrame()
 
 def load_data():
-    """Carga y combina todas las fuentes de datos usando la nueva función robusta."""
+    """Carga y combina todas las fuentes de datos."""
     all_dfs = []
 
-    # Mapa de columnas para el archivo de Udemy
-    udemy_map = {
-        'title': ['course_title', 'title'],
-        'url': ['url'],
-        'subscribers': ['num_subscribers', 'subscribers'],
-        'price': ['price']
-    }
+    udemy_map = {'title': ['course_title', 'title'], 'url': ['url'], 'subscribers': ['num_subscribers', 'subscribers'], 'price': ['price']}
     df_udemy = safe_load_and_process(os.path.join(basedir, "data", "udemy_online_education_courses_dataset.csv"), udemy_map, 'Udemy')
     if not df_udemy.empty:
         all_dfs.append(df_udemy)
 
-    # Mapa de columnas para el archivo de Coursera/edX
-    courses2_map = {
-        'title': ['Course Name', 'title'],
-        'url': ['Course URL', 'url'],
-        'source': ['University', 'source']
-    }
+    courses2_map = {'title': ['Course Name', 'title'], 'url': ['Course URL', 'url'], 'source': ['University', 'source']}
     df_courses2 = safe_load_and_process(os.path.join(basedir, "data", "courses_2.csv"), courses2_map, 'Coursera/edX')
     if not df_courses2.empty:
         all_dfs.append(df_courses2)
 
-    # Carga de datos de YouTube
     youtube_tutorials = [
         {'title': 'Curso de Python desde Cero para Principiantes 2025', 'url': 'https://www.youtube.com/watch?v=nKPbfIU442g', 'subscribers': 1500000, 'price': 0, 'source': 'YouTube'},
         {'title': 'Curso HTML y CSS Desde Cero 2025', 'url': 'https://www.youtube.com/watch?v=MJkdaVFHrto', 'subscribers': 950000, 'price': 0, 'source': 'YouTube'},
@@ -91,7 +70,6 @@ def load_data():
     ]
     df_youtube = pd.DataFrame(youtube_tutorials)
     all_dfs.append(df_youtube)
-    print(f"Lista de tutoriales de YouTube cargada: {len(df_youtube)} filas.")
 
     if not all_dfs:
         print("Error crítico: No se pudo cargar ninguna fuente de datos.")
@@ -107,39 +85,43 @@ def load_data():
     print(f"Carga de datos completa. Total de {len(master_df)} cursos cargados.\n")
     return master_df
 
-# Cargar los datos y definir las rutas de la aplicación
 master_df = load_data()
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-def search_and_combine(query, limit_per_source=4):
-    """Busca en cada fuente de datos y combina los resultados de forma justa."""
-    all_results = []
+def rank_by_relevance(df, query):
+    """
+    Calcula un puntaje de relevancia y ordena el DataFrame.
+    Un puntaje más alto es mejor (la consulta es una parte más grande del título).
+    """
+    # Evitar división por cero si hay títulos vacíos
+    df['relevance_score'] = len(query) / df['title_lower'].str.len().replace(0, 1)
     
-    # Dividir el DataFrame maestro por fuente para la búsqueda
-    sources = master_df['source'].unique()
-    for source_name in sources:
-        df_source = master_df[master_df['source'] == source_name]
-        results = df_source[df_source['title_lower'].str.contains(query, na=False)]
-        
-        # Ordenar por suscriptores si hay, si no, tomar muestra aleatoria
-        if 'subscribers' in results.columns and results['subscribers'].sum() > 0:
-            results = results.sort_values(by='subscribers', ascending=False)
-        else:
-            results = results.sample(frac=1) # Mezclar aleatoriamente
-            
-        all_results.extend(results.head(limit_per_source).to_dict(orient='records'))
+    # Ordena por relevancia y luego por suscriptores para romper empates
+    return df.sort_values(by=['relevance_score', 'subscribers'], ascending=[False, False])
 
-    random.shuffle(all_results)
-    return all_results
+def perform_search(query):
+    """
+    Realiza una búsqueda en el DataFrame maestro y la ordena por relevancia.
+    """
+    if master_df.empty or not query:
+        return []
+        
+    results_df = master_df[master_df['title_lower'].str.contains(query, na=False)].copy()
+    
+    if results_df.empty:
+        return []
+        
+    ranked_results = rank_by_relevance(results_df, query)
+    
+    return ranked_results.head(10).to_dict(orient='records')
 
 @app.route('/search', methods=['POST'])
 def search():
     query = request.form.get('interes', '').strip().lower()
-    if not query: return jsonify(cursos=[])
-    cursos = search_and_combine(query)
+    cursos = perform_search(query)
     return jsonify(cursos=cursos)
 
 @app.route('/recommend', methods=['POST'])
@@ -152,25 +134,27 @@ def recommend():
         'cybersecurity': ['cybersecurity', 'hacking'], 'ai': ['artificial intelligence', 'ia']
     }
     search_terms = interest_keywords.get(interest_key, [])
-    if not search_terms: return jsonify(cursos=[])
+    if not search_terms:
+        return jsonify(cursos=[])
+        
+    # Realiza la búsqueda con el término más relevante para la categoría
     query = search_terms[0]
-    cursos = search_and_combine(query)
+    cursos = perform_search(query)
     return jsonify(cursos=cursos)
 
 @app.route('/free_courses', methods=['GET'])
 def free_courses():
-    free_courses_df = master_df[master_df['price'] == 0]
-    # Para ser justos, tomamos una muestra de cursos gratuitos de cada fuente
-    sources = free_courses_df['source'].unique()
-    all_free_results = []
-    for source_name in sources:
-        df_source = free_courses_df[free_courses_df['source'] == source_name]
-        results = df_source.sort_values(by='subscribers', ascending=False).head(4)
-        all_free_results.extend(results.to_dict(orient='records'))
+    if master_df.empty:
+        return jsonify(cursos=[])
         
-    random.shuffle(all_free_results)
-    return jsonify(cursos=all_free_results)
+    free_courses_df = master_df[master_df['price'] == 0].copy()
+    
+    # Mezcla los cursos gratuitos para dar variedad en lugar de solo los más populares
+    if not free_courses_df.empty:
+        shuffled_free_courses = free_courses_df.sample(frac=1).head(10)
+        return jsonify(cursos=shuffled_free_courses.to_dict(orient='records'))
+        
+    return jsonify(cursos=[])
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
-
