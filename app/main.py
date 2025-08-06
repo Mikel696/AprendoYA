@@ -145,3 +145,88 @@ def free_courses():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+# --- INICIO DEL NUEVO CÓDIGO PARA LA RUTA DE APRENDIZAJE ---
+
+def generate_learning_path(query):
+    """
+    Analiza la base de datos para generar una ruta de aprendizaje estructurada
+    basada en una consulta de búsqueda.
+    """
+    if master_df.empty or not query:
+        return {}
+
+    print(f"\n--- GENERANDO RUTA DE APRENDIZAJE PARA: '{query}' ---")
+
+    # --- 1. Definir palabras clave para cada nivel ---
+    beginner_keywords = ['principiantes', 'cero', 'introduction', 'básico', 'inicial', 'beginner']
+    intermediate_keywords = ['completo', 'total', 'masterclass', 'bootcamp']
+    
+    # Palabras clave de especialización (esto puede crecer mucho)
+    # Ejemplo para 'python'
+    specialization_keywords = {
+        'python': ['django', 'flask', 'data science', 'machine learning', 'api', 'pandas', 'numpy'],
+        'web_development': ['react', 'vue', 'angular', 'backend', 'frontend', 'fullstack', 'node.js'],
+        'data_science': ['machine learning', 'deep learning', 'tableau', 'power bi', 'big data']
+    }
+
+    # --- 2. Función auxiliar para buscar y clasificar cursos ---
+    def find_courses(keywords, is_beginner=False, is_specialization=False, main_query=""):
+        # La máscara base siempre requiere la consulta principal en el título
+        base_mask = master_df['title_lower'].str.contains(main_query, na=False)
+        
+        # Combinar palabras clave en un patrón de búsqueda regex
+        keyword_pattern = '|'.join(keywords)
+        keyword_mask = master_df['title_lower'].str.contains(keyword_pattern, na=False)
+
+        if is_beginner:
+            # Para principiantes, buscamos el tema Y una palabra clave de principiante
+            final_mask = base_mask & keyword_mask
+        elif is_specialization:
+            # Para especialización, buscamos el tema Y una palabra clave de especialización
+             final_mask = base_mask & keyword_mask
+        else:
+            # Para intermedio/desarrollo, buscamos el tema y palabras clave intermedias,
+            # pero EXCLUIMOS los cursos que ya son de principiantes.
+            beginner_pattern = '|'.join(beginner_keywords)
+            not_beginner_mask = ~master_df['title_lower'].str.contains(beginner_pattern, na=False)
+            final_mask = base_mask & keyword_mask & not_beginner_mask
+
+        # Si no se encuentran cursos con las palabras clave específicas, 
+        # nos quedamos con los que solo contienen el tema principal (para intermedio).
+        if not is_beginner and not is_specialization and master_df[final_mask].empty:
+             final_mask = base_mask & not_beginner_mask
+
+        results = master_df[final_mask]
+        # Ordenamos por popularidad (número de suscriptores) para obtener los mejores
+        return results.sort_values(by='num_subscribers', ascending=False).head(3).to_dict(orient='records')
+
+    # --- 3. Construir la ruta ---
+    learning_path = {
+        "fundamentos": find_courses(beginner_keywords, is_beginner=True, main_query=query),
+        "desarrollo": find_courses(intermediate_keywords, main_query=query)
+    }
+
+    # Búsqueda de especializaciones
+    spec_keywords = specialization_keywords.get(query, [])
+    if spec_keywords:
+        learning_path["especializacion"] = find_courses(spec_keywords, is_specialization=True, main_query=query)
+    else:
+        # Si no hay palabras clave de especialización definidas, dejamos la sección vacía
+        learning_path["especializacion"] = []
+
+
+    print(f"Ruta generada: {len(learning_path['fundamentos'])} fundamentos, {len(learning_path['desarrollo'])} desarrollo, {len(learning_path['especializacion'])} especialización.")
+    return learning_path
+
+
+@app.route('/learning_path', methods=['POST'])
+def learning_path():
+    """
+    Endpoint para generar la ruta de aprendizaje.
+    """
+    query = request.form.get('query', '').strip().lower()
+    path_data = generate_learning_path(query)
+    return jsonify(path_data)
+
+# --- FIN DEL NUEVO CÓDIGO ---

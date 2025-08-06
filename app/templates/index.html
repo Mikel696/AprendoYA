@@ -315,167 +315,189 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mainSearchForm = document.getElementById('mainSearchForm');
-            const quizForm = document.getElementById('quizForm');
-            const freeCoursesBtn = document.getElementById('freeCoursesBtn');
-            const geminiBtn = document.getElementById('gemini-cta-button');
-            
-            const quizModal = document.getElementById('quizModal');
-            const openQuizBtn = document.getElementById('openQuizBtn');
-            const closeQuizBtn = quizModal.querySelector('.close-button');
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainSearchForm = document.getElementById('mainSearchForm');
+        const quizForm = document.getElementById('quizForm');
+        const freeCoursesBtn = document.getElementById('freeCoursesBtn');
+        const geminiBtn = document.getElementById('gemini-cta-button');
+        
+        const quizModal = document.getElementById('quizModal');
+        const openQuizBtn = document.getElementById('openQuizBtn');
+        const closeQuizBtn = quizModal.querySelector('.close-button');
 
-            const learningPathModal = document.getElementById('learning-path-modal');
-            const learningPathContent = document.getElementById('learning-path-content');
-            const closeLearningPathBtn = learningPathModal.querySelector('.close-button');
+        const learningPathModal = document.getElementById('learning-path-modal');
+        const learningPathContent = document.getElementById('learning-path-content');
+        const closeLearningPathBtn = learningPathModal.querySelector('.close-button');
 
-            const resultsDiv = document.getElementById('results');
-            const resultsTitle = document.getElementById('results-title');
-            const resultsList = document.getElementById('results-list');
-            const noResultsMsg = document.getElementById('no-results-msg');
-            const geminiCtaContainer = document.getElementById('gemini-cta-container');
+        const resultsDiv = document.getElementById('results');
+        const resultsTitle = document.getElementById('results-title');
+        const resultsList = document.getElementById('results-list');
+        const noResultsMsg = document.getElementById('no-results-msg');
+        const geminiCtaContainer = document.getElementById('gemini-cta-container');
 
-            let currentQuery = '';
+        // Variable para guardar la última búsqueda realizada
+        let currentQuery = '';
 
-            openQuizBtn.addEventListener('click', () => { quizModal.style.display = 'flex'; });
-            closeQuizBtn.addEventListener('click', () => { quizModal.style.display = 'none'; });
-            quizModal.addEventListener('click', (e) => { if (e.target === quizModal) quizModal.style.display = 'none'; });
+        openQuizBtn.addEventListener('click', () => { quizModal.style.display = 'flex'; });
+        closeQuizBtn.addEventListener('click', () => { quizModal.style.display = 'none'; });
+        quizModal.addEventListener('click', (e) => { if (e.target === quizModal) quizModal.style.display = 'none'; });
 
-            closeLearningPathBtn.addEventListener('click', () => { learningPathModal.style.display = 'none'; });
-            learningPathModal.addEventListener('click', (e) => { if (e.target === learningPathModal) learningPathModal.style.display = 'none'; });
+        closeLearningPathBtn.addEventListener('click', () => { learningPathModal.style.display = 'none'; });
+        learningPathModal.addEventListener('click', (e) => { if (e.target === learningPathModal) learningPathModal.style.display = 'none'; });
 
-            const performSearch = (endpoint, formData, title, event) => {
-                const submitButton = event.target.querySelector('button');
-                const originalText = submitButton ? submitButton.textContent : '';
-                if(submitButton) {
-                    submitButton.textContent = 'Buscando...';
-                    submitButton.disabled = true;
-                }
-
-                const options = formData ? { method: 'POST', body: formData } : { method: 'GET' };
-
-                fetch(endpoint, options)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log("Datos recibidos del backend:", data.cursos);
-                        displayResults(data.cursos, title);
-                        if (quizModal.style.display === 'flex') quizModal.style.display = 'none';
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Hubo un error al procesar tu solicitud.');
-                    })
-                    .finally(() => {
-                        if(submitButton) {
-                            submitButton.textContent = originalText;
-                            submitButton.disabled = false;
-                        }
-                    });
-            };
-            
-            mainSearchForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const formData = new FormData(mainSearchForm);
-                const query = formData.get('interes');
-                currentQuery = query;
-                performSearch("{{ url_for('search') }}", formData, `Resultados para: "${query}"`, e);
-            });
-
-            geminiBtn.addEventListener('click', async () => {
-                if (!currentQuery) {
-                    alert('Por favor, realiza una búsqueda primero.');
-                    return;
-                }
-
-                learningPathModal.style.display = 'flex';
-                learningPathContent.innerHTML = '<div class="loader"></div>';
-
-                const prompt = `Como un experto en educación y tecnología, crea una ruta de aprendizaje detallada y motivadora para un principiante que quiere aprender sobre "${currentQuery}". La respuesta debe estar en español y en formato Markdown.
-
-                Incluye los siguientes puntos:
-
-                ### 🚀 1. Primeros Pasos (Fundamentos)
-                - Una lista de 3 a 5 conceptos clave que debe dominar primero. Explica brevemente cada uno.
-
-                ### 🛠️ 2. Proyectos Prácticos para Empezar
-                - Sugiere 2 o 3 proyectos simples pero impactantes para aplicar los conocimientos. Describe el objetivo de cada proyecto.
-
-                ### 📚 3. Recursos Adicionales Recomendados
-                - Menciona 2 o 3 recursos útiles como blogs, canales de YouTube, o documentación oficial.
-
-                Usa un tono amigable y alentador.`;
-
-                try {
-                    let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                    const payload = { contents: chatHistory };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Error en la API: ${response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    
-                    if (result.candidates && result.candidates[0].content.parts[0].text) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        const converter = new showdown.Converter();
-                        const html = converter.makeHtml(text);
-                        learningPathContent.innerHTML = html;
-                    } else {
-                        throw new Error('Respuesta inesperada de la API.');
-                    }
-
-                } catch (error) {
-                    console.error('Error al llamar a la API de Gemini:', error);
-                    learningPathContent.innerHTML = '<p style="color: red;">Lo sentimos, no se pudo generar la ruta de aprendizaje en este momento. Por favor, inténtalo de nuevo más tarde.</p>';
-                }
-            });
-
-            function displayResults(cursos, title) {
-                resultsList.innerHTML = '';
-                noResultsMsg.style.display = 'none';
-                geminiCtaContainer.style.display = 'none';
-                resultsTitle.textContent = title;
-
-                if (cursos && cursos.length > 0) {
-                    cursos.forEach(curso => {
-                        const li = document.createElement('li');
-                        const subscribers = curso.num_subscribers ? curso.num_subscribers.toLocaleString('es-ES') : 'N/A';
-                        li.innerHTML = `
-                            <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.course_title}</a>
-                            <div class="course-meta">
-                                <span class="source-badge">${curso.site || 'N/A'}</span>
-                                <span class="subscribers">⭐ ${subscribers}</span>
-                            </div>
-                        `;
-                        resultsList.appendChild(li);
-                    });
-                    resultsDiv.style.display = 'block';
-                    geminiCtaContainer.style.display = 'block';
-                } else {
-                    noResultsMsg.style.display = 'block';
-                    resultsDiv.style.display = 'block';
-                }
-                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const performSearch = (endpoint, formData, title, event) => {
+            const submitButton = event.target.querySelector('button');
+            const originalText = submitButton ? submitButton.textContent : '';
+            if(submitButton) {
+                submitButton.textContent = 'Buscando...';
+                submitButton.disabled = true;
             }
 
-            quizForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                performSearch("{{ url_for('recommend') }}", new FormData(quizForm), 'Cursos recomendados para ti', e);
-            });
+            const options = formData ? { method: 'POST', body: formData } : { method: 'GET' };
 
-            freeCoursesBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares', e);
+            fetch(endpoint, options)
+                .then(response => response.json())
+                .then(data => {
+                    displayResults(data.cursos, title);
+                    if (quizModal.style.display === 'flex') quizModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al procesar tu solicitud.');
+                })
+                .finally(() => {
+                    if(submitButton) {
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
+                    }
+                });
+        };
+        
+        mainSearchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(mainSearchForm);
+            const query = formData.get('interes');
+            // Guardamos la búsqueda actual
+            currentQuery = query; 
+            performSearch("{{ url_for('search') }}", formData, `Resultados para: "${query}"`, e);
+        });
+
+        // --- SECCIÓN MODIFICADA ---
+        geminiBtn.addEventListener('click', () => {
+            if (!currentQuery) {
+                alert('Por favor, realiza una búsqueda primero.');
+                return;
+            }
+
+            // Abrimos el modal y mostramos el loader
+            learningPathModal.style.display = 'flex';
+            learningPathContent.innerHTML = '<div class="loader"></div>';
+
+            // Preparamos los datos para enviar a nuestro backend
+            const formData = new FormData();
+            formData.append('query', currentQuery);
+
+            // Llamamos a nuestro nuevo endpoint /learning_path
+            fetch("{{ url_for('learning_path') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Función para renderizar la ruta de aprendizaje
+                renderLearningPath(data);
+            })
+            .catch(error => {
+                console.error('Error al generar la ruta de aprendizaje:', error);
+                learningPathContent.innerHTML = '<p style="color: red;">Lo sentimos, no se pudo generar la ruta de aprendizaje en este momento. Por favor, inténtalo de nuevo más tarde.</p>';
             });
         });
-    </script>
+
+        function renderLearningPath(pathData) {
+            // Si no obtenemos datos, mostramos un mensaje de error
+            if (!pathData || (pathData.fundamentos.length === 0 && pathData.desarrollo.length === 0 && pathData.especializacion.length === 0)) {
+                learningPathContent.innerHTML = `
+                    <h3>No pudimos generar una ruta automática para "${currentQuery}"</h3>
+                    <p>Esto puede suceder si no tenemos suficientes cursos de diferentes niveles sobre este tema. ¡Intenta con una búsqueda más general!</p>
+                `;
+                return;
+            }
+            
+            let html = `<h3>Ruta de Aprendizaje Sugerida para: ${currentQuery}</h3>`;
+
+            // Función auxiliar para crear la lista de cursos para una sección
+            const createCourseList = (courses) => {
+                if (!courses || courses.length === 0) return '<li>No se encontraron cursos para esta etapa.</li>';
+                return courses.map(course => `
+                    <li>
+                        <a href="${course.url}" target="_blank">${course.course_title}</a>
+                        <small>(${course.num_subscribers.toLocaleString('es-ES')} suscriptores)</small>
+                    </li>
+                `).join('');
+            };
+
+            // Construimos el HTML para cada sección
+            html += `
+                <h4>🚀 1. Fundamentos (Para Empezar)</h4>
+                <ul>${createCourseList(pathData.fundamentos)}</ul>
+                
+                <h4>🛠️ 2. Desarrollo de Habilidades</h4>
+                <ul>${createCourseList(pathData.desarrollo)}</ul>
+
+                <h4>⭐ 3. Especialización y Proyectos</h4>
+                <ul>${createCourseList(pathData.especializacion)}</ul>
+            `;
+
+            // Actualizamos el contenido del modal
+            learningPathContent.innerHTML = html;
+        }
+        // --- FIN DE LA SECCIÓN MODIFICADA ---
+
+        function displayResults(cursos, title) {
+            resultsList.innerHTML = '';
+            noResultsMsg.style.display = 'none';
+            geminiCtaContainer.style.display = 'none';
+            resultsTitle.textContent = title;
+
+            if (cursos && cursos.length > 0) {
+                cursos.forEach(curso => {
+                    const li = document.createElement('li');
+                    const subscribers = curso.num_subscribers ? curso.num_subscribers.toLocaleString('es-ES') : 'N/A';
+                    li.innerHTML = `
+                        <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.course_title}</a>
+                        <div class="course-meta">
+                            <span class="source-badge">${curso.site || 'N/A'}</span>
+                            <span class="subscribers">⭐ ${subscribers}</span>
+                        </div>
+                    `;
+                    resultsList.appendChild(li);
+                });
+                resultsDiv.style.display = 'block';
+                geminiCtaContainer.style.display = 'block';
+            } else {
+                noResultsMsg.style.display = 'block';
+                resultsDiv.style.display = 'block';
+            }
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        quizForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(quizForm);
+            // Obtenemos el texto de la opción seleccionada para usarlo como 'currentQuery'
+            const select = quizForm.querySelector('select[name="interest_modal"]');
+            const selectedText = select.options[select.selectedIndex].text;
+            currentQuery = formData.get('interest_modal'); // Guardamos la clave, ej: "python"
+            
+            performSearch("{{ url_for('recommend') }}", formData, `Cursos recomendados para: "${selectedText}"`, e);
+        });
+
+        freeCoursesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentQuery = ''; // Reseteamos la query ya que no es una búsqueda específica
+            performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares', e);
+        });
+    });
+</script>
 </body>
 </html>
