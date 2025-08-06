@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AprendoYA! - Descubre Cursos en Línea</title>
+    <title>AprendoYA! - Tu Guía Inteligente de Cursos</title>
     <link rel="icon" href="{{ url_for('static', filename='AprendoYA!.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,78 +11,98 @@
     
     <style>
         :root {
-            --primary-color: #007bff;
-            --secondary-color: #56c282;
-            --background-color: #f8f9fa;
+            --primary-color: #4A90E2; /* Un azul más moderno */
+            --secondary-color: #50E3C2; /* Un turquesa vibrante */
+            --background-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
             --surface-color: #ffffff;
-            --text-color: #212529;
-            --subtle-text-color: #6c757d;
-            --border-color: #dee2e6;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --text-color: #333;
+            --subtle-text-color: #777;
+            --border-color: #e8e8e8;
+            --shadow: 0 6px 24px rgba(0, 0, 0, 0.09);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.14);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--background-color); color: var(--text-color); line-height: 1.7; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            line-height: 1.7;
+        }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* --- HEADER Y NAVEGACIÓN --- */
-        .main-header { background-color: var(--surface-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        /* --- HEADER Y LOGO --- */
+        .main-header { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 0.8rem 0; position: sticky; top: 0; z-index: 100; }
         .navbar { display: flex; justify-content: space-between; align-items: center; }
-        .navbar-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .navbar-brand img { height: 45px; }
-        .navbar-brand h1 { font-size: 1.6rem; color: var(--text-color); }
+        .navbar-brand { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .navbar-brand img {
+            height: 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            padding: 4px;
+            background-color: white;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover img { transform: rotate(360deg) scale(1.1); }
+        .navbar-brand h1 { font-size: 1.8rem; color: var(--text-color); font-weight: 700; }
 
-        /* --- SECCIÓN DE BÚSQUEDA --- */
-        .search-hero { padding: 4rem 1rem; text-align: center; background: var(--surface-color); }
-        .search-hero h2 { font-size: 2.8rem; margin-bottom: 1rem; }
-        .search-hero p { font-size: 1.1rem; color: var(--subtle-text-color); margin-bottom: 2rem; }
-        .search-form { display: flex; max-width: 600px; margin: 0 auto; box-shadow: var(--shadow); }
-        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem; font-size: 1rem; border-radius: 8px 0 0 8px; outline: none; }
+        /* --- BÚSQUEDA PRINCIPAL --- */
+        .search-hero { padding: 5rem 1rem; text-align: center; }
+        .search-hero h2 { font-size: 3rem; margin-bottom: 1rem; color: #2c3e50; }
+        .search-hero p { font-size: 1.2rem; color: var(--subtle-text-color); margin-bottom: 2.5rem; }
+        .search-form { display: flex; max-width: 700px; margin: 0 auto; }
+        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem; font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; transition: border-color 0.3s; }
         .search-form input:focus { border-color: var(--primary-color); }
-        .search-form button { border: none; background-color: var(--primary-color); color: white; padding: 1rem 2rem; font-size: 1rem; cursor: pointer; border-radius: 0 8px 8px 0; font-weight: 600; }
+        .search-form button { border: none; background: var(--primary-color); color: white; padding: 1rem 2.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 0 50px 50px 0; font-weight: 600; transition: background-color 0.3s; }
+        .search-form button:hover { background: #357ABD; }
 
         /* --- LAYOUT PRINCIPAL --- */
-        .main-content { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; margin-top: 2rem; }
-        .courses-display { grid-column: 1 / 2; }
-        .sidebar { grid-column: 2 / 3; }
+        .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 2.5rem; margin-top: 3rem; }
+        .sidebar { grid-column: 1 / 2; }
+        .courses-display { grid-column: 2 / 3; }
 
         /* --- SIDEBAR --- */
-        .sidebar-widget { background-color: var(--surface-color); padding: 1.5rem; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        .sidebar-widget h3 { font-size: 1.2rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
-        .sidebar-widget select, .sidebar-widget button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 0.8rem; }
-        .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; }
-
-        /* --- SECCIÓN DE RESULTADOS --- */
-        .results-header h2 { font-size: 1.8rem; color: var(--text-color); border: none; margin-bottom: 1.5rem; }
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-        .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
-        .course-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-        .card-content { padding: 1rem; flex-grow: 1; }
-        .card-content h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0 1rem 1rem; }
-        .platform-badge { background-color: var(--background-color); padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: 600; color: var(--subtle-text-color); }
+        .sidebar-widget { background-color: var(--surface-color); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem; }
+        .sidebar-widget h3 { font-size: 1.3rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .sidebar-widget select, .sidebar-widget button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.8rem; background-color: #fff; }
+        .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; border: none; transition: background-color 0.3s; }
+        .sidebar-widget button:hover { background-color: #48a973; }
+        
+        /* --- TARJETAS DE CURSOS --- */
+        .results-header h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-color); border: none; }
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+        .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; text-decoration: none; color: var(--text-color); transition: transform 0.3s, box-shadow 0.3s; }
+        .course-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+        .card-content { padding: 1.25rem; flex-grow: 1; }
+        .card-content h4 { font-size: 1.05rem; margin-bottom: 0.75rem; line-height: 1.4; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-color); }
+        .platform-badge { background-color: var(--background-gradient); padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: 600; color: var(--subtle-text-color); }
         .star-rating { font-size: 1.1rem; color: #f39c12; }
-        .course-link { display: block; background-color: var(--primary-color); color: #fff; text-align: center; padding: 0.8rem; text-decoration: none; font-weight: 600; }
         
-        /* --- ESTILOS PARA LA VENTANA MODAL --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200; }
-        .modal-content { background: var(--surface-color); padding: 2rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; position: relative; }
+        /* --- VENTANA MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 200; }
+        .modal-content { background: var(--surface-color); padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; position: relative; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #aaa; cursor: pointer; line-height: 1; }
-        .modal-content h2 { font-size: 1.8rem; color: var(--primary-color); margin-top: 0; margin-bottom: 1.5rem; }
-        .path-section h3 { font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.8rem; border-left: 4px solid var(--secondary-color); padding-left: 10px; }
+        .modal-content h2 { font-size: 1.8rem; color: var(--primary-color); margin-top: 0; }
+        .path-section h3 { font-size: 1.3rem; margin: 1.5rem 0 0.8rem 0; border-left: 4px solid var(--secondary-color); padding-left: 10px; }
         .path-section ul { list-style: none; padding-left: 0; }
-        .path-section li { background: var(--background-color); padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; }
-        .path-section li a { font-weight: 600; text-decoration: none; color: var(--text-color); }
+        .path-section li a { font-weight: 600; text-decoration: none; color: var(--text-color); display: block; background: var(--background-gradient); padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: background-color 0.3s, transform 0.3s; }
+        .path-section li a:hover { background-color: #e9ecef; transform: translateX(5px); }
 
-        /* --- FOOTER --- */
-        footer { text-align: center; padding: 2rem; margin-top: 3rem; background-color: #34495e; color: #ecf0f1; }
+        footer { text-align: center; padding: 2rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1; }
         
-        @media (max-width: 992px) { .main-content { grid-template-columns: 1fr; } .sidebar { grid-row: 1; } }
+        @media (max-width: 992px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
         <div class="container navbar">
-            <a href="/" class="navbar-brand"><img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="AprendoYA! Logo"><h1>AprendoYA!</h1></a>
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="AprendoYA! Logo">
+                <h1>AprendoYA!</h1>
+            </a>
         </div>
     </header>
 
@@ -97,25 +117,36 @@
         </section>
 
         <div class="container main-content">
-            <div class="courses-display">
-                <div class="results-header"><h2 id="results-title">Cursos Populares</h2></div>
-                <div id="results-grid" class="results-grid"></div>
-                <p id="no-results-message" style="display: none;">No se encontraron cursos para tu búsqueda.</p>
-            </div>
-
             <aside class="sidebar">
                 <div class="sidebar-widget">
                     <h3>Recomendación Rápida</h3>
-                    <select id="interest_modal"><option value="" disabled selected>Selecciona un área</option><option value="python">Python</option><option value="web_development">Desarrollo Web</option><option value="data_science">Ciencia de Datos</option> etc...</select>
-                    <select id="level_modal"><option value="" disabled selected>Selecciona tu nivel</option><option value="beginner">Principiante</option><option value="intermediate">Con experiencia</option></select>
-                    <button onclick="recommendCourses()">Recomiéndame</button>
+                    <select id="interest_modal" name="interest_modal">
+                        <option value="" disabled selected>Selecciona un área de interés</option>
+                        {% for topic in topics %}
+                            <option value="{{ topic.value }}">{{ topic.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="level_modal" name="level_modal">
+                        <option value="" disabled selected>Selecciona tu nivel</option>
+                        <option value="beginner">Principiante</option>
+                        <option value="intermediate">Con experiencia</option>
+                    </select>
+                    <button onclick="recommendCourses()">Recomiéndame un Curso</button>
                 </div>
                 <div class="sidebar-widget">
                     <h3>Ruta de Aprendizaje</h3>
                     <p>Obtén un plan de estudio paso a paso para un tema.</p>
-                    <button onclick="generateLearningPath()">Generar Ruta</button>
+                    <button onclick="generateLearningPath()">Generar Mi Ruta</button>
                 </div>
             </aside>
+            
+            <div class="courses-display">
+                <div class="results-header">
+                    <h2 id="results-title">Cursos Populares</h2>
+                </div>
+                <div id="results-grid" class="results-grid"></div>
+                <p id="no-results-message" style="display: none; text-align: center; padding: 2rem;">No se encontraron cursos para tu búsqueda.</p>
+            </div>
         </div>
     </main>
     
@@ -143,73 +174,78 @@
 
             if (courses && courses.length > 0) {
                 courses.forEach(course => {
-                    const card = document.createElement('div');
+                    const card = document.createElement('a');
                     card.className = 'course-card';
+                    card.href = course.url;
+                    card.target = '_blank';
+                    card.rel = 'noopener noreferrer';
+                    
                     const stars = '⭐'.repeat(course.num_subscribers);
                     card.innerHTML = `
                         <div class="card-content"><h4>${course.course_title}</h4></div>
-                        <div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${stars}</span></div>
-                        <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="course-link">Ir al Curso</a>`;
+                        <div class="card-footer">
+                            <span class="platform-badge">${course.site}</span>
+                            <span class="star-rating">${stars}</span>
+                        </div>`;
                     resultsGrid.appendChild(card);
                 });
             } else { noResultsMessage.style.display = 'block'; }
         }
 
-        async function searchCourses() {
-            const query = document.getElementById('search-input').value;
-            if (!query) return;
-            resultsTitle.textContent = `Resultados para: "${query}"`;
-            const formData = new URLSearchParams();
-            formData.append('interes', query);
-            const response = await fetch("{{ url_for('search') }}", { method: 'POST', body: formData });
-            const data = await response.json();
-            displayCourses(data.cursos);
+        async function fetchAndDisplay(endpoint, options, title) {
+            resultsTitle.textContent = title;
+            try {
+                const response = await fetch(endpoint, options);
+                const data = await response.json();
+                displayCourses(data.cursos);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                noResultsMessage.textContent = 'Hubo un error al cargar los cursos.';
+                noResultsMessage.style.display = 'block';
+            }
         }
 
-        async function recommendCourses() {
+        function searchCourses() {
+            const query = document.getElementById('search-input').value;
+            if (!query) return;
+            const formData = new URLSearchParams();
+            formData.append('interes', query);
+            fetchAndDisplay("{{ url_for('search') }}", { method: 'POST', body: formData }, `Resultados para: "${query}"`);
+        }
+
+        function recommendCourses() {
             const interest = document.getElementById('interest_modal').value;
             const level = document.getElementById('level_modal').value;
             if (!interest || !level) { alert('Por favor, selecciona un área y tu nivel.'); return; }
-            resultsTitle.textContent = 'Cursos Recomendados para ti';
             const formData = new URLSearchParams();
             formData.append('interest_modal', interest);
             formData.append('level_modal', level);
-            const response = await fetch("{{ url_for('recommend') }}", { method: 'POST', body: formData });
-            const data = await response.json();
-            displayCourses(data.cursos);
+            fetchAndDisplay("{{ url_for('recommend') }}", { method: 'POST', body: formData }, 'Cursos Recomendados para ti');
         }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
+        });
 
-        async function loadPopularCourses() {
-            resultsTitle.textContent = 'Cursos Populares';
-            const response = await fetch("{{ url_for('free_courses') }}");
-            const data = await response.json();
-            displayCourses(data.cursos);
-        }
-
-        // --- NUEVA LÓGICA PARA LA RUTA DE APRENDIZAJE ---
+        // --- LÓGICA PARA LA RUTA DE APRENDIZAJE ---
         function closeModal() { modal.style.display = 'none'; }
         
         function buildPathSection(courses, title) {
             if (!courses || courses.length === 0) return '';
-            let listItems = '';
-            courses.forEach(course => {
-                listItems += `<li><a href="${course.url}" target="_blank">${course.course_title}</a> (${course.site})</li>`;
-            });
-            return `
-                <div class="path-section">
-                    <h3>${title}</h3>
-                    <ul>${listItems}</ul>
-                </div>`;
+            const listItems = courses.map(course => 
+                `<li><a href="${course.url}" target="_blank">${course.course_title} <span>(${course.site})</span></a></li>`
+            ).join('');
+            return `<div class="path-section"><h3>${title}</h3><ul>${listItems}</ul></div>`;
         }
 
         async function generateLearningPath() {
             const query = document.getElementById('search-input').value;
             if (!query) {
-                alert('Por favor, escribe un tema en la barra de búsqueda principal para generar una ruta.');
+                alert('Escribe un tema en la barra de búsqueda para generar una ruta.');
                 return;
             }
             modalTitle.textContent = `Ruta de Aprendizaje para: ${query}`;
-            modalBody.innerHTML = '<p>Generando ruta...</p>';
+            modalBody.innerHTML = '<p>Generando ruta, por favor espera...</p>';
             modal.style.display = 'flex';
 
             const formData = new URLSearchParams();
@@ -221,14 +257,10 @@
             pathHtml += buildPathSection(pathData.desarrollo, '🛠️ 2. Desarrollo de Habilidades');
             pathHtml += buildPathSection(pathData.especializacion, '⭐ 3. Especialización y Proyectos');
             
-            if (!pathHtml) {
-                pathHtml = '<p>No se encontraron suficientes cursos para generar una ruta de aprendizaje sobre este tema.</p>';
-            }
-            modalBody.innerHTML = pathHtml;
+            modalBody.innerHTML = pathHtml || '<p>No se encontraron suficientes cursos para generar una ruta de aprendizaje sobre este tema.</p>';
         }
 
         window.onclick = function(event) { if (event.target == modal) { closeModal(); } }
-        document.addEventListener('DOMContentLoaded', loadPopularCourses);
     </script>
 </body>
 </html>
