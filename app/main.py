@@ -122,3 +122,53 @@ def free_courses():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+# --- INICIO DE LA NUEVA LÓGICA PARA RUTA DE APRENDIZAJE ---
+
+def generate_learning_path(query):
+    """
+    Crea una ruta de aprendizaje estructurada buscando cursos con diferentes
+    calificaciones de estrellas para representar los niveles.
+    """
+    if master_df.empty or not query:
+        return {}
+
+    # Buscamos todos los cursos que coincidan con la consulta
+    mask = master_df['title_lower'].str.contains(query, na=False)
+    relevant_courses = master_df[mask]
+
+    if relevant_courses.empty:
+        return {}
+
+    # Ordenamos por calificación para facilitar la selección
+    sorted_courses = relevant_courses.sort_values(by='star_rating', ascending=True)
+
+    # Nivel 1: Fundamentos (1-2 estrellas) - Los conceptos básicos
+    fundamentos = sorted_courses[sorted_courses['star_rating'] <= 2].head(2).to_dict(orient='records')
+    
+    # Nivel 2: Desarrollo (3-4 estrellas) - Cursos más completos
+    desarrollo = sorted_courses[sorted_courses['star_rating'].between(3, 4)].head(3).to_dict(orient='records')
+
+    # Nivel 3: Especialización (5 estrellas) - Masterclass y cursos avanzados
+    especializacion = sorted_courses[sorted_courses['star_rating'] == 5].head(2).to_dict(orient='records')
+
+    learning_path = {
+        'fundamentos': fundamentos,
+        'desarrollo': desarrollo,
+        'especializacion': especializacion
+    }
+    
+    return learning_path
+
+
+@app.route('/learning_path', methods=['POST'])
+def learning_path_route():
+    query = request.form.get('query', '').strip().lower()
+    if not query:
+        return jsonify({'error': 'No se proporcionó una consulta'}), 400
+    
+    path = generate_learning_path(query)
+    
+    return jsonify(path)
+
+# --- FIN DE LA NUEVA LÓGICA ---
