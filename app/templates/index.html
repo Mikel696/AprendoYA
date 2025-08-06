@@ -5,499 +5,429 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprendoYA! - Descubre Cursos en Línea</title>
     <link rel="icon" href="{{ url_for('static', filename='AprendoYA!.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* --- Paleta de Colores y Variables CSS --- */
         :root {
-            --primary-color: #2F80ED;
-            --secondary-color: #27AE60;
-            --light-bg: #f5f7fa;
-            --dark-text: #333;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-            --gemini-purple: #8A2BE2;
+            --primary-color: #3498db; /* Azul Principal */
+            --secondary-color: #2ecc71; /* Verde Secundario */
+            --background-color: #f4f7f6; /* Fondo Gris Claro */
+            --surface-color: #ffffff; /* Color de las tarjetas y superficies */
+            --text-color: #34495e; /* Color de Texto Principal */
+            --subtle-text-color: #7f8c8d; /* Color de Texto Secundario */
+            --border-color: #ecf0f1; /* Color de Bordes */
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light-bg);
-            color: var(--dark-text);
+
+        /* --- Estilos Generales y Reset --- */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
             line-height: 1.6;
         }
-        
-        header {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 60vh;
-            background: 
-                radial-gradient(ellipse at center, rgba(245, 247, 250, 0) 0%, rgba(245, 247, 250, 1) 75%),
-                var(--light-bg);
-            text-align: center;
-            padding: 3em 1em;
-            box-sizing: border-box;
-            width: 100%;
-        }
 
-        .logo-container {
-            max-width: 700px;
-            width: 80%; 
-            margin-bottom: 1.5em;
-            animation: fadeInLogo 1.5s ease-out;
-        }
-
-        @keyframes fadeInLogo {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .logo-container img {
-            width: 100%;
-            height: auto;
-        }
-
-        .tagline {
-            font-size: 1.5em;
-            font-weight: 300;
-            color: #555;
-            animation: fadeInTagline 2s ease-out;
-        }
-
-        @keyframes fadeInTagline {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .main-content {
-            z-index: 10;
-            position: relative;
-            padding-top: 1em;
-        }
-
+        /* --- Estructura Principal --- */
         .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 2em auto;
-            background-color: var(--card-bg);
-            padding: 2.5em;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
-            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* --- Header y Barra de Navegación --- */
+        header {
+            background-color: var(--surface-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .navbar-brand img {
+            height: 50px;
+            width: 50px;
+            object-fit: contain;
+        }
+
+        .navbar-brand h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
         
-        .main-form button, .modal-content button {
-            background-color: var(--secondary-color);
-            color: #fff;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        /* --- Hero Section y Búsqueda Principal --- */
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
         }
-        .main-form button:hover, .modal-content button:hover { background-color: #219653; transform: translateY(-2px); }
-        input[type="text"] {
-            width: calc(100% - 24px);
-            padding: 12px;
-            margin-bottom: 1em;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            font-size: 1em;
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
         }
-        .results-container {
-            background-color: var(--card-bg);
-            margin-top: 2em;
-            padding: 1.5em;
-            border-radius: 12px;
-            text-align: left;
-            max-width: 700px;
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--subtle-text-color);
+            margin-bottom: 2rem;
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            box-shadow: 0 4px 15px var(--shadow-light);
-            border: 1px solid var(--border-color);
-            display: none;
         }
-        .results-container h2 { margin-top: 0; color: var(--primary-color); }
-        .results-container ul { list-style: none; padding: 0; }
-        .results-container li {
-            margin-bottom: 1em;
-            padding-bottom: 1em;
-            border-bottom: 1px dashed var(--border-color);
+
+        .search-form {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            justify-content: center;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: var(--shadow);
+            border-radius: 50px;
         }
-        .results-container li:last-child { border-bottom: none; }
-        .results-container li a { color: var(--primary-color); text-decoration: none; font-weight: 600; margin-bottom: 0.25em; }
-        .results-container li a:hover { text-decoration: underline; }
-        .course-meta { display: flex; gap: 1em; align-items: center; font-size: 0.85em; }
-        .course-meta .subscribers { color: var(--secondary-color); font-weight: 700; }
-        .course-meta .source-badge { background-color: #eee; padding: 3px 8px; border-radius: 5px; font-weight: 500; }
-        footer { margin-top: 3em; padding: 2em; background-color: #333; color: #fff; text-align: center; width: 100%; box-sizing: border-box; }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); display: none; align-items: center;
-            justify-content: center; z-index: 1000; backdrop-filter: blur(5px);
+        .search-form input {
+            flex-grow: 1;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 50px 0 0 50px;
+            border-right: none;
+            outline: none;
         }
-        .modal-content {
-            background: white; padding: 2.5em; border-radius: 15px; width: 90%;
-            max-width: 650px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            position: relative; animation: slide-down 0.4s ease-out;
-            max-height: 80vh; overflow-y: auto;
-        }
-        @keyframes slide-down { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .close-button { position: absolute; top: 15px; right: 20px; font-size: 2em; color: #aaa; cursor: pointer; line-height: 1; }
-        .close-button:hover { color: #333; }
-        .modal-content h2 { margin-top: 0; color: var(--primary-color); }
-        .modal-content .question { margin-bottom: 1.5em; }
-        .modal-content label { display: block; font-weight: 600; margin-bottom: 0.5em; }
-        .modal-content select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1em; background-color: #fdfdfd; }
         
-        .action-button {
-            display: inline-block; background-color: #FF758C; color: white;
-            padding: 12px 25px; border-radius: 8px; text-decoration: none;
-            font-weight: 700; transition: all 0.3s ease; cursor: pointer; border: none;
+        .search-form input:focus {
+            border-color: var(--primary-color);
         }
-        .action-button:hover { background-color: #ff5c77; transform: translateY(-2px); }
-        .action-button.green { background-color: var(--secondary-color); }
-        .action-button.green:hover { background-color: #219653; }
 
-        #gemini-cta-container {
-            margin-top: 2em;
-            padding-top: 1.5em;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            display: none;
+        .search-form button {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            background-color: var(--primary-color);
+            color: #fff;
+            cursor: pointer;
+            border-radius: 0 50px 50px 0;
+            transition: background-color 0.3s ease;
         }
-        #gemini-cta-button {
-            background: linear-gradient(45deg, var(--gemini-purple), var(--primary-color));
-            color: white;
-            font-weight: 700;
-            font-size: 1em;
-            padding: 12px 25px;
+        
+        .search-form button:hover {
+            background-color: #2980b9;
+        }
+
+        /* --- Secciones de Contenido (Resultados, Recomendaciones) --- */
+        .content-section {
+            background-color: var(--surface-color);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+        }
+
+        .content-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* --- Formulario de Recomendaciones --- */
+        .recommend-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background-color: var(--background-color);
+            padding: 1.5rem;
             border-radius: 8px;
+        }
+        
+        .recommend-form select, .recommend-form button {
+            padding: 0.8rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .recommend-form select {
+            flex-grow: 1;
+        }
+
+        .recommend-form button {
+            background-color: var(--secondary-color);
+            color: #fff;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
-        #gemini-cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+        
+        .recommend-form button:hover {
+            background-color: #27ae60;
         }
-        #learning-path-modal .modal-content {
-            text-align: left;
+
+        /* --- Contenedor de Resultados y Tarjetas de Curso --- */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
-        #learning-path-modal h2 {
-            color: var(--gemini-purple);
+
+        .course-card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        #learning-path-content h3 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.3em;
-            margin-top: 1.5em;
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
-        #learning-path-content ul {
-            list-style-type: disc;
-            padding-left: 20px;
+
+        .card-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
-        #learning-path-content li {
-            margin-bottom: 0.5em;
+
+        .card-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            flex-grow: 1;
         }
-        .loader {
-            border: 8px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 8px solid var(--gemini-purple);
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 2em auto;
+
+        .card-footer {
+            padding: 0 1.25rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
+            padding-top: 1rem;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        .platform-badge {
+            background-color: var(--background-color);
+            color: var(--subtle-text-color);
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
+
+        .star-rating {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f39c12; /* Color de las estrellas */
+        }
+
+        .course-link {
+            display: block;
+            background-color: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            padding: 0.8rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .course-link:hover {
+            background-color: #2980b9;
+        }
+
+        /* --- Mensajes y Footer --- */
+        .message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--subtle-text-color);
+            font-size: 1.1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
     </style>
 </head>
 <body>
     <header>
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="Logo AprendoYA!">
+        <div class="container navbar">
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="AprendoYA! Logo">
+                <h1>AprendoYA!</h1>
+            </a>
         </div>
-        <p class="tagline">Tu guía inteligente para descubrir cursos en línea.</p>
     </header>
 
-    <div class="main-content">
-        <div class="container">
-            <h2>Encuentra tu Próximo Curso</h2>
-            <form id="mainSearchForm" class="main-form">
+    <main class="container">
+        <section class="hero">
+            <h2>Encuentra Tu Próximo Curso</h2>
+            <p>Tu guía inteligente para descubrir cursos en línea de las mejores plataformas.</p>
+            <form id="searchForm" class="search-form" onsubmit="searchCourses(event)">
                 <input type="text" name="interes" placeholder="Ej: Python, Excel, Marketing Digital..." required>
-                <button type="submit">Buscar Cursos</button>
+                <button type="submit">Buscar</button>
             </form>
-        </div>
-        
-        <div class="container" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1em;">
-            <div style="background: linear-gradient(135deg, #6DD5FA, #FF758C); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
-                <h3 style="margin-top: 0;">¿No sabes qué estudiar?</h3>
-                <p style="font-size: 0.9em;">Responde un par de preguntas y te guiaremos.</p>
-                <button id="openQuizBtn" class="action-button">¡Comenzar el test!</button>
-            </div>
-            <div style="background: linear-gradient(135deg, #56ab2f, #a8e063); color: white; padding: 1.5em; border-radius: 10px; flex: 1; min-width: 250px;">
-                <h3 style="margin-top: 0;">¡Explora Cursos Gratis!</h3>
-                <p style="font-size: 0.9em;">Accede a una selección de cursos sin costo.</p>
-                <button id="freeCoursesBtn" class="action-button green">Ver Cursos Gratis</button>
-            </div>
-        </div>
+        </section>
 
-        <div id="results" class="results-container">
-            <h2 id="results-title">Resultados</h2>
-            <ul id="results-list"></ul>
-            <div id="gemini-cta-container">
-                <button id="gemini-cta-button">✨ Generar Ruta de Aprendizaje</button>
+        <section class="content-section">
+             <h3>Recomendaciones Personalizadas</h3>
+             <div class="recommend-form">
+                <select id="interest_modal" name="interest_modal" required>
+                    <option value="" disabled selected>Selecciona un área de interés</option>
+                    <option value="python">Programación con Python</option>
+                    <option value="web_development">Desarrollo Web (HTML, CSS, JS)</option>
+                    <option value="data_science">Ciencia de Datos y Analítica</option>
+                    <option value="cybersecurity">Ciberseguridad</option>
+                    <option value="ai">Inteligencia Artificial</option>
+                    <option value="marketing">Marketing Digital</option>
+                    <option value="excel">Excel y Hojas de Cálculo</option>
+                    <option value="design">Diseño Gráfico</option>
+                </select>
+                <select id="level_modal" name="level_modal" required>
+                    <option value="" disabled selected>Selecciona tu nivel</option>
+                    <option value="beginner">Soy principiante</option>
+                    <option value="intermediate">Tengo algo de experiencia</option>
+                </select>
+                <button onclick="recommendCourses()">Encontrar mi curso</button>
             </div>
-            <p id="no-results-msg" style="display: none; text-align: center;">No se encontraron cursos para tu selección. ¡Inténtalo de nuevo!</p>
-        </div>
+        </section>
 
-        <div class="container about-us" style="text-align: left;">
-            <h2>Quiénes Somos</h2>
-            <p>AprendoYA! es un proyecto de investigación que tiene como objetivo facilitar el descubrimiento de cursos en línea relevantes y de calidad...</p>
-        </div>
-    </div>
+        <section id="results-section" class="content-section">
+            <h3 id="results-title">Cursos Populares</h3>
+            <div id="results-grid" class="results-grid">
+                </div>
+            <p id="no-results-message" class="message" style="display: none;">No se encontraron cursos para tu búsqueda. ¡Inténtalo de nuevo!</p>
+        </section>
+    </main>
 
     <footer>
-        <p>&copy; 2025 AprendoYA! Todos los derechos reservados.</p>
+        <p>&copy; 2025 AprendoYA! - Todos los derechos reservados.</p>
     </footer>
 
-    <div id="quizModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Descubre tu curso ideal</h2>
-            <form id="quizForm">
-                <div class="question">
-                    <label for="interest_modal">¿En qué área te gustaría aprender?</label>
-                    <select name="interest_modal" required>
-                        <option value="" disabled selected>Selecciona un área</option>
-                        <option value="python">Programación con Python</option>
-                        <option value="web_development">Desarrollo Web (HTML, CSS, JS)</option>
-                        <option value="data_science">Ciencia de Datos y Analítica</option>
-                        <option value="cybersecurity">Ciberseguridad</option>
-                        <option value="ai">Inteligencia Artificial</option>
-                        <option value="marketing">Marketing Digital</option>
-                        <option value="excel">Excel y Hojas de Cálculo</option>
-                        <option value="design">Diseño Gráfico</option>
-                    </select>
-                </div>
-                <div class="question">
-                    <label for="level_modal">¿Cuál es tu nivel de experiencia?</label>
-                    <select name="level_modal" required>
-                        <option value="" disabled selected>Selecciona tu nivel</option>
-                        <option value="beginner">Soy principiante</option>
-                        <option value="intermediate">Tengo algo de experiencia</option>
-                    </select>
-                </div>
-                <button type="submit">Ver Recomendaciones</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="learning-path-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Ruta de Aprendizaje Personalizada</h2>
-            <div id="learning-path-content">
-                <div class="loader"></div>
-            </div>
-        </div>
-    </div>
-
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const mainSearchForm = document.getElementById('mainSearchForm');
-        const quizForm = document.getElementById('quizForm');
-        const freeCoursesBtn = document.getElementById('freeCoursesBtn');
-        const geminiBtn = document.getElementById('gemini-cta-button');
-        
-        const quizModal = document.getElementById('quizModal');
-        const openQuizBtn = document.getElementById('openQuizBtn');
-        const closeQuizBtn = quizModal.querySelector('.close-button');
+        // --- Lógica de la Aplicación (JavaScript) ---
 
-        const learningPathModal = document.getElementById('learning-path-modal');
-        const learningPathContent = document.getElementById('learning-path-content');
-        const closeLearningPathBtn = learningPathModal.querySelector('.close-button');
+        // Función para renderizar los cursos en la cuadrícula
+        function displayResults(courses) {
+            const resultsGrid = document.getElementById('results-grid');
+            const noResultsMessage = document.getElementById('no-results-message');
+            resultsGrid.innerHTML = ''; // Limpiar resultados anteriores
 
-        const resultsDiv = document.getElementById('results');
-        const resultsTitle = document.getElementById('results-title');
-        const resultsList = document.getElementById('results-list');
-        const noResultsMsg = document.getElementById('no-results-msg');
-        const geminiCtaContainer = document.getElementById('gemini-cta-container');
+            if (courses && courses.length > 0) {
+                noResultsMessage.style.display = 'none';
+                courses.forEach(course => {
+                    const card = document.createElement('div');
+                    card.className = 'course-card';
 
-        // Variable para guardar la última búsqueda realizada
-        let currentQuery = '';
+                    // El número de estrellas se basa en la calificación (1-5)
+                    const stars = '⭐'.repeat(course.num_subscribers);
 
-        openQuizBtn.addEventListener('click', () => { quizModal.style.display = 'flex'; });
-        closeQuizBtn.addEventListener('click', () => { quizModal.style.display = 'none'; });
-        quizModal.addEventListener('click', (e) => { if (e.target === quizModal) quizModal.style.display = 'none'; });
-
-        closeLearningPathBtn.addEventListener('click', () => { learningPathModal.style.display = 'none'; });
-        learningPathModal.addEventListener('click', (e) => { if (e.target === learningPathModal) learningPathModal.style.display = 'none'; });
-
-        const performSearch = (endpoint, formData, title, event) => {
-            const submitButton = event.target.querySelector('button');
-            const originalText = submitButton ? submitButton.textContent : '';
-            if(submitButton) {
-                submitButton.textContent = 'Buscando...';
-                submitButton.disabled = true;
-            }
-
-            const options = formData ? { method: 'POST', body: formData } : { method: 'GET' };
-
-            fetch(endpoint, options)
-                .then(response => response.json())
-                .then(data => {
-                    displayResults(data.cursos, title);
-                    if (quizModal.style.display === 'flex') quizModal.style.display = 'none';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Hubo un error al procesar tu solicitud.');
-                })
-                .finally(() => {
-                    if(submitButton) {
-                        submitButton.textContent = originalText;
-                        submitButton.disabled = false;
-                    }
+                    card.innerHTML = `
+                        <div class="card-content">
+                            <h4>${course.course_title}</h4>
+                        </div>
+                        <div class="card-footer">
+                            <span class="platform-badge">${course.site}</span>
+                            <span class="star-rating">${stars}</span>
+                        </div>
+                        <a href="${course.url}" target="_blank" rel="noopener noreferrer" class="course-link">Ir al Curso</a>
+                    `;
+                    resultsGrid.appendChild(card);
                 });
-        };
-        
-        mainSearchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(mainSearchForm);
-            const query = formData.get('interes');
-            // Guardamos la búsqueda actual
-            currentQuery = query; 
-            performSearch("{{ url_for('search') }}", formData, `Resultados para: "${query}"`, e);
-        });
+            } else {
+                noResultsMessage.style.display = 'block';
+            }
+        }
 
-        // --- SECCIÓN MODIFICADA ---
-        geminiBtn.addEventListener('click', () => {
-            if (!currentQuery) {
-                alert('Por favor, realiza una búsqueda primero.');
+        // Función para la búsqueda principal
+        async function searchCourses(event) {
+            event.preventDefault(); // Prevenir el envío tradicional del formulario
+            const form = document.getElementById('searchForm');
+            const formData = new FormData(form);
+            const query = formData.get('interes');
+
+            document.getElementById('results-title').textContent = `Resultados para: "${query}"`;
+            
+            const response = await fetch("{{ url_for('search') }}", {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            });
+            const data = await response.json();
+            displayResults(data.cursos);
+        }
+
+        // Función para las recomendaciones personalizadas
+        async function recommendCourses() {
+            const interest = document.getElementById('interest_modal').value;
+            const level = document.getElementById('level_modal').value;
+            
+            if (!interest || !level) {
+                alert('Por favor, selecciona un área y tu nivel de experiencia.');
                 return;
             }
 
-            // Abrimos el modal y mostramos el loader
-            learningPathModal.style.display = 'flex';
-            learningPathContent.innerHTML = '<div class="loader"></div>';
+            document.getElementById('results-title').textContent = 'Cursos Recomendados para ti';
 
-            // Preparamos los datos para enviar a nuestro backend
-            const formData = new FormData();
-            formData.append('query', currentQuery);
+            const formData = new URLSearchParams();
+            formData.append('interest_modal', interest);
+            formData.append('level_modal', level);
 
-            // Llamamos a nuestro nuevo endpoint /learning_path
-            fetch("{{ url_for('learning_path') }}", {
+            const response = await fetch("{{ url_for('recommend') }}", {
                 method: 'POST',
                 body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Función para renderizar la ruta de aprendizaje
-                renderLearningPath(data);
-            })
-            .catch(error => {
-                console.error('Error al generar la ruta de aprendizaje:', error);
-                learningPathContent.innerHTML = '<p style="color: red;">Lo sentimos, no se pudo generar la ruta de aprendizaje en este momento. Por favor, inténtalo de nuevo más tarde.</p>';
             });
-        });
-
-        function renderLearningPath(pathData) {
-            // Si no obtenemos datos, mostramos un mensaje de error
-            if (!pathData || (pathData.fundamentos.length === 0 && pathData.desarrollo.length === 0 && pathData.especializacion.length === 0)) {
-                learningPathContent.innerHTML = `
-                    <h3>No pudimos generar una ruta automática para "${currentQuery}"</h3>
-                    <p>Esto puede suceder si no tenemos suficientes cursos de diferentes niveles sobre este tema. ¡Intenta con una búsqueda más general!</p>
-                `;
-                return;
-            }
-            
-            let html = `<h3>Ruta de Aprendizaje Sugerida para: ${currentQuery}</h3>`;
-
-            // Función auxiliar para crear la lista de cursos para una sección
-            const createCourseList = (courses) => {
-                if (!courses || courses.length === 0) return '<li>No se encontraron cursos para esta etapa.</li>';
-                return courses.map(course => `
-                    <li>
-                        <a href="${course.url}" target="_blank">${course.course_title}</a>
-                        <small>(${course.num_subscribers.toLocaleString('es-ES')} suscriptores)</small>
-                    </li>
-                `).join('');
-            };
-
-            // Construimos el HTML para cada sección
-            html += `
-                <h4>🚀 1. Fundamentos (Para Empezar)</h4>
-                <ul>${createCourseList(pathData.fundamentos)}</ul>
-                
-                <h4>🛠️ 2. Desarrollo de Habilidades</h4>
-                <ul>${createCourseList(pathData.desarrollo)}</ul>
-
-                <h4>⭐ 3. Especialización y Proyectos</h4>
-                <ul>${createCourseList(pathData.especializacion)}</ul>
-            `;
-
-            // Actualizamos el contenido del modal
-            learningPathContent.innerHTML = html;
-        }
-        // --- FIN DE LA SECCIÓN MODIFICADA ---
-
-        function displayResults(cursos, title) {
-            resultsList.innerHTML = '';
-            noResultsMsg.style.display = 'none';
-            geminiCtaContainer.style.display = 'none';
-            resultsTitle.textContent = title;
-
-            if (cursos && cursos.length > 0) {
-                cursos.forEach(curso => {
-                    const li = document.createElement('li');
-                    const subscribers = curso.num_subscribers ? curso.num_subscribers.toLocaleString('es-ES') : 'N/A';
-                    li.innerHTML = `
-                        <a href="${curso.url}" target="_blank" rel="noopener noreferrer">${curso.course_title}</a>
-                        <div class="course-meta">
-                            <span class="source-badge">${curso.site || 'N/A'}</span>
-                            <span class="subscribers">⭐ ${subscribers}</span>
-                        </div>
-                    `;
-                    resultsList.appendChild(li);
-                });
-                resultsDiv.style.display = 'block';
-                geminiCtaContainer.style.display = 'block';
-            } else {
-                noResultsMsg.style.display = 'block';
-                resultsDiv.style.display = 'block';
-            }
-            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const data = await response.json();
+            displayResults(data.cursos);
         }
 
-        quizForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(quizForm);
-            // Obtenemos el texto de la opción seleccionada para usarlo como 'currentQuery'
-            const select = quizForm.querySelector('select[name="interest_modal"]');
-            const selectedText = select.options[select.selectedIndex].text;
-            currentQuery = formData.get('interest_modal'); // Guardamos la clave, ej: "python"
-            
-            performSearch("{{ url_for('recommend') }}", formData, `Cursos recomendados para: "${selectedText}"`, e);
-        });
+        // Función para cargar los cursos populares al inicio
+        async function loadPopularCourses() {
+            document.getElementById('results-title').textContent = 'Cursos Populares';
+            const response = await fetch("{{ url_for('free_courses') }}");
+            const data = await response.json();
+            displayResults(data.cursos);
+        }
 
-        freeCoursesBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentQuery = ''; // Reseteamos la query ya que no es una búsqueda específica
-            performSearch("{{ url_for('free_courses') }}", null, 'Cursos Gratuitos Populares', e);
-        });
-    });
-</script>
+        // Cargar cursos populares cuando la página se carga por primera vez
+        document.addEventListener('DOMContentLoaded', loadPopularCourses);
+
+    </script>
 </body>
 </html>
