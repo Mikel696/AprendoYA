@@ -31,41 +31,55 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* --- HEADER Y LOGOS --- */
-        .main-header { background-color: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.8rem 0; position: sticky; top: 0; z-index: 100; }
+        /* --- HEADER Y LOGOS (SECCIÓN MODIFICADA) --- */
+        .main-header { background-color: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.5rem 0; position: sticky; top: 0; z-index: 100; }
         .navbar { display: flex; justify-content: space-between; align-items: center; }
         .navbar-brand { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .logo-buho { height: 50px; }
+        .logo-buho {
+            height: 65px; /* Más grande */
+            width: 65px;
+            border-radius: 50%; /* Forma circular/ovalada */
+            border: 3px solid var(--secondary-color); /* Contorno con color secundario */
+            padding: 4px;
+            background-color: white;
+            box-shadow: 0 0 15px rgba(80, 227, 194, 0.5); /* Sombra para resaltar */
+        }
         .navbar-brand h1 { font-size: 1.8rem; color: white; font-weight: 700; }
         
-        /* --- BÚSQUEDA PRINCIPAL --- */
+        /* --- BÚSQUEDA PRINCIPAL (SECCIÓN MODIFICADA) --- */
         .search-hero { padding: 5rem 1rem; text-align: center; }
         .search-hero h2 { font-size: 3rem; margin-bottom: 1rem; color: #2c3e50; }
         .search-hero p { font-size: 1.2rem; color: var(--subtle-text-color); margin-bottom: 2.5rem; }
-        .search-container { display: flex; align-items: center; max-width: 800px; margin: 0 auto; }
+        .search-container { position: relative; display: flex; align-items: center; max-width: 800px; margin: 0 auto; }
         .logo-ay-search {
-            height: 60px;
-            margin-right: -20px; /* Superposición sutil */
-            z-index: 1;
-            transition: transform 0.4s ease-in-out;
+            position: absolute; /* Posicionamiento absoluto para control total */
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 50px;
+            width: 50px;
+            border-radius: 50%; /* Forma circular/ovalada */
+            border: 2px solid var(--primary-color); /* Contorno azul */
+            padding: 3px;
+            background-color: white;
+            z-index: 2;
+            transition: transform 0.6s ease-in-out; /* Animación preservada */
         }
-        .search-container:hover .logo-ay-search { transform: rotate(360deg); }
+        .search-container:hover .logo-ay-search { transform: translateY(-50%) rotate(360deg); }
         .search-form { display: flex; flex-grow: 1; box-shadow: var(--shadow); }
-        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem 1rem 30px; /* Padding izquierdo para el logo */ font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; }
+        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem 1rem 65px; /* Padding izquierdo para no tapar el logo */ font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; }
         .search-form button { border: none; background: var(--primary-color); color: white; padding: 1rem 2.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 0 50px 50px 0; font-weight: 600; }
 
-        /* --- LAYOUT PRINCIPAL --- */
+        /* --- LAYOUT PRINCIPAL (SIN CAMBIOS) --- */
         .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 2.5rem; margin-top: 3rem; }
         .sidebar { grid-column: 1 / 2; }
         .courses-display { grid-column: 2 / 3; }
-
-        /* --- SIDEBAR --- */
         .sidebar-widget { background-color: var(--surface-color); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem; }
         .sidebar-widget h3 { font-size: 1.3rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
         .sidebar-widget select, .sidebar-widget button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.8rem; background-color: #fff; }
         .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; border: none; }
         
-        /* --- TARJETAS DE CURSOS --- */
+        /* --- TARJETAS DE CURSOS (SIN CAMBIOS) --- */
         .results-header h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-color); border: none; }
         .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
         .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; text-decoration: none; color: var(--text-color); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid var(--primary-color); }
@@ -76,7 +90,7 @@
         .platform-badge { background-color: var(--background-gradient); padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: 600; color: var(--subtle-text-color); }
         .star-rating { font-size: 1.1rem; color: #f39c12; }
         
-        /* --- VENTANA MODAL --- */
+        /* --- VENTANA MODAL (SIN CAMBIOS) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 200; }
         .modal-content { background: var(--surface-color); padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; position: relative; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #aaa; cursor: pointer; }
