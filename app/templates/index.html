@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprendoYA! - Tu Guía Inteligente de Cursos</title>
-    <link rel="icon" href="{{ url_for('static', filename='AprendoYA!.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='Buho.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-color: #4A90E2; /* Un azul más moderno */
-            --secondary-color: #50E3C2; /* Un turquesa vibrante */
+            --primary-color: #4A90E2;
+            --secondary-color: #50E3C2;
             --background-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
             --surface-color: #ffffff;
             --text-color: #333;
@@ -31,30 +31,28 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* --- HEADER Y LOGO --- */
-        .main-header { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 0.8rem 0; position: sticky; top: 0; z-index: 100; }
+        /* --- HEADER Y LOGOS --- */
+        .main-header { background-color: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.8rem 0; position: sticky; top: 0; z-index: 100; }
         .navbar { display: flex; justify-content: space-between; align-items: center; }
         .navbar-brand { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .navbar-brand img {
-            height: 50px;
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            padding: 4px;
-            background-color: white;
-            transition: transform 0.3s ease;
-        }
-        .navbar-brand:hover img { transform: rotate(360deg) scale(1.1); }
-        .navbar-brand h1 { font-size: 1.8rem; color: var(--text-color); font-weight: 700; }
-
+        .logo-buho { height: 50px; }
+        .navbar-brand h1 { font-size: 1.8rem; color: white; font-weight: 700; }
+        
         /* --- BÚSQUEDA PRINCIPAL --- */
         .search-hero { padding: 5rem 1rem; text-align: center; }
         .search-hero h2 { font-size: 3rem; margin-bottom: 1rem; color: #2c3e50; }
         .search-hero p { font-size: 1.2rem; color: var(--subtle-text-color); margin-bottom: 2.5rem; }
-        .search-form { display: flex; max-width: 700px; margin: 0 auto; }
-        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem; font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; transition: border-color 0.3s; }
-        .search-form input:focus { border-color: var(--primary-color); }
-        .search-form button { border: none; background: var(--primary-color); color: white; padding: 1rem 2.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 0 50px 50px 0; font-weight: 600; transition: background-color 0.3s; }
-        .search-form button:hover { background: #357ABD; }
+        .search-container { display: flex; align-items: center; max-width: 800px; margin: 0 auto; }
+        .logo-ay-search {
+            height: 60px;
+            margin-right: -20px; /* Superposición sutil */
+            z-index: 1;
+            transition: transform 0.4s ease-in-out;
+        }
+        .search-container:hover .logo-ay-search { transform: rotate(360deg); }
+        .search-form { display: flex; flex-grow: 1; box-shadow: var(--shadow); }
+        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem 1rem 30px; /* Padding izquierdo para el logo */ font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; }
+        .search-form button { border: none; background: var(--primary-color); color: white; padding: 1rem 2.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 0 50px 50px 0; font-weight: 600; }
 
         /* --- LAYOUT PRINCIPAL --- */
         .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 2.5rem; margin-top: 3rem; }
@@ -65,13 +63,12 @@
         .sidebar-widget { background-color: var(--surface-color); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem; }
         .sidebar-widget h3 { font-size: 1.3rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
         .sidebar-widget select, .sidebar-widget button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.8rem; background-color: #fff; }
-        .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; border: none; transition: background-color 0.3s; }
-        .sidebar-widget button:hover { background-color: #48a973; }
+        .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; border: none; }
         
         /* --- TARJETAS DE CURSOS --- */
         .results-header h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-color); border: none; }
         .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-        .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; text-decoration: none; color: var(--text-color); transition: transform 0.3s, box-shadow 0.3s; }
+        .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; text-decoration: none; color: var(--text-color); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid var(--primary-color); }
         .course-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
         .card-content { padding: 1.25rem; flex-grow: 1; }
         .card-content h4 { font-size: 1.05rem; margin-bottom: 0.75rem; line-height: 1.4; }
@@ -82,25 +79,22 @@
         /* --- VENTANA MODAL --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 200; }
         .modal-content { background: var(--surface-color); padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #aaa; cursor: pointer; line-height: 1; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #aaa; cursor: pointer; }
         .modal-content h2 { font-size: 1.8rem; color: var(--primary-color); margin-top: 0; }
         .path-section h3 { font-size: 1.3rem; margin: 1.5rem 0 0.8rem 0; border-left: 4px solid var(--secondary-color); padding-left: 10px; }
         .path-section ul { list-style: none; padding-left: 0; }
-        .path-section li a { font-weight: 600; text-decoration: none; color: var(--text-color); display: block; background: var(--background-gradient); padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; transition: background-color 0.3s, transform 0.3s; }
-        .path-section li a:hover { background-color: #e9ecef; transform: translateX(5px); }
+        .path-section li a { font-weight: 600; text-decoration: none; color: var(--text-color); display: block; background: var(--background-gradient); padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; }
 
         footer { text-align: center; padding: 2rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1; }
         
-        @media (max-width: 992px) {
-            .main-content { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 992px) { .main-content { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <header class="main-header">
         <div class="container navbar">
             <a href="/" class="navbar-brand">
-                <img src="{{ url_for('static', filename='AprendoYA!.png') }}" alt="AprendoYA! Logo">
+                <img src="{{ url_for('static', filename='Buho.png') }}" class="logo-buho" alt="Logo Búho">
                 <h1>AprendoYA!</h1>
             </a>
         </div>
@@ -110,10 +104,13 @@
         <section class="search-hero">
             <h2>Descubre el Curso Perfecto para Ti</h2>
             <p>Tu guía inteligente para encontrar cursos en las mejores plataformas educativas.</p>
-            <form id="searchForm" class="search-form" onsubmit="event.preventDefault(); searchCourses();">
-                <input type="text" id="search-input" placeholder="¿Qué quieres aprender hoy?" required>
-                <button type="submit">Buscar</button>
-            </form>
+            <div class="search-container">
+                <img src="{{ url_for('static', filename='AprendoYA!.png') }}" class="logo-ay-search" alt="AprendoYA! Icono">
+                <form id="searchForm" class="search-form" onsubmit="event.preventDefault(); searchCourses();">
+                    <input type="text" id="search-input" placeholder="¿Qué quieres aprender hoy?" required>
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
         </section>
 
         <div class="container main-content">
@@ -179,7 +176,6 @@
                     card.href = course.url;
                     card.target = '_blank';
                     card.rel = 'noopener noreferrer';
-                    
                     const stars = '⭐'.repeat(course.num_subscribers);
                     card.innerHTML = `
                         <div class="card-content"><h4>${course.course_title}</h4></div>
@@ -198,11 +194,7 @@
                 const response = await fetch(endpoint, options);
                 const data = await response.json();
                 displayCourses(data.cursos);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                noResultsMessage.textContent = 'Hubo un error al cargar los cursos.';
-                noResultsMessage.style.display = 'block';
-            }
+            } catch (error) { console.error('Error fetching data:', error); noResultsMessage.style.display = 'block'; }
         }
 
         function searchCourses() {
@@ -227,7 +219,6 @@
             fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
         });
 
-        // --- LÓGICA PARA LA RUTA DE APRENDIZAJE ---
         function closeModal() { modal.style.display = 'none'; }
         
         function buildPathSection(courses, title) {
@@ -240,24 +231,18 @@
 
         async function generateLearningPath() {
             const query = document.getElementById('search-input').value;
-            if (!query) {
-                alert('Escribe un tema en la barra de búsqueda para generar una ruta.');
-                return;
-            }
+            if (!query) { alert('Escribe un tema en la barra de búsqueda para generar una ruta.'); return; }
             modalTitle.textContent = `Ruta de Aprendizaje para: ${query}`;
             modalBody.innerHTML = '<p>Generando ruta, por favor espera...</p>';
             modal.style.display = 'flex';
-
             const formData = new URLSearchParams();
             formData.append('query', query);
             const response = await fetch("{{ url_for('learning_path_route') }}", { method: 'POST', body: formData });
             const pathData = await response.json();
-
             let pathHtml = buildPathSection(pathData.fundamentos, '🚀 1. Fundamentos');
             pathHtml += buildPathSection(pathData.desarrollo, '🛠️ 2. Desarrollo de Habilidades');
             pathHtml += buildPathSection(pathData.especializacion, '⭐ 3. Especialización y Proyectos');
-            
-            modalBody.innerHTML = pathHtml || '<p>No se encontraron suficientes cursos para generar una ruta de aprendizaje sobre este tema.</p>';
+            modalBody.innerHTML = pathHtml || '<p>No se encontraron cursos para generar una ruta.</p>';
         }
 
         window.onclick = function(event) { if (event.target == modal) { closeModal(); } }

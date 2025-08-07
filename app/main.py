@@ -8,10 +8,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def get_topics_from_keywords():
     """
-    Genera una lista de temas a partir de las palabras clave de la lógica de calificación.
+    Genera una lista de temas a partir de las palabras clave de la lógica de calificación
+    para poblar el menú desplegable de recomendaciones.
     """
-    # Esta es una selección curada de las palabras clave más importantes
-    # para usar en el menú desplegable.
     topics_dict = {
         'python': 'Python', 'javascript': 'JavaScript', 'java': 'Java', 'c#': 'C#',
         'html': 'HTML & CSS', 'sql': 'SQL', 'react': 'React', 'angular': 'Angular',
@@ -20,16 +19,16 @@ def get_topics_from_keywords():
         'excel': 'Excel', 'power bi': 'Power BI', 'marketing': 'Marketing Digital',
         'seo': 'SEO', 'hacking': 'Ethical Hacking', 'ciberseguridad': 'Ciberseguridad',
         'aws': 'AWS', 'azure': 'Azure', 'docker': 'Docker', 'diseño gráfico': 'Diseño Gráfico',
-        'photoshop': 'Photoshop', 'figma': 'Figma', 'finanzas': 'Finanzas', 'trading': 'Trading'
+        'photoshop': 'Photoshop', 'figma': 'Figma', 'finanzas': 'Finanzas', 'trading': 'Trading',
+        'unity': 'Unity', 'blender': 'Blender', 'contabilidad': 'Contabilidad'
     }
-    # Creamos una lista de diccionarios para usarla fácilmente en la plantilla
     return [{'value': key, 'name': name} for key, name in topics_dict.items()]
 
 def load_data():
     """
-    Carga el archivo de datos final y pre-procesado.
+    Carga el archivo de datos final y pre-procesado con las calificaciones de estrellas.
     """
-    try:
+    try
         path = os.path.join(basedir, "data", "cursos_calificados_final.csv")
         df = pd.read_csv(path, encoding='utf-8')
         df['title_lower'] = df['course_title'].str.lower()
@@ -39,13 +38,13 @@ def load_data():
         print(f"ERROR CRÍTICO AL CARGAR 'cursos_calificados_final.csv': {e}")
         return pd.DataFrame()
 
+# Se cargan los datos y se generan los temas una sola vez al iniciar la aplicación
 master_df = load_data()
-# Generamos la lista de temas una sola vez
 TOPICS_LIST = get_topics_from_keywords()
 
 def perform_search(query, level=None):
     """
-    Realiza una búsqueda con el ranking por estrellas.
+    Realiza una búsqueda con el ranking por estrellas, relevancia y nivel.
     """
     if master_df.empty or not query:
         return []
@@ -56,21 +55,25 @@ def perform_search(query, level=None):
     if results_df.empty:
         return []
         
+    # Puntuación de Nivel (penaliza cursos de principiantes en búsquedas generales)
     level_score = pd.Series(0, index=results_df.index)
     if level == 'beginner':
         level_score += results_df['title_lower'].str.contains('principiantes|básico|cero|inicial', na=False, regex=True).astype(int)
     
+    # Puntuación de Relevancia y Calidad
     results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x and len(x) > 0 else 0)
     results_df['level_score'] = level_score
     
     scaler = MinMaxScaler()
     results_df['quality_score'] = scaler.fit_transform(results_df[['star_rating']]).flatten()
     
+    # Puntuación final combinada
     results_df['final_score'] = (results_df['relevance_score'] * 0.4) + \
                                 (results_df['quality_score'] * 0.5) - \
-                                (results_df['level_score'] * 0.1) # Penalizamos un poco los cursos básicos en búsquedas generales
+                                (results_df['level_score'] * 0.1) # Pequeña penalización a cursos básicos
     
     ranked_results = results_df.sort_values(by='final_score', ascending=False)
+    # Devolvemos 9 resultados para que se vea bien en la cuadrícula
     return ranked_results.head(9).rename(columns={'star_rating': 'num_subscribers'}).to_dict(orient='records')
 
 def generate_learning_path(query):
@@ -89,9 +92,11 @@ def generate_learning_path(query):
     especializacion = sorted_courses[sorted_courses['star_rating'] == 5].head(2).to_dict(orient='records')
     return {'fundamentos': fundamentos, 'desarrollo': desarrollo, 'especializacion': especializacion}
 
+# --- Rutas de la Aplicación (Endpoints) ---
+
 @app.route('/')
 def home():
-    # Ahora pasamos la lista de temas a la plantilla
+    # Pasamos la lista de temas a la plantilla para crear el menú desplegable dinámicamente
     return render_template('index.html', topics=TOPICS_LIST)
 
 @app.route('/search', methods=['POST'])
@@ -111,6 +116,7 @@ def recommend():
 def popular_courses():
     if master_df.empty:
         return jsonify(cursos=[])
+    # Los cursos populares son los de 5 estrellas
     popular_selection = master_df[master_df['star_rating'] == 5].sample(n=9, replace=True)
     return jsonify(cursos=popular_selection.rename(columns={'star_rating': 'num_subscribers'}).to_dict(orient='records'))
 
