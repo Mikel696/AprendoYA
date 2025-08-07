@@ -28,7 +28,8 @@ def load_data():
     """
     Carga el archivo de datos final y pre-procesado con las calificaciones de estrellas.
     """
-    try
+    # ----- AQUÍ ESTABA EL ERROR (FALTABA UN ':') -----
+    try:
         path = os.path.join(basedir, "data", "cursos_calificados_final.csv")
         df = pd.read_csv(path, encoding='utf-8')
         df['title_lower'] = df['course_title'].str.lower()
