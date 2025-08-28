@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprendoYA! - Tu Guía Inteligente de Cursos</title>
-    <link rel="icon" href="{{ url_for('static', filename='Buho.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='OsoAnteojos.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -31,6 +31,33 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
         
+        /* --- ESTILOS PARA EL BANNER --- */
+        .banner-container {
+            margin-bottom: 2.5rem; /* Para mantener el espaciado que tenía el <p> */
+            overflow: hidden; /* Asegura que los bordes redondeados se apliquen bien */
+            border-radius: 20px; /* Bordes suavizados */
+            box-shadow: var(--shadow);
+        }
+
+        .hero-banner {
+            width: 100%;
+            display: block;
+            border-radius: 20px; /* Bordes suavizados */
+            animation: subtle-float 6s ease-in-out infinite; /* Animación de movimiento */
+        }
+
+        @keyframes subtle-float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
         /* --- HEADER Y LOGOS (SECCIÓN MODIFICADA) --- */
         .main-header { background-color: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.5rem 0; position: sticky; top: 0; z-index: 100; }
         .navbar { display: flex; justify-content: space-between; align-items: center; }
@@ -108,7 +135,7 @@
     <header class="main-header">
         <div class="container navbar">
             <a href="/" class="navbar-brand">
-                <img src="{{ url_for('static', filename='Buho.png') }}" class="logo-buho" alt="Logo Búho">
+                <img src="{{ url_for('static', filename='OsoAnteojos.png') }}" class="logo-buho" alt="Logo OsoAnteojos">
                 <h1>AprendoYA!</h1>
             </a>
         </div>
@@ -116,8 +143,9 @@
 
     <main>
         <section class="search-hero">
-            <h2>Descubre el Curso Perfecto para Ti</h2>
-            <p>Tu guía inteligente para encontrar cursos en las mejores plataformas educativas.</p>
+            <div class="banner-container">
+                <img src="{{ url_for('static', filename='Banner.png') }}" class="hero-banner" alt="Banner AprendoYA!">
+            </div>
             <div class="search-container">
                 <img src="{{ url_for('static', filename='AprendoYA!.png') }}" class="logo-ay-search" alt="AprendoYA! Icono">
                 <form id="searchForm" class="search-form" onsubmit="event.preventDefault(); searchCourses();">
