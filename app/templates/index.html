@@ -33,22 +33,25 @@
         
         /* --- ESTILOS PARA EL BANNER (AJUSTADO) --- */
         .banner-container {
-            max-width: 960px; /* Más ancho, como solicitado */
+            max-width: 1040px; /* Aún más ancho */
+            height: 100px; /* Altura fija y reducida para recortar */
             margin-left: auto;
             margin-right: auto;
             margin-bottom: 2.5rem;
-            overflow: hidden;
-            border-radius: 20px;
+            overflow: hidden; /* Oculta el resto de la imagen */
+            border-radius: 25px; /* Ajuste de radio para el nuevo tamaño */
             box-shadow: var(--shadow);
+            border: 4px solid var(--secondary-color); /* Borde verde del logo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .hero-banner {
             width: 100%;
             display: block;
-            border-radius: 20px;
-            mix-blend-mode: multiply; /* Clave para la transparencia del fondo blanco */
-            opacity: 0.9; /* Ligeramente transparente */
-            animation: subtle-float 8s ease-in-out infinite; /* Animación más lenta */
+            mix-blend-mode: multiply;
+            opacity: 0.9;
         }
 
         @keyframes subtle-float {
