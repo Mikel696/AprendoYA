@@ -705,7 +705,7 @@
             <a href="#" class="close-menu-link">Inicio</a>
             <a href="#como-funciona" class="close-menu-link">Cómo Funciona</a>
             <a id="blog-btn" style="cursor: pointer;">Blog</a>
-            <a href="#faq" class="close-menu-link">Preguntas Frecuentes</a>
+            <a id="faq-menu-btn" style="cursor: pointer;" class="close-menu-link">Preguntas Frecuentes</a>
             <a href="#footer-contact" class="close-menu-link">Contacto</a>
         </nav>
     </div>
@@ -761,49 +761,7 @@
             </div>
         </section>
 
-        <section id="faq" class="faq-section">
-            <div class="container">
-                <h2>¿Tienes Preguntas?</h2>
-                <div class="faq-accordion">
-                    <div class="accordion-item">
-                        <button class="accordion-header">
-                            ¿AprendoYA ofrece los cursos directamente?
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="accordion-content">
-                            <p>No, nosotros no creamos los cursos. Nuestra especialidad es investigar y seleccionar los mejores cursos de las plataformas más reconocidas del mundo para construir una ruta de aprendizaje optimizada y personalizada solo para ti.</p>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <button class="accordion-header">
-                            ¿Este servicio de recomendación tiene algún costo para mí?
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="accordion-content">
-                            <p>Nuestro servicio de creación de rutas de aprendizaje es completamente gratuito para el estudiante. Funcionamos a través de alianzas y enlaces de afiliado con las plataformas educativas, sin que eso afecte el precio que tú pagas por el curso.</p>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <button class="accordion-header">
-                            ¿Qué pasa si ya tengo conocimientos en un área?
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="accordion-content">
-                            <p>¡Perfecto! Durante nuestro proceso inicial nos cuentas tu nivel de experiencia. Así, tu ruta de aprendizaje se adapta, omitiendo los temas que ya dominas y enfocándose directamente en las habilidades que necesitas para alcanzar tu siguiente nivel.</p>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <button class="accordion-header">
-                            ¿Por qué debería usar AprendoYA en lugar de buscar los cursos yo mismo?
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="accordion-content">
-                            <p>El universo del e-learning es enorme y es fácil perderse. Te ahorramos decenas de horas de investigación y el riesgo de elegir cursos de baja calidad. Te entregamos un camino directo, probado y eficiente hacia tu objetivo profesional.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        
 
         <div class="container main-content">
             <aside class="sidebar">
@@ -882,6 +840,51 @@
         </div>
     </div>
     
+
+    <div id="faq-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('faq-modal')">&times;</span>
+            <h2>¿Tienes Preguntas?</h2>
+            <div class="faq-accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        ¿AprendoYA ofrece los cursos directamente?
+                        <span class="icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>No, nosotros no creamos los cursos. Nuestra especialidad es investigar y seleccionar los mejores cursos de las plataformas más reconocidas del mundo para construir una ruta de aprendizaje optimizada y personalizada solo para ti.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        ¿Este servicio de recomendación tiene algún costo para mí?
+                        <span class="icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>Nuestro servicio de creación de rutas de aprendizaje es completamente gratuito para el estudiante. Funcionamos a través de alianzas y enlaces de afiliado con las plataformas educativas, sin que eso afecte el precio que tú pagas por el curso.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        ¿Qué pasa si ya tengo conocimientos en un área?
+                        <span class="icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>¡Perfecto! Durante nuestro proceso inicial nos cuentas tu nivel de experiencia. Así, tu ruta de aprendizaje se adapta, omitiendo los temas que ya dominas y enfocándose directamente en las habilidades que necesitas para alcanzar tu siguiente nivel.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        ¿Por qué debería usar AprendoYA en lugar de buscar los cursos yo mismo?
+                        <span class="icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>El universo del e-learning es enorme y es fácil perderse. Te ahorramos decenas de horas de investigación y el riesgo de elegir cursos de baja calidad. Te entregamos un camino directo, probado y eficiente hacia tu objetivo profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="login-modal" class="modal-overlay">
         <div class="modal-content login-modal-content"><span class="modal-close"
@@ -1020,6 +1023,7 @@
 
             document.getElementById('login-btn').addEventListener('click', () => openModal('login-modal'));
             document.getElementById('register-btn').addEventListener('click', () => openModal('register-modal'));
+            document.getElementById('faq-menu-btn').addEventListener('click', () => openModal('faq-modal'));
             
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
