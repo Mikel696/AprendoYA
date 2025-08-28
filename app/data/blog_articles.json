@@ -1,0 +1,20 @@
+[
+    {
+        "id": "motivacion-aprendizaje",
+        "title": "5 Claves para la Motivación en el Aprendizaje Autodidacta",
+        "summary": "Descubre cómo mantenerte enfocado y alcanzar tus metas de aprendizaje sin perder el impulso.",
+        "content": "<p>El aprendizaje autodidacta es un viaje emocionante, pero a veces puede ser difícil mantener la motivación. Aquí te presentamos 5 claves para que no pierdas el rumbo:</p><ul><li><b>Establece metas claras y realistas:</b> Define qué quieres lograr y en cuánto tiempo.</li><li><b>Celebra tus pequeños logros:</b> Cada paso cuenta, reconoce tu progreso.</li><li><b>Encuentra tu porqué:</b> Conecta tu aprendizaje con tus pasiones y objetivos a largo plazo.</li><li><b>Crea una rutina de estudio:</b> La consistencia es clave para el éxito.</li><li><b>Busca una comunidad:</b> Compartir con otros te mantendrá inspirado y conectado.</li></ul><p>¡Recuerda que el conocimiento es poder y tu esfuerzo vale la pena!</p>"
+    },
+    {
+        "id": "fullstack-developer",
+        "title": "¿Qué es un Full-Stack Developer y Cómo Convertirte en Uno?",
+        "summary": "Una guía completa sobre el perfil más demandado en tecnología y la ruta para llegar a serlo.",
+        "content": "<p>Un <b>Full-Stack Developer</b> es un ingeniero de software que trabaja tanto en el frontend (la parte visible de una aplicación) como en el backend (la lógica del servidor y la base de datos). Son profesionales versátiles y muy demandados en la industria tecnológica.</p><h3>Ruta para convertirte en Full-Stack:</h3><ol><li><b>Fundamentos de la Web:</b> HTML, CSS, JavaScript.</li><li><b>Frameworks Frontend:</b> React, Angular o Vue.js.</li><li><b>Lenguajes Backend:</b> Python (Django/Flask), Node.js (Express), Java (Spring), etc.</li><li><b>Bases de Datos:</b> SQL (PostgreSQL, MySQL) y NoSQL (MongoDB).</li><li><b>Control de Versiones:</b> Git y GitHub.</li><li><b>Despliegue:</b> Docker, AWS, Azure, Heroku.</li></ol><p>Ser un Full-Stack requiere dedicación y aprendizaje continuo, pero las oportunidades son inmensas.</p>"
+    },
+    {
+        "id": "ia-estudio",
+        "title": "3 Herramientas de IA que Revolucionarán tu Forma de Estudiar",
+        "summary": "Aprende a usar la inteligencia artificial a tu favor para optimizar tu proceso de aprendizaje.",
+        "content": "<p>La inteligencia artificial está transformando la educación. Aquí te presentamos 3 herramientas de IA que pueden potenciar tu estudio:</p><ul><li><b>Asistentes de escritura con IA:</b> Herramientas como Grammarly o Jasper.ai pueden ayudarte a mejorar tu redacción y a generar ideas.</li><li><b>Plataformas de aprendizaje adaptativo:</b> Coursera, edX y otras utilizan IA para personalizar tu ruta de aprendizaje según tu progreso y estilo.</li><li><b>Herramientas de resumen y extracción de información:</b> Aplicaciones como SummarizeBot o QuillBot pueden ayudarte a procesar grandes volúmenes de texto de manera eficiente.</li></ul><p>¡Aprovecha la IA para estudiar de forma más inteligente, no más difícil!</p>"
+    }
+]
