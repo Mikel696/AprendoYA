@@ -31,19 +31,24 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* --- ESTILOS PARA EL BANNER --- */
+        /* --- ESTILOS PARA EL BANNER (AJUSTADO) --- */
         .banner-container {
-            margin-bottom: 2.5rem; /* Para mantener el espaciado que tenía el <p> */
-            overflow: hidden; /* Asegura que los bordes redondeados se apliquen bien */
-            border-radius: 20px; /* Bordes suavizados */
+            max-width: 800px; /* Limita el ancho para que no sea exagerado */
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 2.5rem;
+            overflow: hidden;
+            border-radius: 20px;
             box-shadow: var(--shadow);
         }
 
         .hero-banner {
             width: 100%;
             display: block;
-            border-radius: 20px; /* Bordes suavizados */
-            animation: subtle-float 6s ease-in-out infinite; /* Animación de movimiento */
+            border-radius: 20px;
+            mix-blend-mode: multiply; /* Clave para la transparencia del fondo blanco */
+            opacity: 0.9; /* Ligeramente transparente */
+            animation: subtle-float 8s ease-in-out infinite; /* Animación más lenta */
         }
 
         @keyframes subtle-float {
@@ -51,7 +56,7 @@
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-10px);
+                transform: translateY(-6px); /* Movimiento más sutil */
             }
             100% {
                 transform: translateY(0px);
