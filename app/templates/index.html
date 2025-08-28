@@ -33,18 +33,14 @@
         
         /* --- ESTILOS PARA EL BANNER (AJUSTADO) --- */
         .banner-container {
-            max-width: 1040px; /* Aún más ancho */
-            height: 200px; /* Altura duplicada por petición urgente */
+            max-width: 1040px; /* Ancho final */
             margin-left: auto;
             margin-right: auto;
             margin-bottom: 2.5rem;
-            overflow: hidden; /* Oculta el resto de la imagen */
-            border-radius: 25px; /* Ajuste de radio para el nuevo tamaño */
-            box-shadow: var(--shadow);
             border: 4px solid var(--secondary-color); /* Borde verde del logo */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border-radius: 22px; /* Radio de borde final */
+            box-shadow: var(--shadow);
+            line-height: 0; /* Previene espacios extra */
         }
 
         .hero-banner {
@@ -52,18 +48,7 @@
             display: block;
             mix-blend-mode: multiply;
             opacity: 0.9;
-        }
-
-        @keyframes subtle-float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-6px); /* Movimiento más sutil */
-            }
-            100% {
-                transform: translateY(0px);
-            }
+            border-radius: 18px; /* Radio interior para que encaje con el contenedor */
         }
 
         /* --- HEADER Y LOGOS (SECCIÓN MODIFICADA) --- */
