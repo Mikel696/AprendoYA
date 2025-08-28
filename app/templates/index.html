@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-color: #4A90E2;
@@ -21,16 +22,30 @@
             --shadow: 0 6px 24px rgba(0, 0, 0, 0.09);
             --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.14);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--background-gradient);
             color: var(--text-color);
             line-height: 1.7;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
-        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
         .banner-container {
             max-width: 1100px;
             height: 188px;
@@ -53,13 +68,38 @@
         }
 
         @keyframes vertical-pan {
-            from { transform: translateY(0); }
-            to { transform: translateY(calc(-100% + 188px)); }
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(calc(-100% + 188px));
+            }
         }
 
-        .main-header { background-color: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.5rem 0; position: sticky; top: 0; z-index: 100; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; }
-        .navbar-brand { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .main-header {
+            background-color: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
         .logo-buho {
             height: 65px;
             width: 65px;
@@ -69,10 +109,26 @@
             background-color: white;
             box-shadow: 0 0 15px rgba(80, 227, 194, 0.5);
         }
-        .navbar-brand h1 { font-size: 1.8rem; color: white; font-weight: 700; }
-        
-        .search-hero { padding: 5rem 1rem; text-align: center; }
-        .search-container { position: relative; display: flex; align-items: center; max-width: 800px; margin: 0 auto; }
+
+        .navbar-brand h1 {
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .search-hero {
+            padding: 5rem 1rem;
+            text-align: center;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         .logo-ay-search {
             position: absolute;
             left: 8px;
@@ -87,38 +143,201 @@
             z-index: 2;
             transition: transform 0.6s ease-in-out;
         }
-        .search-container:hover .logo-ay-search { transform: translateY(-50%) rotate(360deg); }
-        .search-form { display: flex; flex-grow: 1; box-shadow: var(--shadow); }
-        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem 1rem 65px; font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; }
-        .search-form button { border: none; background: var(--primary-color); color: white; padding: 1rem 2.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 0 50px 50px 0; font-weight: 600; }
 
-        .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 2.5rem; margin-top: 3rem; }
-        .sidebar { grid-column: 1 / 2; }
-        .courses-display { grid-column: 2 / 3; }
-        .sidebar-widget { background-color: var(--surface-color); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        .sidebar-widget h3 { font-size: 1.3rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
-        .sidebar-widget select, .sidebar-widget button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.8rem; background-color: #fff; }
-        .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; border: none; }
-        
-        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-        .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; text-decoration: none; color: var(--text-color); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid var(--primary-color); }
-        .course-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
-        .card-content { padding: 1.25rem; flex-grow: 1; }
-        .card-content h4 { font-size: 1.05rem; margin-bottom: 0.75rem; line-height: 1.4; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-color); }
-        .platform-badge { background-color: var(--background-gradient); padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: 600; color: var(--subtle-text-color); }
-        .star-rating { font-size: 1.1rem; color: #f39c12; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 200; }
-        .modal-content { background: var(--surface-color); padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #aaa; cursor: pointer; }
-        .modal-content h2 { font-size: 1.8rem; color: var(--primary-color); margin-top: 0; }
-        
-        .navbar { padding: 0.5rem 1.5rem; }
-        .navbar-right { display: flex; align-items: center; gap: 1rem; }
-        #user-view { display: none; align-items: center; gap: 1rem; }
+        .search-container:hover .logo-ay-search {
+            transform: translateY(-50%) rotate(360deg);
+        }
 
-        .login-btn, .register-btn, #logout-btn {
+        .search-form {
+            display: flex;
+            flex-grow: 1;
+            box-shadow: var(--shadow);
+        }
+
+        .search-form input {
+            flex-grow: 1;
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.5rem 1rem 65px;
+            font-size: 1.1rem;
+            border-radius: 50px 0 0 50px;
+            outline: none;
+        }
+
+        .search-form button {
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 0 50px 50px 0;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .sidebar {
+            grid-column: 1 / 2;
+        }
+
+        .courses-display {
+            grid-column: 2 / 3;
+        }
+
+        .sidebar-widget {
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-widget h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-widget select,
+        .sidebar-widget button {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            background-color: #fff;
+        }
+
+        .sidebar-widget button {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .course-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+        }
+
+        .card-content h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .platform-badge {
+            background-color: var(--background-gradient);
+            padding: 0.25rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--subtle-text-color);
+        }
+
+        .star-rating {
+            font-size: 1.1rem;
+            color: #f39c12;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background: var(--surface-color);
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .navbar {
+            padding: 0.5rem 1.5rem;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #user-view {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .login-btn,
+        .register-btn,
+        #logout-btn {
             border: none;
             padding: 0.6rem 1.2rem;
             border-radius: 50px;
@@ -128,12 +347,15 @@
             transition: all 0.3s ease;
         }
 
-        .login-btn, #logout-btn {
+        .login-btn,
+        #logout-btn {
             background-color: transparent;
             color: white;
             border: 2px solid var(--secondary-color);
         }
-        .login-btn:hover, #logout-btn:hover {
+
+        .login-btn:hover,
+        #logout-btn:hover {
             background-color: var(--secondary-color);
             color: #2c3e50;
         }
@@ -143,6 +365,7 @@
             color: white;
             border: 2px solid var(--primary-color);
         }
+
         .register-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
@@ -157,42 +380,301 @@
             cursor: pointer;
             z-index: 110;
         }
-        .menu-icon span { width: 100%; height: 3px; background-color: white; border-radius: 2px; transition: all 0.3s ease; }
+
+        .menu-icon span {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
 
         .info-menu-panel {
-            position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
             background-color: #2c3e50;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
             z-index: 105;
             transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             padding: 6rem 2rem 2rem;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
-        .info-menu-panel.open { right: 0; }
-        .info-menu-panel nav { display: flex; flex-direction: column; gap: 1.5rem; }
-        .info-menu-panel nav a { color: white; text-decoration: none; font-size: 1.2rem; font-weight: 400; transition: color 0.3s; cursor: pointer; }
-        .info-menu-panel nav a:hover { color: var(--secondary-color); }
-        .info-menu-panel nav a small { font-size: 0.8rem; color: #bdc3c7; display: block; line-height: 1.4; }
-        .close-menu-btn { position: absolute; top: 15px; right: 25px; font-size: 2.5rem; color: white; cursor: pointer; }
 
-        .login-modal-content { max-width: 450px; text-align: center; }
-        .login-modal-content h2 { margin-bottom: 2rem; }
-        .login-form .form-group { text-align: left; margin-bottom: 1.5rem; }
-        .login-form label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--subtle-text-color); }
-        .login-form input { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; }
-        .login-form .forgot-password { display: block; text-align: right; font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--primary-color); text-decoration: none; }
-        .login-form .submit-login { width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s; }
-        .login-form .submit-login:hover { background-color: #3a7ac8; }
-        .login-modal-content .register-link { margin-top: 2rem; font-size: 0.9rem; }
-        .login-modal-content .register-link a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+        .info-menu-panel.open {
+            right: 0;
+        }
 
-        footer { text-align: center; padding: 2rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1; }
-        
-        @media (max-width: 992px) { .main-content { grid-template-columns: 1fr; } .navbar { padding: 0.5rem 1rem; } }
-        @media (max-width: 768px) { .login-btn, .register-btn { padding: 0.5rem 1rem; font-size: 0.8rem; } .navbar-right { gap: 0.8rem; } }
-        @media (max-width: 480px) { #anonymous-view { display: none; } #user-view { display: none !important; } .navbar-brand h1 { font-size: 1.5rem; } .logo-buho { height: 55px; width: 55px; } }
+        .info-menu-panel nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-menu-panel nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 400;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .info-menu-panel nav a:hover {
+            color: var(--secondary-color);
+        }
+
+        .info-menu-panel nav a small {
+            font-size: 0.8rem;
+            color: #bdc3c7;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .close-menu-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 2.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .login-modal-content {
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-modal-content h2 {
+            margin-bottom: 2rem;
+        }
+
+        .login-form .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--subtle-text-color);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .login-form .forgot-password {
+            display: block;
+            text-align: right;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .login-form .submit-login {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-form .submit-login:hover {
+            background-color: #3a7ac8;
+        }
+
+        .login-modal-content .register-link {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .login-modal-content .register-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .blog-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .blog-card-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .blog-card-content p {
+            font-size: 0.9rem;
+            color: var(--subtle-text-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .read-more-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .read-more-btn:hover {
+            background-color: #3a7ac8;
+        }
+
+        .how-it-works-section {
+            padding: 4rem 1rem;
+            background-color: var(--surface-color);
+            text-align: center;
+        }
+
+        .how-it-works-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            background: var(--background-gradient);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .step-icon {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .step-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .step-card p {
+            font-size: 0.95rem;
+            color: var(--subtle-text-color);
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .login-btn,
+            .register-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .navbar-right {
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #anonymous-view {
+                display: none;
+            }
+
+            #user-view {
+                display: none !important;
+            }
+
+            .navbar-brand h1 {
+                font-size: 1.5rem;
+            }
+
+            .logo-buho {
+                height: 55px;
+                width: 55px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <header class="main-header">
         <div class="container navbar">
@@ -219,11 +701,11 @@
     <div id="info-menu" class="info-menu-panel">
         <span id="close-menu-btn" class="close-menu-btn">&times;</span>
         <nav>
-            <a id="quienes-somos-btn">Quiénes Somos</a>
-            <a>Contáctanos <small>WhatsApp: +57 3144373585</small><small>Email: aprendoyalearn@gmail.com</small></a>
-            <a href="#">Nuestros Cursos</a>
-            <a href="#">Blog</a>
-            <a href="#">Preguntas Frecuentes (FAQ)</a>
+            <a href="#" class="close-menu-link">Inicio</a>
+            <a href="#como-funciona" class="close-menu-link">Cómo Funciona</a>
+            <a id="blog-btn" style="cursor: pointer;">Blog</a>
+            <a href="#faq" class="close-menu-link">Preguntas Frecuentes</a>
+            <a href="#footer-contact" class="close-menu-link">Contacto</a>
         </nav>
     </div>
 
@@ -233,7 +715,8 @@
                 <img src="{{ url_for('static', filename='Banner.png') }}" class="hero-banner" alt="Banner AprendoYA!">
             </div>
             <div class="search-container">
-                <img src="{{ url_for('static', filename='AprendoYA!.png') }}" class="logo-ay-search" alt="AprendoYA! Icono">
+                <img src="{{ url_for('static', filename='AprendoYA!.png') }}" class="logo-ay-search"
+                    alt="AprendoYA! Icono">
                 <form id="searchForm" class="search-form" onsubmit="event.preventDefault(); searchCourses();">
                     <input type="text" id="search-input" placeholder="¿Qué quieres aprender hoy?" required>
                     <button type="submit">Buscar</button>
@@ -241,12 +724,99 @@
             </div>
         </section>
 
+        <section id="como-funciona" class="how-it-works-section">
+            <div class="container">
+                <h2>Cómo Creamos tu Ruta de Aprendizaje Perfecta</h2>
+                <div class="steps-container">
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                        </div>
+                        <h3>Paso 1: Cuéntanos tu Meta</h3>
+                        <p>Nos dices qué quieres aprender, desde cero o para especializarte.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                        <h3>Paso 2: Analizamos las Mejores Plataformas</h3>
+                        <p>Buscamos y comparamos los mejores cursos de plataformas líderes como Coursera, Platzi, Udemy y más.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                        </div>
+                        <h3>Paso 3: Diseñamos tu Ruta Personalizada</h3>
+                        <p>Te entregamos un plan de estudios paso a paso, combinando los módulos más efectivos para que no pierdas tiempo ni dinero.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                        </div>
+                        <h3>Paso 4: Empieza a Aprender</h3>
+                        <p>Con tu mapa claro, solo tienes que seguir los enlaces y comenzar tu transformación profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <h2>¿Tienes Preguntas?</h2>
+                <div class="faq-accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            ¿AprendoYA ofrece los cursos directamente?
+                            <span class="icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <p>No, nosotros no creamos los cursos. Nuestra especialidad es investigar y seleccionar los mejores cursos de las plataformas más reconocidas del mundo para construir una ruta de aprendizaje optimizada y personalizada solo para ti.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            ¿Este servicio de recomendación tiene algún costo para mí?
+                            <span class="icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Nuestro servicio de creación de rutas de aprendizaje es completamente gratuito para el estudiante. Funcionamos a través de alianzas y enlaces de afiliado con las plataformas educativas, sin que eso afecte el precio que tú pagas por el curso.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            ¿Qué pasa si ya tengo conocimientos en un área?
+                            <span class="icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <p>¡Perfecto! Durante nuestro proceso inicial nos cuentas tu nivel de experiencia. Así, tu ruta de aprendizaje se adapta, omitiendo los temas que ya dominas y enfocándose directamente en las habilidades que necesitas para alcanzar tu siguiente nivel.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            ¿Por qué debería usar AprendoYA en lugar de buscar los cursos yo mismo?
+                            <span class="icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <p>El universo del e-learning es enorme y es fácil perderse. Te ahorramos decenas de horas de investigación y el riesgo de elegir cursos de baja calidad. Te entregamos un camino directo, probado y eficiente hacia tu objetivo profesional.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <div class="container main-content">
             <aside class="sidebar">
                 <div class="sidebar-widget">
                     <h3>Recomendación Rápida</h3>
-                    <select id="interest_modal" name="interest_modal"><option value="" disabled selected>Selecciona un área de interés</option>{% for topic in topics %}<option value="{{ topic.value }}">{{ topic.name }}</option>{% endfor %}</select>
-                    <select id="level_modal" name="level_modal"><option value="" disabled selected>Selecciona tu nivel</option><option value="beginner">Principiante</option><option value="intermediate">Con experiencia</option></select>
+                    <select id="interest_modal" name="interest_modal">
+                        <option value="" disabled selected>Selecciona un área de interés</option>{% for topic in topics
+                        %}<option value="{{ topic.value }}">{{ topic.name }}</option>{% endfor %}
+                    </select>
+                    <select id="level_modal" name="level_modal">
+                        <option value="" disabled selected>Selecciona tu nivel</option>
+                        <option value="beginner">Principiante</option>
+                        <option value="intermediate">Con experiencia</option>
+                    </select>
                     <button onclick="recommendCourses()">Recomiéndame un Curso</button>
                 </div>
                 <div class="sidebar-widget">
@@ -255,22 +825,111 @@
                     <button onclick="generateLearningPath()">Generar Mi Ruta</button>
                 </div>
             </aside>
-            
+
             <div class="courses-display">
-                <div class="results-header"><h2 id="results-title">Cursos Populares</h2></div>
+                <div class="results-header">
+                    <h2 id="results-title">Cursos Populares</h2>
+                </div>
                 <div id="results-grid" class="results-grid"></div>
-                <p id="no-results-message" style="display: none; text-align: center; padding: 2rem;">No se encontraron cursos para tu búsqueda.</p>
+                <p id="no-results-message" style="display: none; text-align: center; padding: 2rem;">No se encontraron
+                    cursos para tu búsqueda.</p>
             </div>
         </div>
     </main>
-    
-    <div id="learning-path-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close" onclick="closeModal('learning-path-modal')">&times;</span><h2 id="modal-title">Ruta de Aprendizaje</h2><div id="modal-body"></div></div></div>
-    <div id="quienes-somos-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close" onclick="closeModal('quienes-somos-modal')">&times;</span><h2>¿Quiénes Somos?</h2><p style="text-align: justify;"><strong>AprendoYA!</strong> es tu plataforma inteligente para descubrir el universo del aprendizaje en línea. Nuestra misión es guiarte hacia los mejores cursos de internet, adaptados a tus intereses y nivel de experiencia. Usamos un sistema de recomendación avanzado que analiza miles de opciones de las principales plataformas educativas para ofrecerte sugerencias personalizadas y rutas de aprendizaje claras. Creemos que la educación debe ser accesible y efectiva. Con AprendoYA!, tu próximo gran paso profesional está a solo una búsqueda de distancia.</p></div></div>
-    
-    <div id="login-modal" class="modal-overlay"><div class="modal-content login-modal-content"><span class="modal-close" onclick="closeModal('login-modal')">&times;</span><h2>Bienvenido de nuevo</h2><form id="login-form" class="login-form"><div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" required></div><div class="form-group"><label for="login-password">Contraseña</label><input type="password" id="login-password" required></div><a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a><button type="submit" class="submit-login">Ingresar</button><p id="login-error" style="color: red; display: none; margin-top: 1rem;"></p></form><p class="register-link">¿No tienes una cuenta? <a href="#" id="go-to-register">Regístrate aquí</a></p></div></div>
-    <div id="register-modal" class="modal-overlay"><div class="modal-content login-modal-content"><span class="modal-close" onclick="closeModal('register-modal')">&times;</span><h2>Crea tu Cuenta</h2><form id="register-form" class="login-form"><div class="form-group"><label for="register-email">Email</label><input type="email" id="register-email" required></div><div class="form-group"><label for="register-password">Contraseña</label><input type="password" id="register-password" required></div><div class="form-group"><label for="register-password-confirm">Confirmar Contraseña</label><input type="password" id="register-password-confirm" required></div><button type="submit" class="submit-login">Registrarse</button><p id="register-error" style="color: red; display: none; margin-top: 1rem;"></p></form></div></div>
 
-    <footer><p>&copy; 2025 AprendoYA! - Todos los derechos reservados.</p></footer>
+    <div id="learning-path-modal" class="modal-overlay">
+        <div class="modal-content"><span class="modal-close" onclick="closeModal('learning-path-modal')">&times;</span>
+            <h2 id="modal-title">Ruta de Aprendizaje</h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    <div id="blog-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('blog-modal')">&times;</span>
+            <h2>Blog de AprendoYA</h2>
+            <div class="blog-grid">
+                <div class="blog-card">
+                    <img src="https://placehold.co/600x400/50E3C2/333333?text=Motivación"
+                        alt="Claves para la Motivación">
+                    <div class="blog-card-content">
+                        <h4>5 Claves para la Motivación en el Aprendizaje Autodidacta</h4>
+                        <p>Descubre cómo mantenerte enfocado y alcanzar tus metas de aprendizaje sin perder el impulso.
+                        </p>
+                        <a href="blog/articulo-1.html" target="_blank" class="read-more-btn">Leer más</a>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <img src="https://placehold.co/600x400/4A90E2/FFFFFF?text=Full-Stack"
+                        alt="¿Qué es un Full-Stack Developer?">
+                    <div class="blog-card-content">
+                        <h4>¿Qué es un Full-Stack Developer y Cómo Convertirte en Uno?</h4>
+                        <p>Una guía completa sobre el perfil más demandado en tecnología y la ruta para llegar a serlo.
+                        </p>
+                        <a href="blog/articulo-2.html" target="_blank" class="read-more-btn">Leer más</a>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <img src="https://placehold.co/600x400/2c3e50/FFFFFF?text=IA" alt="Herramientas de IA">
+                    <div class="blog-card-content">
+                        <h4>3 Herramientas de IA que Revolucionarán tu Forma de Estudiar</h4>
+                        <p>Aprende a usar la inteligencia artificial a tu favor para optimizar tu proceso de
+                            aprendizaje.</p>
+                        <a href="blog/articulo-3.html" target="_blank" class="read-more-btn">Leer más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content login-modal-content"><span class="modal-close"
+                onclick="closeModal('login-modal')">&times;</span>
+            <h2>Bienvenido de nuevo</h2>
+            <form id="login-form" class="login-form">
+                <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email"
+                        required></div>
+                <div class="form-group"><label for="login-password">Contraseña</label><input type="password"
+                        id="login-password" required></div><a href="#" class="forgot-password">¿Olvidaste tu
+                    contraseña?</a><button type="submit" class="submit-login">Ingresar</button>
+                <p id="login-error" style="color: red; display: none; margin-top: 1rem;"></p>
+            </form>
+            <p class="register-link">¿No tienes una cuenta? <a href="#" id="go-to-register">Regístrate aquí</a></p>
+        </div>
+    </div>
+    <div id="register-modal" class="modal-overlay">
+        <div class="modal-content login-modal-content"><span class="modal-close"
+                onclick="closeModal('register-modal')">&times;</span>
+            <h2>Crea tu Cuenta</h2>
+            <form id="register-form" class="login-form">
+                <div class="form-group"><label for="register-email">Email</label><input type="email" id="register-email"
+                        required></div>
+                <div class="form-group"><label for="register-password">Contraseña</label><input type="password"
+                        id="register-password" required></div>
+                <div class="form-group"><label for="register-password-confirm">Confirmar Contraseña</label><input
+                        type="password" id="register-password-confirm" required></div><button type="submit"
+                    class="submit-login">Registrarse</button>
+                <p id="register-error" style="color: red; display: none; margin-top: 1rem;"></p>
+            </form>
+        </div>
+    </div>
+
+    <footer id="footer-contact"
+        style="text-align: center; padding: 3rem 1rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1;">
+        <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">Contacto</h3>
+        <p style="margin-bottom: 1rem;">
+            ¿Tienes preguntas o sugerencias? ¡Contáctanos!
+        </p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap;">
+            <a href="https://wa.me/573144373585" target="_blank"
+                style="color: var(--secondary-color); text-decoration: none; font-weight: 600;">WhatsApp: +57
+                3144373585</a>
+            <a href="mailto:aprendoyalearn@gmail.com"
+                style="color: var(--secondary-color); text-decoration: none; font-weight: 600;">Email:
+                aprendoyalearn@gmail.com</a>
+        </div>
+        <p style="margin-top: 3rem; font-size: 0.9rem;">&copy; 2025 AprendoYA! - Todos los derechos reservados.</p>
+    </footer>
 
     <script>
         // --- Lógica de Cursos (Funciones existentes) ---
@@ -278,7 +937,7 @@
         const resultsTitle = document.getElementById('results-title');
         const noResultsMessage = document.getElementById('no-results-message');
         function displayCourses(courses) {
-            resultsGrid.innerHTML = ''; 
+            resultsGrid.innerHTML = '';
             noResultsMessage.style.display = 'none';
             if (courses && courses.length > 0) {
                 courses.forEach(course => {
@@ -342,11 +1001,11 @@
         // --- Lógica de Modales y Menús ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
-            if(modal) modal.style.display = 'flex';
+            if (modal) modal.style.display = 'flex';
         }
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
-            if(modal) modal.style.display = 'none';
+            if (modal) modal.style.display = 'none';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -357,10 +1016,10 @@
             // Manejadores de eventos
             document.getElementById('menu-icon').addEventListener('click', () => document.getElementById('info-menu').classList.toggle('open'));
             document.getElementById('close-menu-btn').addEventListener('click', () => document.getElementById('info-menu').classList.remove('open'));
-            
+
             document.getElementById('login-btn').addEventListener('click', () => openModal('login-modal'));
             document.getElementById('register-btn').addEventListener('click', () => openModal('register-modal'));
-            document.getElementById('quienes-somos-btn').addEventListener('click', () => openModal('quienes-somos-modal'));
+            
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
             document.getElementById('go-to-register').addEventListener('click', (e) => {
@@ -384,6 +1043,39 @@
             // Formularios
             document.getElementById('login-form').addEventListener('submit', handleLogin);
             document.getElementById('register-form').addEventListener('submit', handleRegister);
+            // Close menu when a link is clicked
+            document.querySelectorAll('.close-menu-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.getElementById('info-menu').classList.remove('open');
+                });
+            });
+
+            // FAQ Accordion Logic
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const currentContent = header.nextElementSibling;
+                    const currentIcon = header.querySelector('.icon');
+
+                    // Close all other open accordions
+                    accordionHeaders.forEach(otherHeader => {
+                        if (otherHeader !== header) {
+                            otherHeader.classList.remove('active');
+                            otherHeader.nextElementSibling.classList.remove('show');
+                            otherHeader.querySelector('.icon').textContent = '+';
+                        }
+                    });
+
+                    // Toggle current accordion
+                    header.classList.toggle('active');
+                    currentContent.classList.toggle('show');
+                    if (currentContent.classList.contains('show')) {
+                        currentIcon.textContent = '-';
+                    } else {
+                        currentIcon.textContent = '+';
+                    }
+                });
+            });
         });
 
         // --- Lógica de Autenticación ---
@@ -423,7 +1115,7 @@
             const form = event.target;
             const submitButton = form.querySelector('.submit-login');
             const originalButtonText = submitButton.textContent;
-            
+
             submitButton.disabled = true;
             submitButton.textContent = 'Ingresando...';
 
@@ -466,7 +1158,7 @@
 
             submitButton.disabled = true;
             submitButton.textContent = 'Registrando...';
-            
+
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             const passwordConfirm = document.getElementById('register-password-confirm').value;
@@ -517,4 +1209,5 @@
         }
     </script>
 </body>
+
 </html>
