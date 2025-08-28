@@ -574,28 +574,29 @@
         }
 
         .how-it-works-section {
-            padding: 4rem 1rem;
+            padding: 2rem 1rem;
             background-color: var(--surface-color);
             text-align: center;
         }
 
         .how-it-works-section h2 {
-            font-size: 2.2rem;
-            margin-bottom: 3rem;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
             color: var(--primary-color);
         }
 
         .steps-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2.5rem;
-            max-width: 1100px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            max-width: 800px; /* Reduced max width */
+            margin: 0; /* Remove auto margin for left alignment */
+            justify-content: start; /* Align items to the start of the grid */
         }
 
         .step-card {
             background: var(--background-gradient);
-            padding: 2rem;
+            padding: 1.5rem; /* Reduced padding */
             border-radius: 16px;
             box-shadow: var(--shadow);
             transition: transform 0.3s, box-shadow 0.3s;
@@ -612,15 +613,15 @@
         }
 
         .step-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            font-size: 1.1rem; /* Reduced font size */
+            margin-bottom: 0.7rem; /* Reduced margin */
             color: var(--text-color);
         }
 
         .step-card p {
-            font-size: 0.95rem;
+            font-size: 0.85rem; /* Reduced font size */
             color: var(--subtle-text-color);
-            line-height: 1.6;
+            line-height: 1.5; /* Reduced line height */
         }
 
         footer {
