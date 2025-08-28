@@ -152,14 +152,17 @@
             display: flex;
             flex-grow: 1;
             box-shadow: var(--shadow);
+            border-radius: 50px; /* Apply consistent rounding to the whole form */
+            overflow: hidden; /* Ensures children respect the border-radius */
         }
 
         .search-form input {
             flex-grow: 1;
-            border: 1px solid var(--border-color);
+            border: none; /* Remove individual border */
+            border-right: 1px solid var(--border-color); /* Add right border for separation */
             padding: 1rem 1.5rem 1rem 65px;
             font-size: 1.1rem;
-            border-radius: 50px 0 0 50px;
+            border-radius: 0; /* Remove individual border-radius */
             outline: none;
         }
 
@@ -170,7 +173,7 @@
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
             cursor: pointer;
-            border-radius: 0 50px 50px 0;
+            border-radius: 0; /* Remove individual border-radius */
             font-weight: 600;
         }
 
@@ -730,7 +733,7 @@
         <span id="close-menu-btn" class="close-menu-btn">&times;</span>
         <nav>
             <a href="#" class="close-menu-link">Inicio</a>
-            <a href="#como-funciona" class="close-menu-link">Cómo Funciona</a>
+            
             <a id="blog-btn" style="cursor: pointer;">Blog</a>
             <a id="faq-menu-btn" style="cursor: pointer;" class="close-menu-link">Preguntas Frecuentes</a>
             <a href="#footer-contact" class="close-menu-link">Contacto</a>
