@@ -49,6 +49,19 @@
             mix-blend-mode: multiply;
             opacity: 0.9;
             border-radius: 18px; /* Radio interior para que encaje con el contenedor */
+            animation: subtle-focus 8s ease-in-out infinite; /* Nueva animación de enfoque */
+        }
+
+        @keyframes subtle-focus {
+            0% {
+                filter: blur(1px) brightness(1);
+            }
+            50% {
+                filter: blur(0px) brightness(1.05);
+            }
+            100% {
+                filter: blur(1px) brightness(1);
+            }
         }
 
         /* --- HEADER Y LOGOS (SECCIÓN MODIFICADA) --- */
