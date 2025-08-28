@@ -131,9 +131,209 @@
         .path-section ul { list-style: none; padding-left: 0; }
         .path-section li a { font-weight: 600; text-decoration: none; color: var(--text-color); display: block; background: var(--background-gradient); padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; }
 
+        /* --- TAREA 1 y 2: ESTILOS PARA HEADER, BOTONES Y MENÚS --- */
+        .navbar {
+            padding: 0.5rem 1.5rem; /* Ajuste de padding para el contenedor */
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Botones de Login/Registro */
+        .login-btn, .register-btn {
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .login-btn:hover {
+            background-color: var(--secondary-color);
+            color: #2c3e50;
+        }
+
+        .register-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        /* Icono de Menú Hamburguesa */
+        .menu-icon {
+            width: 30px;
+            height: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            z-index: 110;
+        }
+
+        .menu-icon span {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Panel de Menú Desplegable */
+        .info-menu-panel {
+            position: fixed;
+            top: 0;
+            right: -320px; /* Inicia fuera de la pantalla */
+            width: 300px;
+            height: 100%;
+            background-color: #2c3e50;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            z-index: 105;
+            transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-menu-panel.open {
+            right: 0; /* Se desliza a la vista */
+        }
+
+        .info-menu-panel nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .info-menu-panel nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 400;
+            transition: color 0.3s;
+        }
+
+        .info-menu-panel nav a:hover {
+            color: var(--secondary-color);
+        }
+
+        .info-menu-panel nav a small {
+            font-size: 0.8rem;
+            color: #bdc3c7;
+        }
+
+        .close-menu-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 2.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* --- TAREA 2: ESTILOS PARA MODAL DE LOGIN --- */
+        .login-modal-content {
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-modal-content h2 {
+            margin-bottom: 2rem;
+        }
+
+        .login-form .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--subtle-text-color);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .login-form .forgot-password {
+            display: block;
+            text-align: right;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .login-form .submit-login {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-form .submit-login:hover {
+            background-color: #3a7ac8;
+        }
+
+        .login-modal-content .register-link {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .login-modal-content .register-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
         footer { text-align: center; padding: 2rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1; }
         
-        @media (max-width: 992px) { .main-content { grid-template-columns: 1fr; } }
+        /* --- Media Queries para Responsividad --- */
+        @media (max-width: 992px) { 
+            .main-content { grid-template-columns: 1fr; } 
+            .navbar { padding: 0.5rem 1rem; }
+        }
+        @media (max-width: 768px) {
+            .search-hero h2 { font-size: 2.5rem; }
+            .login-btn, .register-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .navbar-right { gap: 0.8rem; }
+        }
+        @media (max-width: 480px) {
+            /* Ocultar botones de texto en pantallas muy pequeñas, dejando solo el menú */
+            .login-btn, .register-btn { display: none; }
+            .navbar-brand h1 { font-size: 1.5rem; }
+            .logo-buho { height: 55px; width: 55px; }
+        }
     </style>
 </head>
 <body>
@@ -143,8 +343,30 @@
                 <img src="{{ url_for('static', filename='OsoAnteojos.png') }}" class="logo-buho" alt="Logo OsoAnteojos">
                 <h1>AprendoYA!</h1>
             </a>
+            <!-- TAREA 1 y 2: Botones de login y menú -->
+            <div class="navbar-right">
+                <button id="login-btn" class="login-btn">Iniciar Sesión</button>
+                <button class="register-btn">Registrarse</button>
+                <div id="menu-icon" class="menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
         </div>
     </header>
+
+    <!-- TAREA 1: Panel de Menú Desplegable -->
+    <div id="info-menu" class="info-menu-panel">
+        <span id="close-menu-btn" class="close-menu-btn">&times;</span>
+        <nav>
+            <a href="#">Quiénes Somos</a>
+            <a href="#">Contáctanos <br><small>(WhatsApp: +57 3144373585)</small></a>
+            <a href="#">Nuestros Cursos</a>
+            <a href="#">Blog</a>
+            <a href="#">Preguntas Frecuentes (FAQ)</a>
+        </nav>
+    </div>
 
     <main>
         <section class="search-hero">
@@ -201,17 +423,42 @@
             <div id="modal-body"></div>
         </div>
     </div>
+
+    <!-- TAREA 2: Modal de Inicio de Sesión -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content login-modal-content">
+            <span id="close-login-modal" class="modal-close">&times;</span>
+            <h2>Bienvenido de nuevo</h2>
+            <form class="login-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" required>
+                </div>
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                <button type="submit" class="submit-login">Ingresar</button>
+            </form>
+            <p class="register-link">¿No tienes una cuenta? <a href="#">Regístrate aquí</a></p>
+        </div>
+    </div>
     
     <footer><p>&copy; 2025 AprendoYA! - Todos los derechos reservados.</p></footer>
 
     <script>
+        // --- Referencias a Elementos del DOM ---
         const resultsGrid = document.getElementById('results-grid');
         const resultsTitle = document.getElementById('results-title');
         const noResultsMessage = document.getElementById('no-results-message');
-        const modal = document.getElementById('learning-path-modal');
+        
+        // Modal de Ruta de Aprendizaje
+        const learningPathModal = document.getElementById('learning-path-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
 
+        // --- Lógica de Cursos (Funciones Principales) ---
         function displayCourses(courses) {
             resultsGrid.innerHTML = ''; 
             noResultsMessage.style.display = 'none';
@@ -262,11 +509,9 @@
             fetchAndDisplay("{{ url_for('recommend') }}", { method: 'POST', body: formData }, 'Cursos Recomendados para ti');
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
-        });
-
-        function closeModal() { modal.style.display = 'none'; }
+        function closeModal() { 
+            if(learningPathModal) learningPathModal.style.display = 'none'; 
+        }
         
         function buildPathSection(courses, title) {
             if (!courses || courses.length === 0) return '';
@@ -281,7 +526,7 @@
             if (!query) { alert('Escribe un tema en la barra de búsqueda para generar una ruta.'); return; }
             modalTitle.textContent = `Ruta de Aprendizaje para: ${query}`;
             modalBody.innerHTML = '<p>Generando ruta, por favor espera...</p>';
-            modal.style.display = 'flex';
+            learningPathModal.style.display = 'flex';
             const formData = new URLSearchParams();
             formData.append('query', query);
             const response = await fetch("{{ url_for('learning_path_route') }}", { method: 'POST', body: formData });
@@ -292,7 +537,58 @@
             modalBody.innerHTML = pathHtml || '<p>No se encontraron cursos para generar una ruta.</p>';
         }
 
-        window.onclick = function(event) { if (event.target == modal) { closeModal(); } }
+        // --- TAREA 1 y 2: LÓGICA PARA MENÚS Y MODALES ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Lógica del Menú Desplegable (Tarea 1) ---
+            const menuIcon = document.getElementById('menu-icon');
+            const infoMenu = document.getElementById('info-menu');
+            const closeMenuBtn = document.getElementById('close-menu-btn');
+
+            if (menuIcon && infoMenu) {
+                menuIcon.addEventListener('click', () => {
+                    infoMenu.classList.toggle('open');
+                });
+            }
+            if (closeMenuBtn) {
+                closeMenuBtn.addEventListener('click', () => {
+                    infoMenu.classList.remove('open');
+                });
+            }
+
+            // --- Lógica del Modal de Login (Tarea 2) ---
+            const loginBtn = document.getElementById('login-btn');
+            const loginModal = document.getElementById('login-modal');
+            const closeLoginModalBtn = document.getElementById('close-login-modal');
+
+            if (loginBtn && loginModal) {
+                loginBtn.addEventListener('click', () => {
+                    loginModal.style.display = 'flex';
+                });
+            }
+
+            function closeLoginModal() {
+                if (loginModal) {
+                    loginModal.style.display = 'none';
+                }
+            }
+
+            if (closeLoginModalBtn) {
+                closeLoginModalBtn.addEventListener('click', closeLoginModal);
+            }
+
+            // Cierre de modales al hacer clic en el overlay
+            window.addEventListener('click', function(event) {
+                if (event.target == learningPathModal) {
+                    closeModal();
+                }
+                if (event.target == loginModal) {
+                    closeLoginModal();
+                }
+            });
+
+            // Cargar cursos populares (código existente)
+            fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
+        });
     </script>
 </body>
 </html>
