@@ -576,7 +576,6 @@
         .how-it-works-section {
             padding: 2rem 1rem;
             background-color: var(--surface-color);
-            text-align: center;
         }
 
         .how-it-works-section h2 {
@@ -585,43 +584,71 @@
             color: var(--primary-color);
         }
 
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            max-width: 800px; /* Reduced max width */
-            margin: 0; /* Remove auto margin for left alignment */
-            justify-content: start; /* Align items to the start of the grid */
+        .vertical-steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* Smaller gap for vertical stacking */
+            max-width: 250px; /* Narrower for left side */
+            margin-left: 0; /* Ensure left alignment */
+            margin-right: auto; /* Push to left */
+            padding-left: 1.5rem; /* Add some padding from the left edge */
         }
 
         .step-card {
             background: var(--background-gradient);
-            padding: 1.5rem; /* Reduced padding */
             border-radius: 16px;
             box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease-in-out; /* Smooth transition for all properties */
+            overflow: hidden; /* Hide overflowing content */
+            width: 100%; /* Take full width of its container */
+            cursor: pointer;
+            border-left: 4px solid var(--primary-color); /* Visual indicator */
         }
 
         .step-card:hover {
-            transform: translateY(-10px);
             box-shadow: var(--shadow-hover);
+            border-left-color: var(--secondary-color); /* Change border color on hover */
         }
 
-        .step-icon {
-            margin-bottom: 1.5rem;
-            color: var(--secondary-color);
+        .step-header {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem; /* Smaller padding for header */
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .step-card h3 {
-            font-size: 1.1rem; /* Reduced font size */
-            margin-bottom: 0.7rem; /* Reduced margin */
+        .step-header .step-icon {
+            margin-bottom: 0; /* Remove bottom margin */
+            margin-right: 0.5rem; /* Space between icon and text */
+            color: var(--primary-color); /* Icon color */
+        }
+
+        .step-header h3 {
+            font-size: 0.9rem; /* Very small font size for title */
+            margin-bottom: 0; /* Remove bottom margin */
             color: var(--text-color);
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis for overflowing text */
         }
 
-        .step-card p {
-            font-size: 0.85rem; /* Reduced font size */
+        .step-body {
+            max-height: 0; /* Hide content initially */
+            padding: 0 1rem; /* Padding for content */
+            transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out; /* Smooth transition for expansion */
+            background-color: var(--surface-color); /* Background for expanded content */
+        }
+
+        .step-card:hover .step-body {
+            max-height: 100px; /* Expand to show content (adjust as needed) */
+            padding: 0.8rem 1rem; /* Expanded padding */
+        }
+
+        .step-body p {
+            font-size: 0.8rem; /* Very small font size for paragraph */
             color: var(--subtle-text-color);
-            line-height: 1.5; /* Reduced line height */
+            line-height: 1.4; /* Adjusted line height */
         }
 
         footer {
@@ -728,34 +755,50 @@
         <section id="como-funciona" class="how-it-works-section">
             <div class="container">
                 <h2>Cómo Creamos tu Ruta de Aprendizaje Perfecta</h2>
-                <div class="steps-container">
+                <div class="vertical-steps-container">
                     <div class="step-card">
-                        <div class="step-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                        <div class="step-header">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                            </div>
+                            <h3>Paso 1: Cuéntanos tu Meta</h3>
                         </div>
-                        <h3>Paso 1: Cuéntanos tu Meta</h3>
-                        <p>Nos dices qué quieres aprender, desde cero o para especializarte.</p>
+                        <div class="step-body">
+                            <p>Nos dices qué quieres aprender, desde cero o para especializarte.</p>
+                        </div>
                     </div>
                     <div class="step-card">
-                        <div class="step-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <div class="step-header">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </div>
+                            <h3>Paso 2: Analizamos las Mejores Plataformas</h3>
                         </div>
-                        <h3>Paso 2: Analizamos las Mejores Plataformas</h3>
-                        <p>Buscamos y comparamos los mejores cursos de plataformas líderes como Coursera, Platzi, Udemy y más.</p>
+                        <div class="step-body">
+                            <p>Buscamos y comparamos los mejores cursos de plataformas líderes como Coursera, Platzi, Udemy y más.</p>
+                        </div>
                     </div>
                     <div class="step-card">
-                        <div class="step-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                        <div class="step-header">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                            </div>
+                            <h3>Paso 3: Diseñamos tu Ruta Personalizada</h3>
                         </div>
-                        <h3>Paso 3: Diseñamos tu Ruta Personalizada</h3>
-                        <p>Te entregamos un plan de estudios paso a paso, combinando los módulos más efectivos para que no pierdas tiempo ni dinero.</p>
+                        <div class="step-body">
+                            <p>Te entregamos un plan de estudios paso a paso, combinando los módulos más efectivos para que no pierdas tiempo ni dinero.</p>
+                        </div>
                     </div>
                     <div class="step-card">
-                        <div class="step-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                        <div class="step-header">
+                            <div class="step-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                            </div>
+                            <h3>Paso 4: Empieza a Aprender</h3>
                         </div>
-                        <h3>Paso 4: Empieza a Aprender</h3>
-                        <p>Con tu mapa claro, solo tienes que seguir los enlaces y comenzar tu transformación profesional.</p>
+                        <div class="step-body">
+                            <p>Con tu mapa claro, solo tienes que seguir los enlaces y comenzar tu transformación profesional.</p>
+                        </div>
                     </div>
                 </div>
             </div>
