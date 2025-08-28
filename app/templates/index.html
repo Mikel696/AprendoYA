@@ -31,7 +31,6 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
         
-        /* --- ESTILOS PARA EL BANNER (AJUSTADO) --- */
         .banner-container {
             max-width: 1100px;
             height: 188px;
@@ -41,7 +40,7 @@
             border: 4px solid var(--secondary-color);
             border-radius: 22px;
             box-shadow: var(--shadow);
-            overflow: hidden; /* Crucial para la animación de paneo */
+            overflow: hidden;
         }
 
         .hero-banner {
@@ -50,59 +49,49 @@
             display: block;
             mix-blend-mode: multiply;
             opacity: 0.9;
-            animation: vertical-pan 12s ease-in-out infinite alternate; /* Animación de paneo */
+            animation: vertical-pan 12s ease-in-out infinite alternate;
         }
 
         @keyframes vertical-pan {
-            from {
-                transform: translateY(0);
-            }
-            to {
-                /* Mueve la imagen hacia arriba hasta mostrar el borde inferior */
-                transform: translateY(calc(-100% + 188px));
-            }
+            from { transform: translateY(0); }
+            to { transform: translateY(calc(-100% + 188px)); }
         }
 
-        /* --- HEADER Y LOGOS (SECCIÓN MODIFICADA) --- */
         .main-header { background-color: rgba(44, 62, 80, 0.95); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 0.5rem 0; position: sticky; top: 0; z-index: 100; }
         .navbar { display: flex; justify-content: space-between; align-items: center; }
         .navbar-brand { display: flex; align-items: center; gap: 15px; text-decoration: none; }
         .logo-buho {
-            height: 65px; /* Más grande */
+            height: 65px;
             width: 65px;
-            border-radius: 50%; /* Forma circular/ovalada */
-            border: 3px solid var(--secondary-color); /* Contorno con color secundario */
+            border-radius: 50%;
+            border: 3px solid var(--secondary-color);
             padding: 4px;
             background-color: white;
-            box-shadow: 0 0 15px rgba(80, 227, 194, 0.5); /* Sombra para resaltar */
+            box-shadow: 0 0 15px rgba(80, 227, 194, 0.5);
         }
         .navbar-brand h1 { font-size: 1.8rem; color: white; font-weight: 700; }
         
-        /* --- BÚSQUEDA PRINCIPAL (SECCIÓN MODIFICADA) --- */
         .search-hero { padding: 5rem 1rem; text-align: center; }
-        .search-hero h2 { font-size: 3rem; margin-bottom: 1rem; color: #2c3e50; }
-        .search-hero p { font-size: 1.2rem; color: var(--subtle-text-color); margin-bottom: 2.5rem; }
         .search-container { position: relative; display: flex; align-items: center; max-width: 800px; margin: 0 auto; }
         .logo-ay-search {
-            position: absolute; /* Posicionamiento absoluto para control total */
+            position: absolute;
             left: 8px;
             top: 50%;
             transform: translateY(-50%);
             height: 50px;
             width: 50px;
-            border-radius: 50%; /* Forma circular/ovalada */
-            border: 2px solid var(--primary-color); /* Contorno azul */
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
             padding: 3px;
             background-color: white;
             z-index: 2;
-            transition: transform 0.6s ease-in-out; /* Animación preservada */
+            transition: transform 0.6s ease-in-out;
         }
         .search-container:hover .logo-ay-search { transform: translateY(-50%) rotate(360deg); }
         .search-form { display: flex; flex-grow: 1; box-shadow: var(--shadow); }
-        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem 1rem 65px; /* Padding izquierdo para no tapar el logo */ font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; }
+        .search-form input { flex-grow: 1; border: 1px solid var(--border-color); padding: 1rem 1.5rem 1rem 65px; font-size: 1.1rem; border-radius: 50px 0 0 50px; outline: none; }
         .search-form button { border: none; background: var(--primary-color); color: white; padding: 1rem 2.5rem; font-size: 1.1rem; cursor: pointer; border-radius: 0 50px 50px 0; font-weight: 600; }
 
-        /* --- LAYOUT PRINCIPAL (SIN CAMBIOS) --- */
         .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 2.5rem; margin-top: 3rem; }
         .sidebar { grid-column: 1 / 2; }
         .courses-display { grid-column: 2 / 3; }
@@ -111,8 +100,6 @@
         .sidebar-widget select, .sidebar-widget button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.8rem; background-color: #fff; }
         .sidebar-widget button { background-color: var(--secondary-color); color: white; font-weight: 600; cursor: pointer; border: none; }
         
-        /* --- TARJETAS DE CURSOS (SIN CAMBIOS) --- */
-        .results-header h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-color); border: none; }
         .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
         .course-card { background: var(--surface-color); border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; text-decoration: none; color: var(--text-color); transition: transform 0.3s, box-shadow 0.3s; border-top: 4px solid var(--primary-color); }
         .course-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
@@ -122,28 +109,16 @@
         .platform-badge { background-color: var(--background-gradient); padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 0.8rem; font-weight: 600; color: var(--subtle-text-color); }
         .star-rating { font-size: 1.1rem; color: #f39c12; }
         
-        /* --- VENTANA MODAL (SIN CAMBIOS) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 200; }
         .modal-content { background: var(--surface-color); padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; position: relative; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #aaa; cursor: pointer; }
         .modal-content h2 { font-size: 1.8rem; color: var(--primary-color); margin-top: 0; }
-        .path-section h3 { font-size: 1.3rem; margin: 1.5rem 0 0.8rem 0; border-left: 4px solid var(--secondary-color); padding-left: 10px; }
-        .path-section ul { list-style: none; padding-left: 0; }
-        .path-section li a { font-weight: 600; text-decoration: none; color: var(--text-color); display: block; background: var(--background-gradient); padding: 1rem; border-radius: 6px; margin-bottom: 0.5rem; }
+        
+        .navbar { padding: 0.5rem 1.5rem; }
+        .navbar-right { display: flex; align-items: center; gap: 1rem; }
+        #user-view { display: none; align-items: center; gap: 1rem; }
 
-        /* --- TAREA 1 y 2: ESTILOS PARA HEADER, BOTONES Y MENÚS --- */
-        .navbar {
-            padding: 0.5rem 1.5rem; /* Ajuste de padding para el contenedor */
-        }
-
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* Botones de Login/Registro */
-        .login-btn, .register-btn {
+        .login-btn, .register-btn, #logout-btn {
             border: none;
             padding: 0.6rem 1.2rem;
             border-radius: 50px;
@@ -153,13 +128,12 @@
             transition: all 0.3s ease;
         }
 
-        .login-btn {
+        .login-btn, #logout-btn {
             background-color: transparent;
             color: white;
             border: 2px solid var(--secondary-color);
         }
-
-        .login-btn:hover {
+        .login-btn:hover, #logout-btn:hover {
             background-color: var(--secondary-color);
             color: #2c3e50;
         }
@@ -169,13 +143,11 @@
             color: white;
             border: 2px solid var(--primary-color);
         }
-
         .register-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
         }
 
-        /* Icono de Menú Hamburguesa */
         .menu-icon {
             width: 30px;
             height: 22px;
@@ -185,155 +157,40 @@
             cursor: pointer;
             z-index: 110;
         }
+        .menu-icon span { width: 100%; height: 3px; background-color: white; border-radius: 2px; transition: all 0.3s ease; }
 
-        .menu-icon span {
-            width: 100%;
-            height: 3px;
-            background-color: white;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        /* Panel de Menú Desplegable */
         .info-menu-panel {
-            position: fixed;
-            top: 0;
-            right: -320px; /* Inicia fuera de la pantalla */
-            width: 300px;
-            height: 100%;
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
             background-color: #2c3e50;
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 105;
             transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             padding: 6rem 2rem 2rem;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
+        .info-menu-panel.open { right: 0; }
+        .info-menu-panel nav { display: flex; flex-direction: column; gap: 1.5rem; }
+        .info-menu-panel nav a { color: white; text-decoration: none; font-size: 1.2rem; font-weight: 400; transition: color 0.3s; cursor: pointer; }
+        .info-menu-panel nav a:hover { color: var(--secondary-color); }
+        .info-menu-panel nav a small { font-size: 0.8rem; color: #bdc3c7; display: block; line-height: 1.4; }
+        .close-menu-btn { position: absolute; top: 15px; right: 25px; font-size: 2.5rem; color: white; cursor: pointer; }
 
-        .info-menu-panel.open {
-            right: 0; /* Se desliza a la vista */
-        }
-
-        .info-menu-panel nav {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .info-menu-panel nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: 400;
-            transition: color 0.3s;
-        }
-
-        .info-menu-panel nav a:hover {
-            color: var(--secondary-color);
-        }
-
-        .info-menu-panel nav a small {
-            font-size: 0.8rem;
-            color: #bdc3c7;
-        }
-
-        .close-menu-btn {
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            font-size: 2.5rem;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* --- TAREA 2: ESTILOS PARA MODAL DE LOGIN --- */
-        .login-modal-content {
-            max-width: 450px;
-            text-align: center;
-        }
-
-        .login-modal-content h2 {
-            margin-bottom: 2rem;
-        }
-
-        .login-form .form-group {
-            text-align: left;
-            margin-bottom: 1.5rem;
-        }
-
-        .login-form label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--subtle-text-color);
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .login-form .forgot-password {
-            display: block;
-            text-align: right;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .login-form .submit-login {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .login-form .submit-login:hover {
-            background-color: #3a7ac8;
-        }
-
-        .login-modal-content .register-link {
-            margin-top: 2rem;
-            font-size: 0.9rem;
-        }
-
-        .login-modal-content .register-link a {
-            color: var(--primary-color);
-            font-weight: 600;
-            text-decoration: none;
-        }
+        .login-modal-content { max-width: 450px; text-align: center; }
+        .login-modal-content h2 { margin-bottom: 2rem; }
+        .login-form .form-group { text-align: left; margin-bottom: 1.5rem; }
+        .login-form label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--subtle-text-color); }
+        .login-form input { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; }
+        .login-form .forgot-password { display: block; text-align: right; font-size: 0.9rem; margin-bottom: 1.5rem; color: var(--primary-color); text-decoration: none; }
+        .login-form .submit-login { width: 100%; padding: 1rem; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s; }
+        .login-form .submit-login:hover { background-color: #3a7ac8; }
+        .login-modal-content .register-link { margin-top: 2rem; font-size: 0.9rem; }
+        .login-modal-content .register-link a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
 
         footer { text-align: center; padding: 2rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1; }
         
-        /* --- Media Queries para Responsividad --- */
-        @media (max-width: 992px) { 
-            .main-content { grid-template-columns: 1fr; } 
-            .navbar { padding: 0.5rem 1rem; }
-        }
-        @media (max-width: 768px) {
-            .search-hero h2 { font-size: 2.5rem; }
-            .login-btn, .register-btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
-            }
-            .navbar-right { gap: 0.8rem; }
-        }
-        @media (max-width: 480px) {
-            /* Ocultar botones de texto en pantallas muy pequeñas, dejando solo el menú */
-            .login-btn, .register-btn { display: none; }
-            .navbar-brand h1 { font-size: 1.5rem; }
-            .logo-buho { height: 55px; width: 55px; }
-        }
+        @media (max-width: 992px) { .main-content { grid-template-columns: 1fr; } .navbar { padding: 0.5rem 1rem; } }
+        @media (max-width: 768px) { .login-btn, .register-btn { padding: 0.5rem 1rem; font-size: 0.8rem; } .navbar-right { gap: 0.8rem; } }
+        @media (max-width: 480px) { #anonymous-view { display: none; } #user-view { display: none !important; } .navbar-brand h1 { font-size: 1.5rem; } .logo-buho { height: 55px; width: 55px; } }
     </style>
 </head>
 <body>
@@ -343,25 +200,27 @@
                 <img src="{{ url_for('static', filename='OsoAnteojos.png') }}" class="logo-buho" alt="Logo OsoAnteojos">
                 <h1>AprendoYA!</h1>
             </a>
-            <!-- TAREA 1 y 2: Botones de login y menú -->
             <div class="navbar-right">
-                <button id="login-btn" class="login-btn">Iniciar Sesión</button>
-                <button class="register-btn">Registrarse</button>
+                <div id="anonymous-view">
+                    <button id="login-btn" class="login-btn">Iniciar Sesión</button>
+                    <button id="register-btn" class="register-btn">Registrarse</button>
+                </div>
+                <div id="user-view">
+                    <span id="user-email-display" style="color: white; font-weight: 600;"></span>
+                    <button id="logout-btn">Cerrar Sesión</button>
+                </div>
                 <div id="menu-icon" class="menu-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- TAREA 1: Panel de Menú Desplegable -->
     <div id="info-menu" class="info-menu-panel">
         <span id="close-menu-btn" class="close-menu-btn">&times;</span>
         <nav>
-            <a href="#">Quiénes Somos</a>
-            <a href="#">Contáctanos <br><small>(WhatsApp: +57 3144373585)</small></a>
+            <a id="quienes-somos-btn">Quiénes Somos</a>
+            <a>Contáctanos <small>WhatsApp: +57 3144373585</small><small>Email: aprendoyalearn@gmail.com</small></a>
             <a href="#">Nuestros Cursos</a>
             <a href="#">Blog</a>
             <a href="#">Preguntas Frecuentes (FAQ)</a>
@@ -386,17 +245,8 @@
             <aside class="sidebar">
                 <div class="sidebar-widget">
                     <h3>Recomendación Rápida</h3>
-                    <select id="interest_modal" name="interest_modal">
-                        <option value="" disabled selected>Selecciona un área de interés</option>
-                        {% for topic in topics %}
-                            <option value="{{ topic.value }}">{{ topic.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select id="level_modal" name="level_modal">
-                        <option value="" disabled selected>Selecciona tu nivel</option>
-                        <option value="beginner">Principiante</option>
-                        <option value="intermediate">Con experiencia</option>
-                    </select>
+                    <select id="interest_modal" name="interest_modal"><option value="" disabled selected>Selecciona un área de interés</option>{% for topic in topics %}<option value="{{ topic.value }}">{{ topic.name }}</option>{% endfor %}</select>
+                    <select id="level_modal" name="level_modal"><option value="" disabled selected>Selecciona tu nivel</option><option value="beginner">Principiante</option><option value="intermediate">Con experiencia</option></select>
                     <button onclick="recommendCourses()">Recomiéndame un Curso</button>
                 </div>
                 <div class="sidebar-widget">
@@ -407,62 +257,29 @@
             </aside>
             
             <div class="courses-display">
-                <div class="results-header">
-                    <h2 id="results-title">Cursos Populares</h2>
-                </div>
+                <div class="results-header"><h2 id="results-title">Cursos Populares</h2></div>
                 <div id="results-grid" class="results-grid"></div>
                 <p id="no-results-message" style="display: none; text-align: center; padding: 2rem;">No se encontraron cursos para tu búsqueda.</p>
             </div>
         </div>
     </main>
     
-    <div id="learning-path-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <h2 id="modal-title">Ruta de Aprendizaje</h2>
-            <div id="modal-body"></div>
-        </div>
-    </div>
-
-    <!-- TAREA 2: Modal de Inicio de Sesión -->
-    <div id="login-modal" class="modal-overlay">
-        <div class="modal-content login-modal-content">
-            <span id="close-login-modal" class="modal-close">&times;</span>
-            <h2>Bienvenido de nuevo</h2>
-            <form class="login-form" onsubmit="event.preventDefault();">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" required>
-                </div>
-                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-                <button type="submit" class="submit-login">Ingresar</button>
-            </form>
-            <p class="register-link">¿No tienes una cuenta? <a href="#">Regístrate aquí</a></p>
-        </div>
-    </div>
+    <div id="learning-path-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close" onclick="closeModal('learning-path-modal')">&times;</span><h2 id="modal-title">Ruta de Aprendizaje</h2><div id="modal-body"></div></div></div>
+    <div id="quienes-somos-modal" class="modal-overlay"><div class="modal-content"><span class="modal-close" onclick="closeModal('quienes-somos-modal')">&times;</span><h2>¿Quiénes Somos?</h2><p style="text-align: justify;"><strong>AprendoYA!</strong> es tu plataforma inteligente para descubrir el universo del aprendizaje en línea. Nuestra misión es guiarte hacia los mejores cursos de internet, adaptados a tus intereses y nivel de experiencia. Usamos un sistema de recomendación avanzado que analiza miles de opciones de las principales plataformas educativas para ofrecerte sugerencias personalizadas y rutas de aprendizaje claras. Creemos que la educación debe ser accesible y efectiva. Con AprendoYA!, tu próximo gran paso profesional está a solo una búsqueda de distancia.</p></div></div>
     
+    <div id="login-modal" class="modal-overlay"><div class="modal-content login-modal-content"><span class="modal-close" onclick="closeModal('login-modal')">&times;</span><h2>Bienvenido de nuevo</h2><form id="login-form" class="login-form"><div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" required></div><div class="form-group"><label for="login-password">Contraseña</label><input type="password" id="login-password" required></div><a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a><button type="submit" class="submit-login">Ingresar</button><p id="login-error" style="color: red; display: none; margin-top: 1rem;"></p></form><p class="register-link">¿No tienes una cuenta? <a href="#" id="go-to-register">Regístrate aquí</a></p></div></div>
+    <div id="register-modal" class="modal-overlay"><div class="modal-content login-modal-content"><span class="modal-close" onclick="closeModal('register-modal')">&times;</span><h2>Crea tu Cuenta</h2><form id="register-form" class="login-form"><div class="form-group"><label for="register-email">Email</label><input type="email" id="register-email" required></div><div class="form-group"><label for="register-password">Contraseña</label><input type="password" id="register-password" required></div><div class="form-group"><label for="register-password-confirm">Confirmar Contraseña</label><input type="password" id="register-password-confirm" required></div><button type="submit" class="submit-login">Registrarse</button><p id="register-error" style="color: red; display: none; margin-top: 1rem;"></p></form></div></div>
+
     <footer><p>&copy; 2025 AprendoYA! - Todos los derechos reservados.</p></footer>
 
     <script>
-        // --- Referencias a Elementos del DOM ---
+        // --- Lógica de Cursos (Funciones existentes) ---
         const resultsGrid = document.getElementById('results-grid');
         const resultsTitle = document.getElementById('results-title');
         const noResultsMessage = document.getElementById('no-results-message');
-        
-        // Modal de Ruta de Aprendizaje
-        const learningPathModal = document.getElementById('learning-path-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalBody = document.getElementById('modal-body');
-
-        // --- Lógica de Cursos (Funciones Principales) ---
         function displayCourses(courses) {
             resultsGrid.innerHTML = ''; 
             noResultsMessage.style.display = 'none';
-
             if (courses && courses.length > 0) {
                 courses.forEach(course => {
                     const card = document.createElement('a');
@@ -471,17 +288,11 @@
                     card.target = '_blank';
                     card.rel = 'noopener noreferrer';
                     const stars = '⭐'.repeat(course.num_subscribers);
-                    card.innerHTML = `
-                        <div class="card-content"><h4>${course.course_title}</h4></div>
-                        <div class="card-footer">
-                            <span class="platform-badge">${course.site}</span>
-                            <span class="star-rating">${stars}</span>
-                        </div>`;
+                    card.innerHTML = `<div class="card-content"><h4>${course.course_title}</h4></div><div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${stars}</span></div>`;
                     resultsGrid.appendChild(card);
                 });
             } else { noResultsMessage.style.display = 'block'; }
         }
-
         async function fetchAndDisplay(endpoint, options, title) {
             resultsTitle.textContent = title;
             try {
@@ -490,7 +301,6 @@
                 displayCourses(data.cursos);
             } catch (error) { console.error('Error fetching data:', error); noResultsMessage.style.display = 'block'; }
         }
-
         function searchCourses() {
             const query = document.getElementById('search-input').value;
             if (!query) return;
@@ -498,7 +308,6 @@
             formData.append('interes', query);
             fetchAndDisplay("{{ url_for('search') }}", { method: 'POST', body: formData }, `Resultados para: "${query}"`);
         }
-
         function recommendCourses() {
             const interest = document.getElementById('interest_modal').value;
             const level = document.getElementById('level_modal').value;
@@ -508,25 +317,13 @@
             formData.append('level_modal', level);
             fetchAndDisplay("{{ url_for('recommend') }}", { method: 'POST', body: formData }, 'Cursos Recomendados para ti');
         }
-        
-        function closeModal() { 
-            if(learningPathModal) learningPathModal.style.display = 'none'; 
-        }
-        
-        function buildPathSection(courses, title) {
-            if (!courses || courses.length === 0) return '';
-            const listItems = courses.map(course => 
-                `<li><a href="${course.url}" target="_blank">${course.course_title} <span>(${course.site})</span></a></li>`
-            ).join('');
-            return `<div class="path-section"><h3>${title}</h3><ul>${listItems}</ul></div>`;
-        }
-
         async function generateLearningPath() {
             const query = document.getElementById('search-input').value;
             if (!query) { alert('Escribe un tema en la barra de búsqueda para generar una ruta.'); return; }
-            modalTitle.textContent = `Ruta de Aprendizaje para: ${query}`;
+            const modalBody = document.getElementById('modal-body');
+            document.getElementById('modal-title').textContent = `Ruta de Aprendizaje para: ${query}`;
             modalBody.innerHTML = '<p>Generando ruta, por favor espera...</p>';
-            learningPathModal.style.display = 'flex';
+            openModal('learning-path-modal');
             const formData = new URLSearchParams();
             formData.append('query', query);
             const response = await fetch("{{ url_for('learning_path_route') }}", { method: 'POST', body: formData });
@@ -536,59 +333,188 @@
             pathHtml += buildPathSection(pathData.especializacion, '⭐ 3. Especialización y Proyectos');
             modalBody.innerHTML = pathHtml || '<p>No se encontraron cursos para generar una ruta.</p>';
         }
+        function buildPathSection(courses, title) {
+            if (!courses || courses.length === 0) return '';
+            const listItems = courses.map(course => `<li><a href="${course.url}" target="_blank">${course.course_title} <span>(${course.site})</span></a></li>`).join('');
+            return `<div class="path-section"><h3>${title}</h3><ul>${listItems}</ul></div>`;
+        }
 
-        // --- TAREA 1 y 2: LÓGICA PARA MENÚS Y MODALES ---
+        // --- Lógica de Modales y Menús ---
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) modal.style.display = 'flex';
+        }
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) modal.style.display = 'none';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Lógica del Menú Desplegable (Tarea 1) ---
-            const menuIcon = document.getElementById('menu-icon');
-            const infoMenu = document.getElementById('info-menu');
-            const closeMenuBtn = document.getElementById('close-menu-btn');
+            // Carga inicial
+            fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
+            checkSession();
 
-            if (menuIcon && infoMenu) {
-                menuIcon.addEventListener('click', () => {
-                    infoMenu.classList.toggle('open');
-                });
-            }
-            if (closeMenuBtn) {
-                closeMenuBtn.addEventListener('click', () => {
-                    infoMenu.classList.remove('open');
-                });
-            }
+            // Manejadores de eventos
+            document.getElementById('menu-icon').addEventListener('click', () => document.getElementById('info-menu').classList.toggle('open'));
+            document.getElementById('close-menu-btn').addEventListener('click', () => document.getElementById('info-menu').classList.remove('open'));
+            
+            document.getElementById('login-btn').addEventListener('click', () => openModal('login-modal'));
+            document.getElementById('register-btn').addEventListener('click', () => openModal('register-modal'));
+            document.getElementById('quienes-somos-btn').addEventListener('click', () => openModal('quienes-somos-modal'));
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
-            // --- Lógica del Modal de Login (Tarea 2) ---
-            const loginBtn = document.getElementById('login-btn');
-            const loginModal = document.getElementById('login-modal');
-            const closeLoginModalBtn = document.getElementById('close-login-modal');
-
-            if (loginBtn && loginModal) {
-                loginBtn.addEventListener('click', () => {
-                    loginModal.style.display = 'flex';
-                });
-            }
-
-            function closeLoginModal() {
-                if (loginModal) {
-                    loginModal.style.display = 'none';
-                }
-            }
-
-            if (closeLoginModalBtn) {
-                closeLoginModalBtn.addEventListener('click', closeLoginModal);
-            }
-
-            // Cierre de modales al hacer clic en el overlay
-            window.addEventListener('click', function(event) {
-                if (event.target == learningPathModal) {
-                    closeModal();
-                }
-                if (event.target == loginModal) {
-                    closeLoginModal();
-                }
+            document.getElementById('go-to-register').addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal('login-modal');
+                openModal('register-modal');
             });
 
-            // Cargar cursos populares (código existente)
-            fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
+            // Cierre de modales
+            window.addEventListener('click', (event) => {
+                if (event.target.classList.contains('modal-overlay')) {
+                    event.target.style.display = 'none';
+                }
+            });
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.modal-overlay').style.display = 'none';
+                });
+            });
+
+            // Formularios
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('register-form').addEventListener('submit', handleRegister);
         });
+
+        // --- Lógica de Autenticación ---
+        function updateAuthState(isLoggedIn, userEmail = '') {
+            const anonymousView = document.getElementById('anonymous-view');
+            const userView = document.getElementById('user-view');
+            const userEmailDisplay = document.getElementById('user-email-display');
+
+            if (isLoggedIn) {
+                anonymousView.style.display = 'none';
+                userView.style.display = 'flex';
+                userEmailDisplay.textContent = userEmail;
+            } else {
+                anonymousView.style.display = 'flex';
+                userView.style.display = 'none';
+                userEmailDisplay.textContent = '';
+            }
+        }
+
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/check_session');
+                const data = await response.json();
+                if (data.logged_in) {
+                    updateAuthState(true, data.email);
+                } else {
+                    updateAuthState(false);
+                }
+            } catch (error) {
+                console.error('Error checking session:', error);
+                updateAuthState(false);
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('.submit-login');
+            const originalButtonText = submitButton.textContent;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Ingresando...';
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorP = document.getElementById('login-error');
+            errorP.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateAuthState(true, data.email);
+                    closeModal('login-modal');
+                    form.reset();
+                } else {
+                    errorP.textContent = data.message || 'Error al iniciar sesión.';
+                    errorP.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error en el login:', error);
+                errorP.textContent = 'Ocurrió un error de red. Inténtalo de nuevo.';
+                errorP.style.display = 'block';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('.submit-login');
+            const originalButtonText = submitButton.textContent;
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Registrando...';
+            
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+            const errorP = document.getElementById('register-error');
+            errorP.style.display = 'none';
+
+            if (password !== passwordConfirm) {
+                errorP.textContent = 'Las contraseñas no coinciden.';
+                errorP.style.display = 'block';
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateAuthState(true, data.email);
+                    closeModal('register-modal');
+                    form.reset();
+                } else {
+                    errorP.textContent = data.message || 'Error en el registro.';
+                    errorP.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error en el registro:', error);
+                errorP.textContent = 'Ocurrió un error de red. Inténtalo de nuevo.';
+                errorP.style.display = 'block';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+
+        async function handleLogout() {
+            const response = await fetch('/api/logout');
+            if (response.ok) {
+                updateAuthState(false);
+            } else {
+                alert('Error al cerrar sesión.');
+            }
+        }
     </script>
 </body>
 </html>
