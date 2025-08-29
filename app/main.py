@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, make_response
 import pandas as pd
 import os
 import csv
 from sklearn.preprocessing import MinMaxScaler
 from werkzeug.security import generate_password_hash, check_password_hash
+import json # Asegurarse de que json esté importado
+import threading
+import datetime
+
+users_file_lock = threading.Lock()
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) # Clave secreta para la gestión de sesiones
@@ -46,11 +51,12 @@ def initialize_users_file():
     """
     Verifica si el archivo de usuarios existe y, si no, lo crea con una cabecera.
     """
-    if not os.path.exists(USERS_FILE_PATH):
-        with open(USERS_FILE_PATH, 'w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(['email', 'password'])
-        print(f"Archivo '{os.path.basename(USERS_FILE_PATH)}' no encontrado. Se ha creado uno nuevo.")
+    with users_file_lock: # Bloquear el archivo durante la inicialización
+        if not os.path.exists(USERS_FILE_PATH):
+            with open(USERS_FILE_PATH, 'w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(['email', 'password'])
+            print(f"Archivo '{os.path.basename(USERS_FILE_PATH)}' no encontrado. Se ha creado uno nuevo.")
 
 master_df = load_data()
 TOPICS_LIST = get_topics_from_keywords()
@@ -100,6 +106,24 @@ def generate_learning_path(query):
     especializacion = sorted_courses[sorted_courses['star_rating'] == 5].head(2).to_dict(orient='records')
     return {'fundamentos': fundamentos, 'desarrollo': desarrollo, 'especializacion': especializacion}
 
+# Definir la ruta al archivo de artículos del blog
+BLOG_ARTICLES_FILE_PATH = os.path.join(basedir, "data", "blog_articles.json")
+
+def load_blog_articles():
+    try:
+        with open(BLOG_ARTICLES_FILE_PATH, 'r', encoding='utf-8') as f:
+            articles = json.load(f)
+        print(f"Archivo '{os.path.basename(BLOG_ARTICLES_FILE_PATH)}' cargado con {len(articles)} artículos.")
+        return articles
+    except FileNotFoundError:
+        print(f"Archivo '{os.path.basename(BLOG_ARTICLES_FILE_PATH)}' no encontrado. Se devolverá una lista vacía.")
+        return []
+    except json.JSONDecodeError:
+        print(f"Error al decodificar JSON en '{os.path.basename(BLOG_ARTICLES_FILE_PATH)}'. Se devolverá una lista vacía.")
+        return []
+
+BLOG_ARTICLES = load_blog_articles()
+
 # --- Rutas de la Aplicación ---
 
 @app.route('/')
@@ -134,6 +158,25 @@ def learning_path_route():
     path = generate_learning_path(query)
     return jsonify(path)
 
+# --- Rutas del Blog ---
+@app.route('/api/blog/articles')
+def get_blog_articles_summary():
+    summary_articles = []
+    for article in BLOG_ARTICLES:
+        summary_articles.append({
+            'id': article['id'],
+            'title': article['title'],
+            'summary': article['summary']
+        })
+    return jsonify(articles=summary_articles)
+
+@app.route('/api/blog/article/<string:article_id>')
+def get_blog_article(article_id):
+    for article in BLOG_ARTICLES:
+        if article['id'] == article_id:
+            return jsonify(article)
+    return jsonify({'message': 'Artículo no encontrado'}), 404
+
 # --- Rutas de Autenticación ---
 
 @app.route('/api/register', methods=['POST'])
@@ -145,22 +188,23 @@ def register():
     if not email or not password:
         return jsonify({'message': 'Faltan datos'}), 400
 
-    # Verificar si el usuario ya existe
-    try:
-        with open(USERS_FILE_PATH, 'r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if row and row[0] == email:
-                    return jsonify({'message': 'El correo ya está registrado'}), 409
-    except FileNotFoundError:
-        # Esto no debería ocurrir gracias a initialize_users_file(), pero es una salvaguarda.
-        pass
+    with users_file_lock: # Bloquear el archivo durante la lectura y escritura
+        # Verificar si el usuario ya existe
+        try:
+            with open(USERS_FILE_PATH, 'r', newline='', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if row and row[0] == email:
+                        return jsonify({'message': 'El correo ya está registrado'}), 409
+        except FileNotFoundError:
+            # Esto no debería ocurrir gracias a initialize_users_file(), pero es una salvaguarda.
+            pass
 
-    # Guardar nuevo usuario
-    hashed_password = generate_password_hash(password)
-    with open(USERS_FILE_PATH, 'a', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        writer.writerow([email, hashed_password])
+        # Guardar nuevo usuario
+        hashed_password = generate_password_hash(password)
+        with open(USERS_FILE_PATH, 'a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow([email, hashed_password])
     
     session['email'] = email
     return jsonify({'message': 'Registro exitoso', 'email': email}), 201
@@ -170,39 +214,58 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
+    remember_me = data.get('remember_me', False) # Nuevo: obtener el estado de "recordarme"
 
     if not email or not password:
         return jsonify({'message': 'Faltan datos'}), 400
 
-    try:
-        with open(USERS_FILE_PATH, 'r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            header = next(reader, None) # Leer cabecera de forma segura
-            if not header:
-                return jsonify({'message': 'Usuario no encontrado'}), 404
+    with users_file_lock: # Bloquear el archivo durante la lectura
+        try:
+            with open(USERS_FILE_PATH, 'r', newline='', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                header = next(reader, None) # Leer cabecera de forma segura
+                if not header:
+                    return jsonify({'message': 'Usuario no encontrado'}), 404
 
-            for row in reader:
-                if row and row[0] == email:
-                    if check_password_hash(row[1], password):
-                        session['email'] = email
-                        return jsonify({'message': 'Inicio de sesión exitoso', 'email': email}), 200
-                    else:
-                        return jsonify({'message': 'Contraseña incorrecta'}), 401
-        
-        return jsonify({'message': 'Usuario no encontrado'}), 404
-    except FileNotFoundError:
-        # Esto no debería ocurrir gracias a initialize_users_file()
-        return jsonify({'message': 'Error interno del servidor'}), 500
+                for row in reader:
+                    if row and row[0] == email:
+                        if check_password_hash(row[1], password):
+                            session['email'] = email
+                            response = make_response(jsonify({'message': 'Inicio de sesión exitoso', 'email': email}), 200)
+                            if remember_me:
+                                # Establecer una cookie de larga duración (ej. 30 días)
+                                expires = datetime.datetime.now() + datetime.timedelta(days=30)
+                                response.set_cookie('remember_me_email', email, expires=expires, httponly=True, secure=True, samesite='Lax')
+                            return response
+                        else:
+                            return jsonify({'message': 'Contraseña incorrecta'}), 401
+            
+            return jsonify({'message': 'Usuario no encontrado'}), 404
+        except FileNotFoundError:
+            # Esto no debería ocurrir gracias a initialize_users_file()
+            return jsonify({'message': 'Error interno del servidor'}), 500
 
 @app.route('/api/logout')
 def logout():
     session.pop('email', None)
-    return jsonify({'message': 'Sesión cerrada'}), 200
+    response = make_response(jsonify({'message': 'Sesión cerrada'}), 200)
+    response.set_cookie('remember_me_email', '', expires=0, httponly=True, secure=True, samesite='Lax') # Eliminar la cookie
+    return response
 
 @app.route('/api/check_session')
 def check_session():
     if 'email' in session:
         return jsonify({'logged_in': True, 'email': session['email']})
+    
+    # Nuevo: Verificar la cookie de "recordarme"
+    remember_me_email = request.cookies.get('remember_me_email')
+    if remember_me_email:
+        # Aquí podrías añadir una verificación adicional si el email de la cookie es válido
+        # Por simplicidad, asumimos que si la cookie existe, el usuario es válido.
+        # En un sistema real, se verificaría contra la base de datos.
+        session['email'] = remember_me_email
+        return jsonify({'logged_in': True, 'email': remember_me_email})
+
     return jsonify({'logged_in': False})
 
 

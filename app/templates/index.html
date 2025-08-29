@@ -916,8 +916,12 @@
                 <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email"
                         required></div>
                 <div class="form-group"><label for="login-password">Contraseña</label><input type="password"
-                        id="login-password" required></div><a href="#" class="forgot-password">¿Olvidaste tu
-                    contraseña?</a><button type="submit" class="submit-login">Ingresar</button>
+                        id="login-password" required></div>
+                <div class="form-group" style="display: flex; align-items: center; justify-content: flex-start; gap: 0.5rem;">
+                    <input type="checkbox" id="remember-me" style="width: auto; margin-bottom: 0;">
+                    <label for="remember-me" style="margin-bottom: 0; font-weight: normal;">Recordarme</label>
+                </div>
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a><button type="submit" class="submit-login">Ingresar</button>
                 <p id="login-error" style="color: red; display: none; margin-top: 1rem;"></p>
             </form>
             <p class="register-link">¿No tienes una cuenta? <a href="#" id="go-to-register">Regístrate aquí</a></p>
@@ -1216,6 +1220,7 @@
 
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('remember-me').checked; // Obtener el estado del checkbox
             const errorP = document.getElementById('login-error');
             errorP.style.display = 'none';
 
@@ -1223,7 +1228,7 @@
                 const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password, remember_me: rememberMe }) // Enviar el estado
                 });
                 const data = await response.json();
 
