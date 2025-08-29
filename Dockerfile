@@ -4,10 +4,12 @@ WORKDIR /app
 
 # Copia el contenido de tu carpeta 'app' local (que incluye 'data', 'templates', 'static')
 # al directorio de trabajo '/app' en el contenedor.
-COPY app/ .
-
 # Copia el requirements.txt que está en la raíz de tu repositorio
 COPY requirements.txt .
+
+# Copia el contenido de tu carpeta 'app' local (que incluye 'data', 'templates', 'static')
+# al directorio de trabajo '/app' en el contenedor.
+COPY app/ .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
