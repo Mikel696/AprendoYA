@@ -1,19 +1,39 @@
 from flask import Flask, render_template, request, jsonify, session, make_response
 import pandas as pd
 import os
-import csv
+
 from sklearn.preprocessing import MinMaxScaler
 from werkzeug.security import generate_password_hash, check_password_hash
-import json # Asegurarse de que json esté importado
-import threading
+import json
 import datetime
-
-users_file_lock = threading.Lock()
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24) # Clave secreta para la gestión de sesiones
+app.secret_key = os.urandom(24)
 basedir = os.path.abspath(os.path.dirname(__file__))
-USERS_FILE_PATH = os.path.join(basedir, "data", "users.csv")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data', 'users.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # Optional: set the login view
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.email}>'
+
+with app.app_context():
+    db.create_all()
 
 def get_topics_from_keywords():
     """
@@ -47,20 +67,10 @@ def load_data():
         print(f"ERROR CRÍTICO AL CARGAR 'cursos_calificados_final.csv': {e}")
         return pd.DataFrame()
 
-def initialize_users_file():
-    """
-    Verifica si el archivo de usuarios existe y, si no, lo crea con una cabecera.
-    """
-    with users_file_lock: # Bloquear el archivo durante la inicialización
-        if not os.path.exists(USERS_FILE_PATH):
-            with open(USERS_FILE_PATH, 'w', newline='', encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerow(['email', 'password'])
-            print(f"Archivo '{os.path.basename(USERS_FILE_PATH)}' no encontrado. Se ha creado uno nuevo.")
+
 
 master_df = load_data()
-TOPICS_LIST = get_topics_from_keywords()
-initialize_users_file()
+
 
 def perform_search(query, level=None):
     """
@@ -123,6 +133,8 @@ def load_blog_articles():
         return []
 
 BLOG_ARTICLES = load_blog_articles()
+
+TOPICS_LIST = get_topics_from_keywords()
 
 # --- Rutas de la Aplicación ---
 
@@ -188,25 +200,16 @@ def register():
     if not email or not password:
         return jsonify({'message': 'Faltan datos'}), 400
 
-    with users_file_lock: # Bloquear el archivo durante la lectura y escritura
-        # Verificar si el usuario ya existe
-        try:
-            with open(USERS_FILE_PATH, 'r', newline='', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    if row and row[0] == email:
-                        return jsonify({'message': 'El correo ya está registrado'}), 409
-        except FileNotFoundError:
-            # Esto no debería ocurrir gracias a initialize_users_file(), pero es una salvaguarda.
-            pass
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({'message': 'El correo ya está registrado'}), 409
 
-        # Guardar nuevo usuario
-        hashed_password = generate_password_hash(password)
-        with open(USERS_FILE_PATH, 'a', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow([email, hashed_password])
+    hashed_password = generate_password_hash(password)
+    new_user = User(email=email, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
     
-    session['email'] = email
+    login_user(new_user) # Log in the newly registered user
     return jsonify({'message': 'Registro exitoso', 'email': email}), 201
 
 @app.route('/api/login', methods=['POST'])
@@ -214,58 +217,30 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    remember_me = data.get('remember_me', False) # Nuevo: obtener el estado de "recordarme"
+    remember_me = data.get('remember_me', False)
 
     if not email or not password:
         return jsonify({'message': 'Faltan datos'}), 400
 
-    with users_file_lock: # Bloquear el archivo durante la lectura
-        try:
-            with open(USERS_FILE_PATH, 'r', newline='', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                header = next(reader, None) # Leer cabecera de forma segura
-                if not header:
-                    return jsonify({'message': 'Usuario no encontrado'}), 404
+    user = User.query.filter_by(email=email).first()
 
-                for row in reader:
-                    if row and row[0] == email:
-                        if check_password_hash(row[1], password):
-                            session['email'] = email
-                            response = make_response(jsonify({'message': 'Inicio de sesión exitoso', 'email': email}), 200)
-                            if remember_me:
-                                # Establecer una cookie de larga duración (ej. 30 días)
-                                expires = datetime.datetime.now() + datetime.timedelta(days=30)
-                                response.set_cookie('remember_me_email', email, expires=expires, httponly=True, secure=True, samesite='Lax')
-                            return response
-                        else:
-                            return jsonify({'message': 'Contraseña incorrecta'}), 401
-            
-            return jsonify({'message': 'Usuario no encontrado'}), 404
-        except FileNotFoundError:
-            # Esto no debería ocurrir gracias a initialize_users_file()
-            return jsonify({'message': 'Error interno del servidor'}), 500
+    if not user or not check_password_hash(user.password, password):
+        return jsonify({'message': 'Credenciales inválidas'}), 401
+
+    login_user(user, remember=remember_me)
+    response = make_response(jsonify({'message': 'Inicio de sesión exitoso', 'email': user.email}), 200)
+    return response
 
 @app.route('/api/logout')
 def logout():
-    session.pop('email', None)
+    logout_user()
     response = make_response(jsonify({'message': 'Sesión cerrada'}), 200)
-    response.set_cookie('remember_me_email', '', expires=0, httponly=True, secure=True, samesite='Lax') # Eliminar la cookie
     return response
 
 @app.route('/api/check_session')
 def check_session():
-    if 'email' in session:
-        return jsonify({'logged_in': True, 'email': session['email']})
-    
-    # Nuevo: Verificar la cookie de "recordarme"
-    remember_me_email = request.cookies.get('remember_me_email')
-    if remember_me_email:
-        # Aquí podrías añadir una verificación adicional si el email de la cookie es válido
-        # Por simplicidad, asumimos que si la cookie existe, el usuario es válido.
-        # En un sistema real, se verificaría contra la base de datos.
-        session['email'] = remember_me_email
-        return jsonify({'logged_in': True, 'email': remember_me_email})
-
+    if current_user.is_authenticated:
+        return jsonify({'logged_in': True, 'email': current_user.email})
     return jsonify({'logged_in': False})
 
 
