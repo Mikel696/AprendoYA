@@ -11,6 +11,7 @@ COPY requirements.txt .
 # al directorio de trabajo '/app' en el contenedor.
 COPY app/ .
 
+RUN pip install Flask-SQLAlchemy
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip list
 
