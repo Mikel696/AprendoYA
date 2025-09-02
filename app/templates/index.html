@@ -853,8 +853,6 @@
                     <select id="platform-filter" name="platform">
                         <option value="" disabled selected>Plataforma</option>
                     </select>
-                    <input type="number" id="min-price-filter" placeholder="Precio Mínimo">
-                    <input type="number" id="max-price-filter" placeholder="Precio Máximo">
                     <button onclick="searchCourses()">Aplicar Filtros</button>
                 </div>
                 <div class="sidebar-widget">
@@ -1155,19 +1153,15 @@
         function searchCourses() {
             const query = document.getElementById('search-input').value;
             const platform = document.getElementById('platform-filter').value;
-            const minPrice = document.getElementById('min-price-filter').value;
-            const maxPrice = document.getElementById('max-price-filter').value;
 
-            if (!query && !platform && !minPrice && !maxPrice) {
-                alert('Por favor, ingresa un término de búsqueda o selecciona al menos un filtro.');
+            if (!query && !platform) {
+                alert('Por favor, ingresa un término de búsqueda o selecciona una plataforma.');
                 return;
             }
 
             const formData = new URLSearchParams();
             formData.append('interes', query);
             if (platform) formData.append('platform', platform);
-            if (minPrice) formData.append('min_price', minPrice);
-            if (maxPrice) formData.append('max_price', maxPrice);
 
             let title = 'Resultados de la Búsqueda';
             if (query) {

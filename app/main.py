@@ -86,7 +86,7 @@ def load_data():
 master_df = load_data()
 
 
-def perform_search(query, level=None, platform=None, min_price=None, max_price=None):
+def perform_search(query, level=None, platform=None):
     """
     Realiza una búsqueda con el ranking por estrellas, relevancia y nivel, y filtros adicionales.
     """
@@ -101,12 +101,6 @@ def perform_search(query, level=None, platform=None, min_price=None, max_price=N
 
     if platform:
         results_df = results_df[results_df['site'].str.lower() == platform.lower()]
-
-    if min_price is not None:
-        results_df = results_df[results_df['price'] >= min_price]
-
-    if max_price is not None:
-        results_df = results_df[results_df['price'] <= max_price]
 
     if results_df.empty:
         return []
@@ -176,10 +170,8 @@ def home():
 def search():
     query = request.form.get('interes', '').strip().lower()
     platform = request.form.get('platform', None)
-    min_price = request.form.get('min_price', None, type=float)
-    max_price = request.form.get('max_price', None, type=float)
 
-    cursos = perform_search(query, platform=platform, min_price=min_price, max_price=max_price)
+    cursos = perform_search(query, platform=platform)
     return jsonify(cursos=cursos)
 
 @app.route('/recommend', methods=['POST'])
@@ -187,10 +179,8 @@ def recommend():
     query = request.form.get('interest_modal', '')
     level = request.form.get('level_modal', '')
     platform = request.form.get('platform', None)
-    min_price = request.form.get('min_price', None, type=float)
-    max_price = request.form.get('max_price', None, type=float)
     
-    cursos = perform_search(query, level=level, platform=platform, min_price=min_price, max_price=max_price)
+    cursos = perform_search(query, level=level, platform=platform)
     return jsonify(cursos=cursos)
 
 @app.route('/popular_courses')
