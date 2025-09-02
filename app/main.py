@@ -80,31 +80,47 @@ def load_data():
 master_df = load_data()
 
 
-def perform_search(query, level=None):
+def perform_search(query, level=None, platform=None, min_price=None, max_price=None):
     """
-    Realiza una búsqueda con el ranking por estrellas, relevancia y nivel.
+    Realiza una búsqueda con el ranking por estrellas, relevancia y nivel, y filtros adicionales.
     """
-    if master_df.empty or not query:
+    if master_df.empty:
         return []
-    
-    mask = master_df['title_lower'].str.contains(query, na=False)
-    results_df = master_df[mask].copy()
-    
+
+    results_df = master_df.copy()
+
+    if query:
+        mask = results_df['title_lower'].str.contains(query, na=False)
+        results_df = results_df[mask]
+
+    if platform:
+        results_df = results_df[results_df['site'].str.lower() == platform.lower()]
+
+    if min_price is not None:
+        results_df = results_df[results_df['price'] >= min_price]
+
+    if max_price is not None:
+        results_df = results_df[results_df['price'] <= max_price]
+
     if results_df.empty:
         return []
-        
+
     level_score = pd.Series(0, index=results_df.index)
     if level == 'beginner':
         level_score += results_df['title_lower'].str.contains('principiantes|básico|cero|inicial', na=False, regex=True).astype(int)
-    
-    results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x and len(x) > 0 else 0)
+
+    if query:
+        results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x and len(x) > 0 else 0)
+    else:
+        results_df['relevance_score'] = 0
+        
     results_df['level_score'] = level_score
-    
+
     scaler = MinMaxScaler()
     results_df['quality_score'] = scaler.fit_transform(results_df[['star_rating']]).flatten()
-    
+
     results_df['final_score'] = (results_df['relevance_score'] * 0.4) + (results_df['quality_score'] * 0.5) - (results_df['level_score'] * 0.1)
-    
+
     ranked_results = results_df.sort_values(by='final_score', ascending=False)
     return ranked_results.head(9).rename(columns={'star_rating': 'num_subscribers'}).to_dict(orient='records')
 
@@ -153,14 +169,22 @@ def home():
 @app.route('/search', methods=['POST'])
 def search():
     query = request.form.get('interes', '').strip().lower()
-    cursos = perform_search(query)
+    platform = request.form.get('platform', None)
+    min_price = request.form.get('min_price', None, type=float)
+    max_price = request.form.get('max_price', None, type=float)
+
+    cursos = perform_search(query, platform=platform, min_price=min_price, max_price=max_price)
     return jsonify(cursos=cursos)
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
     query = request.form.get('interest_modal', '')
     level = request.form.get('level_modal', '')
-    cursos = perform_search(query, level=level)
+    platform = request.form.get('platform', None)
+    min_price = request.form.get('min_price', None, type=float)
+    max_price = request.form.get('max_price', None, type=float)
+    
+    cursos = perform_search(query, level=level, platform=platform, min_price=min_price, max_price=max_price)
     return jsonify(cursos=cursos)
 
 @app.route('/popular_courses')
