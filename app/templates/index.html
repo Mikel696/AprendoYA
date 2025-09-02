@@ -1084,10 +1084,11 @@
             const card = document.createElement('div');
             card.className = 'course-card';
             
-            const isFavorited = userFavorites.includes(course.course_id);
+            const courseIdAsInt = parseInt(course.course_id, 10);
+            const isFavorited = userFavorites.includes(courseIdAsInt);
 
             card.innerHTML = `
-                <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${course.course_id}, this)">★</button>
+                <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${courseIdAsInt}, this)">★</button>
                 <a href="${course.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
                     <div class="card-content"><h4>${course.course_title}</h4></div>
                     <div class="card-footer">
@@ -1209,20 +1210,21 @@
                 return;
             }
 
+            const courseIdAsInt = parseInt(courseId, 10);
             const isFavorited = starElement.classList.contains('favorited');
             const endpoint = isFavorited ? '/api/favorites/remove' : '/api/favorites/add';
 
             await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ course_id: courseId })
+                body: JSON.stringify({ course_id: courseIdAsInt })
             });
 
             starElement.classList.toggle('favorited');
             if (isFavorited) {
-                userFavorites = userFavorites.filter(id => id !== courseId);
+                userFavorites = userFavorites.filter(id => id !== courseIdAsInt);
             } else {
-                userFavorites.push(courseId);
+                userFavorites.push(courseIdAsInt);
             }
         }
 
