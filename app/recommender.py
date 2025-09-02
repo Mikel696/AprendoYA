@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 
-df = pd.read_csv("data/udemy_online_education_courses_dataset.csv")
+df = pd.read_csv("data/udemy_online_education_courses_dataset.csv", encoding='latin-1')
 
 features = ['price', 'num_subscribers', 'num_reviews', 'num_lectures', 'content_duration']
 
