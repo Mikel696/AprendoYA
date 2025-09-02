@@ -52,7 +52,9 @@ class Review(db.Model):
     def __repr__(self):
         return f'<Review user_id={self.user_id} course_id={self.course_id} rating={self.rating}>'
 
-# Removed db.create_all() from here. It should be handled by migrations or manually.
+
+with app.app_context():
+    db.create_all()
 
 def get_topics_from_keywords():
     """
