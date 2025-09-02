@@ -1310,6 +1310,24 @@
             }
         }
 
+        async function loadPlatforms() {
+            try {
+                const response = await fetch('/api/platforms');
+                const data = await response.json();
+                const platformFilter = document.getElementById('platform-filter');
+                if (platformFilter) {
+                    data.platforms.forEach(platform => {
+                        const option = document.createElement('option');
+                        option.value = platform;
+                        option.textContent = platform;
+                        platformFilter.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading platforms:', error);
+            }
+        }
+
         // --- Lógica de Modales y Menús ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
