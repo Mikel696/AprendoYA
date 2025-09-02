@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 
-def get_recommendations(course_id, data_df, top_n=5):
+def get_recommendations(course_title, data_df, top_n=5):
     features = ['star_rating'] # Only use star_rating as it's the only common numerical feature
 
     if not all(feature in data_df.columns for feature in features):
@@ -13,8 +13,9 @@ def get_recommendations(course_id, data_df, top_n=5):
         # For now, we'll raise an error as per original logic
         raise ValueError("Existen valores nulos en las columnas numéricas del dataset")
 
-    if course_id not in data_df['course_id'].values:
-        raise ValueError(f"El course_id {course_id} no existe en la base de datos")
+    # Use course_title for lookup
+    if course_title not in data_df['course_title'].values:
+        raise ValueError(f"El course_title '{course_title}' no existe en la base de datos")
 
     df_features = data_df[features]
     scaler = StandardScaler()
@@ -22,7 +23,8 @@ def get_recommendations(course_id, data_df, top_n=5):
     
     similarity = cosine_similarity(scaled_features)
     
-    course_idx = data_df.index[data_df['course_id'] == course_id][0]
+    # Find course_idx using course_title
+    course_idx = data_df.index[data_df['course_title'] == course_title][0]
     scores = list(enumerate(similarity[course_idx]))
     scores = sorted(scores, key=lambda x: x[1], reverse=True)
     

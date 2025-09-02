@@ -344,18 +344,27 @@ def remove_favorite():
 @login_required
 def dashboard():
     favorites = Favorite.query.filter_by(user_id=current_user.id).order_by(Favorite.id.desc()).all()
-    favorite_course_ids = [f.course_id for f in favorites]
-
+    
     recommendations = []
-    if favorite_course_ids:
-        # Get recommendations based on the most recent favorite
-        try:
-            recommendations = get_recommendations(favorite_course_ids[0], top_n=3)
-        except Exception as e:
-            print(f"Error getting recommendations for dashboard: {e}")
-
     recent_favorites = []
-    if favorite_course_ids:
+
+    if favorites:
+        # Get the most recent favorite course_id
+        most_recent_favorite_course_id = favorites[0].course_id
+        
+        # Get the course_title for the most recent favorite
+        most_recent_favorite_course = master_df[master_df['course_id'] == most_recent_favorite_course_id]
+        if not most_recent_favorite_course.empty:
+            most_recent_favorite_course_title = most_recent_favorite_course['course_title'].iloc[0]
+            
+            # Get recommendations based on the most recent favorite's title
+            try:
+                recommendations = get_recommendations(most_recent_favorite_course_title, master_df, top_n=3)
+            except Exception as e:
+                print(f"Error al obtener recomendaciones para el dashboard: {e}")
+
+        # Get the user's most recent favorites
+        favorite_course_ids = [f.course_id for f in favorites]
         recent_favorites_df = master_df[master_df['course_id'].isin(favorite_course_ids)]
         recent_favorites = recent_favorites_df.head(3).to_dict(orient='records')
 
