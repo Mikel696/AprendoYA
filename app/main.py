@@ -71,9 +71,9 @@ def load_data():
     """
     try:
         path = os.path.join(basedir, "data", "cursos_calificados_final.csv")
-        df = pd.read_csv(path, encoding='utf-8-sig') # Changed encoding to utf-8-sig
-        print(f"DEBUG: Columns after loading CSV: {df.columns.tolist()}") # Debug print
-        print(f"DEBUG: First 5 rows after loading CSV:\n{df.head()}") # Debug print
+        df = pd.read_csv(path, encoding='utf-8-sig')
+        if 'course_id' in df.columns:
+            df['course_id'] = pd.to_numeric(df['course_id'], errors='coerce').fillna(0).astype(int)
         df['title_lower'] = df['course_title'].str.lower()
         print(f"Archivo 'cursos_calificados_final.csv' cargado con {len(df)} cursos.")
         return df
@@ -102,7 +102,27 @@ def perform_search(query, level=None, platform=None):
     if platform:
         results_df = results_df[results_df['site'].str.lower() == platform.lower()]
 
-    return results_df.head(9).rename(columns={'star_rating': 'num_subscribers'}).to_dict(orient='records')
+    if results_df.empty:
+        return []
+
+    level_score = pd.Series(0, index=results_df.index)
+    if level == 'beginner':
+        level_score += results_df['title_lower'].str.contains('principiantes|básico|cero|inicial', na=False, regex=True).astype(int)
+
+    if query:
+        results_df['relevance_score'] = results_df['title_lower'].apply(lambda x: len(query) / len(x) if x and len(x) > 0 else 0)
+    else:
+        results_df['relevance_score'] = 0
+        
+    results_df['level_score'] = level_score
+
+    scaler = MinMaxScaler()
+    results_df['quality_score'] = scaler.fit_transform(results_df[['star_rating']]).flatten()
+
+    results_df['final_score'] = (results_df['relevance_score'] * 0.4) + (results_df['quality_score'] * 0.5) - (results_df['level_score'] * 0.1)
+
+    ranked_results = results_df.sort_values(by='final_score', ascending=False)
+    return ranked_results.head(9).rename(columns={'star_rating': 'num_subscribers'}).to_dict(orient='records')
 
 def generate_learning_path(query):
     """
