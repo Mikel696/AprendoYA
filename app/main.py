@@ -8,6 +8,7 @@ import json
 import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required
+from recommender import get_recommendations
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -325,6 +326,32 @@ def remove_favorite():
     db.session.commit()
     
     return jsonify({'message': 'Curso eliminado de favoritos'}), 200
+
+# --- Rutas de Dashboard ---
+
+@app.route('/api/dashboard')
+@login_required
+def dashboard():
+    favorites = Favorite.query.filter_by(user_id=current_user.id).order_by(Favorite.id.desc()).all()
+    favorite_course_ids = [f.course_id for f in favorites]
+
+    recommendations = []
+    if favorite_course_ids:
+        # Get recommendations based on the most recent favorite
+        try:
+            recommendations = get_recommendations(favorite_course_ids[0], top_n=3)
+        except Exception as e:
+            print(f"Error getting recommendations for dashboard: {e}")
+
+    recent_favorites = []
+    if favorite_course_ids:
+        recent_favorites_df = master_df[master_df['course_id'].isin(favorite_course_ids)]
+        recent_favorites = recent_favorites_df.head(3).to_dict(orient='records')
+
+    return jsonify({
+        'recommendations': recommendations,
+        'recent_favorites': recent_favorites
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

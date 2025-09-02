@@ -208,7 +208,8 @@
         }
 
         .sidebar-widget select,
-        .sidebar-widget button {
+        .sidebar-widget button,
+        .sidebar-widget input {
             width: 100%;
             padding: 0.8rem;
             font-size: 1rem;
@@ -840,6 +841,18 @@
                     <button onclick="recommendCourses()">Recomiéndame un Curso</button>
                 </div>
                 <div class="sidebar-widget">
+                    <h3>Filtros Avanzados</h3>
+                    <select id="platform-filter" name="platform">
+                        <option value="" disabled selected>Plataforma</option>
+                        <option value="udemy">Udemy</option>
+                        <option value="coursera">Coursera</option>
+                        <option value="platzi">Platzi</option>
+                    </select>
+                    <input type="number" id="min-price-filter" placeholder="Precio Mínimo">
+                    <input type="number" id="max-price-filter" placeholder="Precio Máximo">
+                    <button onclick="searchCourses()">Aplicar Filtros</button>
+                </div>
+                <div class="sidebar-widget">
                     <h3>Ruta de Aprendizaje</h3>
                     <p>Obtén un plan de estudio paso a paso para un tema.</p>
                     <button onclick="generateLearningPath()">Generar Mi Ruta</button>
@@ -847,12 +860,25 @@
             </aside>
 
             <div class="courses-display">
-                <div class="results-header">
-                    <h2 id="results-title">Cursos Populares</h2>
+                <div id="dashboard-view" style="display: none;">
+                    <div class="results-header">
+                        <h2>Recomendado para ti</h2>
+                    </div>
+                    <div id="dashboard-recommendations-grid" class="results-grid"></div>
+                
+                    <div class="results-header" style="margin-top: 2rem;">
+                        <h2>Tus Favoritos Recientes</h2>
+                    </div>
+                    <div id="dashboard-favorites-grid" class="results-grid"></div>
                 </div>
-                <div id="results-grid" class="results-grid"></div>
-                <p id="no-results-message" style="display: none; text-align: center; padding: 2rem;">No se encontraron
-                    cursos para tu búsqueda.</p>
+                <div id="default-view">
+                    <div class="results-header">
+                        <h2 id="results-title">Cursos Populares</h2>
+                    </div>
+                    <div id="results-grid" class="results-grid"></div>
+                    <p id="no-results-message" style="display: none; text-align: center; padding: 2rem;">No se encontraron
+                        cursos para tu búsqueda.</p>
+                </div>
             </div>
         </div>
     </main>
@@ -1048,27 +1074,63 @@
         const resultsGrid = document.getElementById('results-grid');
         const resultsTitle = document.getElementById('results-title');
         const noResultsMessage = document.getElementById('no-results-message');
+        
+        function createCourseCard(course) {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            
+            const isFavorited = userFavorites.includes(course.course_id);
+
+            card.innerHTML = `
+                <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${course.course_id}, this)">★</button>
+                <a href="${course.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                    <div class="card-content"><h4>${course.course_title}</h4></div>
+                    <div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${ '⭐'.repeat(course.num_subscribers)}</span></div>
+                </a>
+            `;
+            return card;
+        }
+
         function displayCourses(courses) {
             resultsGrid.innerHTML = '';
             noResultsMessage.style.display = 'none';
             if (courses && courses.length > 0) {
                 courses.forEach(course => {
-                    const card = document.createElement('div');
-                    card.className = 'course-card';
-                    
-                    const isFavorited = userFavorites.includes(course.course_id);
-
-                    card.innerHTML = `
-                        <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${course.course_id}, this)">★</button>
-                        <a href="${course.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
-                            <div class="card-content"><h4>${course.course_title}</h4></div>
-                            <div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${ '⭐'.repeat(course.num_subscribers)}</span></div>
-                        </a>
-                    `;
+                    const card = createCourseCard(course);
                     resultsGrid.appendChild(card);
                 });
-            } else { noResultsMessage.style.display = 'block'; }
+            } else {
+                noResultsMessage.style.display = 'block';
+            }
         }
+
+        function displayDashboard(dashboardData) {
+            document.getElementById('default-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'block';
+
+            const recommendationsGrid = document.getElementById('dashboard-recommendations-grid');
+            recommendationsGrid.innerHTML = '';
+            if (dashboardData.recommendations && dashboardData.recommendations.length > 0) {
+                dashboardData.recommendations.forEach(course => {
+                    const card = createCourseCard(course);
+                    recommendationsGrid.appendChild(card);
+                });
+            } else {
+                recommendationsGrid.innerHTML = '<p>Añade cursos a tus favoritos para recibir recomendaciones.</p>';
+            }
+
+            const favoritesGrid = document.getElementById('dashboard-favorites-grid');
+            favoritesGrid.innerHTML = '';
+            if (dashboardData.recent_favorites && dashboardData.recent_favorites.length > 0) {
+                dashboardData.recent_favorites.forEach(course => {
+                    const card = createCourseCard(course);
+                    favoritesGrid.appendChild(card);
+                });
+            } else {
+                favoritesGrid.innerHTML = '<p>No tienes cursos favoritos todavía.</p>';
+            }
+        }
+
         async function fetchAndDisplay(endpoint, options, title) {
             resultsTitle.textContent = title;
             try {
@@ -1079,9 +1141,18 @@
         }
         function searchCourses() {
             const query = document.getElementById('search-input').value;
+            const platform = document.getElementById('platform-filter').value;
+            const minPrice = document.getElementById('min-price-filter').value;
+            const maxPrice = document.getElementById('max-price-filter').value;
+
             if (!query) return;
+
             const formData = new URLSearchParams();
             formData.append('interes', query);
+            if (platform) formData.append('platform', platform);
+            if (minPrice) formData.append('min_price', minPrice);
+            if (maxPrice) formData.append('max_price', maxPrice);
+
             fetchAndDisplay("{{ url_for('search') }}", { method: 'POST', body: formData }, `Resultados para: "${query}"`);
         }
         function recommendCourses() {
@@ -1163,7 +1234,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             // Carga inicial
-            fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
             checkSession();
 
             // Manejadores de eventos
@@ -1260,9 +1330,17 @@
                     const favResponse = await fetch('/api/favorites');
                     const favData = await favResponse.json();
                     userFavorites = favData.cursos.map(c => c.course_id);
+
+                    const dashResponse = await fetch('/api/dashboard');
+                    const dashData = await dashResponse.json();
+                    displayDashboard(dashData);
+
                 } else {
                     updateAuthState(false);
                     userFavorites = [];
+                    document.getElementById('default-view').style.display = 'block';
+                    document.getElementById('dashboard-view').style.display = 'none';
+                    fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
                 }
             } catch (error) {
                 console.error('Error checking session:', error);
@@ -1366,6 +1444,9 @@
             if (response.ok) {
                 updateAuthState(false);
                 userFavorites = [];
+                document.getElementById('default-view').style.display = 'block';
+                document.getElementById('dashboard-view').style.display = 'none';
+                fetchAndDisplay("{{ url_for('popular_courses') }}", { method: 'GET' }, 'Cursos Populares');
             } else {
                 alert('Error al cerrar sesión.');
             }
