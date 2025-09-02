@@ -72,8 +72,7 @@ def load_data():
     try:
         path = os.path.join(basedir, "data", "cursos_calificados_final.csv")
         df = pd.read_csv(path, encoding='utf-8-sig')
-        if 'course_id' in df.columns:
-            df['course_id'] = pd.to_numeric(df['course_id'], errors='coerce').fillna(0).astype(int)
+        df['course_id'] = df.index # Generate course_id from index
         df['title_lower'] = df['course_title'].str.lower()
         print(f"Archivo 'cursos_calificados_final.csv' cargado con {len(df)} cursos.")
         return df
