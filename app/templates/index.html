@@ -1142,6 +1142,9 @@
         }
 
         async function fetchAndDisplay(endpoint, options, title) {
+            document.getElementById('default-view').style.display = 'block';
+            document.getElementById('dashboard-view').style.display = 'none';
+            
             resultsTitle.textContent = title;
             try {
                 const response = await fetch(endpoint, options);
