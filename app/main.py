@@ -41,16 +41,7 @@ class Favorite(db.Model):
     def __repr__(self):
         return f'<Favorite user_id={self.user_id} course_id={self.course_id}>'
 
-class Review(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    course_id = db.Column(db.Integer, nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    comment = db.Column(db.Text, nullable=True)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __repr__(self):
-        return f'<Review user_id={self.user_id} course_id={self.course_id} rating={self.rating}>'
 
 
 with app.app_context():
@@ -376,45 +367,7 @@ def dashboard():
         'recent_favorites': recent_favorites
     })
 
-# --- Rutas de Reseñas ---
 
-@app.route('/api/courses/<int:course_id>/reviews', methods=['GET'])
-def get_reviews(course_id):
-    reviews = Review.query.filter_by(course_id=course_id).order_by(Review.timestamp.desc()).all()
-    return jsonify([
-        {
-            'id': review.id,
-            'user_id': review.user_id,
-            'rating': review.rating,
-            'comment': review.comment,
-            'timestamp': review.timestamp.isoformat()
-        } for review in reviews
-    ])
-
-@app.route('/api/courses/<int:course_id>/reviews', methods=['POST'])
-@login_required
-def add_review(course_id):
-    data = request.get_json()
-    rating = data.get('rating')
-    comment = data.get('comment')
-
-    if not rating:
-        return jsonify({'message': 'La calificación es obligatoria'}), 400
-
-    existing_review = Review.query.filter_by(user_id=current_user.id, course_id=course_id).first()
-    if existing_review:
-        return jsonify({'message': 'Ya has dejado una reseña para este curso'}), 409
-
-    new_review = Review(
-        user_id=current_user.id,
-        course_id=course_id,
-        rating=rating,
-        comment=comment
-    )
-    db.session.add(new_review)
-    db.session.commit()
-
-    return jsonify({'message': 'Reseña añadida exitosamente'}), 201
 
 @app.route('/api/platforms', methods=['GET'])
 def get_platforms():

@@ -991,27 +991,7 @@
         </div>
     </div>
 
-    <div id="reviews-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeModal('reviews-modal')">&times;</span>
-            <h2 id="reviews-modal-title">Reseñas del Curso</h2>
-            <div id="reviews-list"></div>
-            <hr>
-            <h3>Deja tu reseña</h3>
-            <form id="review-form" onsubmit="handleReviewSubmit(event)">
-                <input type="hidden" id="review-course-id" name="course_id">
-                <div class="form-group">
-                    <label for="review-rating">Calificación (1-5):</label>
-                    <input type="number" id="review-rating" name="rating" min="1" max="5" required>
-                </div>
-                <div class="form-group">
-                    <label for="review-comment">Comentario:</label>
-                    <textarea id="review-comment" name="comment" rows="4"></textarea>
-                </div>
-                <button type="submit" class="submit-login">Enviar Reseña</button>
-            </form>
-        </div>
-    </div>
+    
 
     <footer id="footer-contact"
         style="text-align: center; padding: 3rem 1rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1;">
@@ -1115,7 +1095,6 @@
                     <div class="card-footer">
                         <span class="platform-badge">${course.site}</span>
                         <span class="star-rating">${ '⭐'.repeat(course.num_subscribers)}</span>
-                        <button class="reviews-btn" onclick="openReviewsModal(${course.course_id})">Reseñas</button>
                     </div>
                 </a>
             `;
@@ -1176,7 +1155,10 @@
             const minPrice = document.getElementById('min-price-filter').value;
             const maxPrice = document.getElementById('max-price-filter').value;
 
-            if (!query) return;
+            if (!query && !platform && !minPrice && !maxPrice) {
+                alert('Por favor, ingresa un término de búsqueda o selecciona al menos un filtro.');
+                return;
+            }
 
             const formData = new URLSearchParams();
             formData.append('interes', query);
@@ -1184,7 +1166,12 @@
             if (minPrice) formData.append('min_price', minPrice);
             if (maxPrice) formData.append('max_price', maxPrice);
 
-            fetchAndDisplay("{{ url_for('search') }}", { method: 'POST', body: formData }, `Resultados para: "${query}"`);
+            let title = 'Resultados de la Búsqueda';
+            if (query) {
+                title = `Resultados para: "${query}"`;
+            }
+
+            fetchAndDisplay("{{ url_for('search') }}", { method: 'POST', body: formData }, title);
         }
         function recommendCourses() {
             const interest = document.getElementById('interest_modal').value;
@@ -1253,62 +1240,7 @@
             document.getElementById('info-menu').classList.remove('open');
         }
 
-        function openReviewsModal(courseId) {
-            document.getElementById('review-course-id').value = courseId;
-            const modal = document.getElementById('reviews-modal');
-            const titleElement = document.getElementById('reviews-modal-title');
-            
-            const card = document.querySelector(`[onclick="openReviewsModal(${courseId})"]`).closest('.course-card');
-            const courseTitle = card.querySelector('h4').textContent;
-            titleElement.textContent = `Reseñas para: ${courseTitle}`;
-
-            fetch(`/api/courses/${courseId}/reviews`)
-                .then(response => response.json())
-                .then(reviews => {
-                    displayReviews(reviews);
-                    openModal('reviews-modal');
-                });
-        }
-
-        function displayReviews(reviews) {
-            const reviewsList = document.getElementById('reviews-list');
-            reviewsList.innerHTML = '';
-            if (reviews && reviews.length > 0) {
-                reviews.forEach(review => {
-                    const reviewElement = document.createElement('div');
-                    reviewElement.className = 'review';
-                    reviewElement.innerHTML = `
-                        <p><strong>Calificación:</strong> ${ '⭐'.repeat(review.rating)}</p>
-                        <p>${review.comment}</p>
-                        <small>Usuario: ${review.user_id} - ${new Date(review.timestamp).toLocaleDateString()}</small>
-                    `;
-                    reviewsList.appendChild(reviewElement);
-                });
-            } else {
-                reviewsList.innerHTML = '<p>No hay reseñas para este curso todavía.</p>';
-            }
-        }
-
-        async function handleReviewSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
-            const courseId = form.querySelector('#review-course-id').value;
-            const rating = form.querySelector('#review-rating').value;
-            const comment = form.querySelector('#review-comment').value;
-
-            const response = await fetch(`/api/courses/${courseId}/reviews`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rating, comment })
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                closeModal('reviews-modal');
-            } else {
-                alert(data.message);
-            }
-        }
+        
 
         async function loadPlatforms() {
             try {
@@ -1376,7 +1308,7 @@
             // Formularios
             document.getElementById('login-form').addEventListener('submit', handleLogin);
             document.getElementById('register-form').addEventListener('submit', handleRegister);
-            document.getElementById('review-form').addEventListener('submit', handleReviewSubmit);
+            
             // Close menu when a link is clicked
             document.querySelectorAll('.close-menu-link').forEach(link => {
                 link.addEventListener('click', () => {
