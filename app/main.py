@@ -413,5 +413,13 @@ def add_review(course_id):
 
     return jsonify({'message': 'Reseña añadida exitosamente'}), 201
 
+@app.route('/api/platforms', methods=['GET'])
+def get_platforms():
+    if master_df.empty:
+        return jsonify(platforms=[])
+    
+    unique_platforms = master_df['site'].dropna().unique().tolist()
+    return jsonify(platforms=unique_platforms)
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

@@ -792,7 +792,7 @@
                         <div class="step-card">
                             <div class="step-header">
                                 <div class="step-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-target"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                                 </div>
                                 <h3>Paso 1: Cuéntanos tu Meta</h3>
                             </div>
@@ -803,7 +803,7 @@
                         <div class="step-card">
                             <div class="step-header">
                                 <div class="step-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                 </div>
                                 <h3>Paso 2: Analizamos las Mejores Plataformas</h3>
                             </div>
@@ -814,7 +814,7 @@
                         <div class="step-card">
                             <div class="step-header">
                                 <div class="step-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
                                 </div>
                                 <h3>Paso 3: Diseñamos tu Ruta Personalizada</h3>
                             </div>
@@ -825,7 +825,7 @@
                         <div class="step-card">
                             <div class="step-header">
                                 <div class="step-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                                 </div>
                                 <h3>Paso 4: Empieza a Aprender</h3>
                             </div>
@@ -852,9 +852,6 @@
                     <h3>Filtros Avanzados</h3>
                     <select id="platform-filter" name="platform">
                         <option value="" disabled selected>Plataforma</option>
-                        <option value="udemy">Udemy</option>
-                        <option value="coursera">Coursera</option>
-                        <option value="platzi">Platzi</option>
                     </select>
                     <input type="number" id="min-price-filter" placeholder="Precio Mínimo">
                     <input type="number" id="max-price-filter" placeholder="Precio Máximo">
@@ -1326,6 +1323,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Carga inicial
             checkSession();
+            loadPlatforms(); // Load platforms on page load
 
             // Manejadores de eventos
             document.getElementById('menu-icon').addEventListener('click', () => document.getElementById('info-menu').classList.toggle('open'));
