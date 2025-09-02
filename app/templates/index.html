@@ -299,6 +299,14 @@
             color: #f39c12;
         }
 
+        .reviews-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 0.25rem 0.6rem;
+            cursor: pointer;
+        }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -986,6 +994,28 @@
         </div>
     </div>
 
+    <div id="reviews-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('reviews-modal')">&times;</span>
+            <h2 id="reviews-modal-title">Reseñas del Curso</h2>
+            <div id="reviews-list"></div>
+            <hr>
+            <h3>Deja tu reseña</h3>
+            <form id="review-form" onsubmit="handleReviewSubmit(event)">
+                <input type="hidden" id="review-course-id" name="course_id">
+                <div class="form-group">
+                    <label for="review-rating">Calificación (1-5):</label>
+                    <input type="number" id="review-rating" name="rating" min="1" max="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="review-comment">Comentario:</label>
+                    <textarea id="review-comment" name="comment" rows="4"></textarea>
+                </div>
+                <button type="submit" class="submit-login">Enviar Reseña</button>
+            </form>
+        </div>
+    </div>
+
     <footer id="footer-contact"
         style="text-align: center; padding: 3rem 1rem; margin-top: 4rem; background-color: #34495e; color: #ecf0f1;">
         <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">Contacto</h3>
@@ -1024,7 +1054,7 @@
                 "id": "ia-estudio",
                 "title": "3 Herramientas de IA que Revolucionarán tu Forma de Estudiar",
                 "summary": "Aprende a usar la inteligencia artificial a tu favor para optimizar tu proceso de aprendizaje.",
-                "content": "<p>La inteligencia artificial está transformando la educación. Aquí te presentamos 3 herramientas de IA que pueden potenciar tu estudio:</p><ul><li><b>Asistentes de escritura con IA:</b> Herramientas como Grammarly o Jasper.ai pueden ayudarte a mejorar tu redacción y a generar ideas.</li><li><b>Plataformas de aprendizaje adaptativo:</b> Coursera, edX y otras utilizan IA para personalizar tu ruta de aprendizaje según tu progreso y estilo.</li><li><b>Herramientas de resumen y extracción de información:</b> Aplicaciones como SummarizeBot o QuillBot pueden ayudarte a procesar grandes volúmenes de texto de manera eficiente.</li></ul><p>¡Aprovecha la IA para estudiar de forma más inteligente, no más difícil!</p>"
+                "content": "<p>La inteligencia artificial está transformando la educación. Aquí te presentamos 3 herramientas de IA que pueden potenciar tu estudio:</p><ul><li><b>Asistentes de escritura con IA:</b> Herramientas como Grammarly o Jasper.ai pueden ayudarte a mejorar tu redacción y a generar ideas.</li><li><b>Plataformas de aprendizaje adaptativo:</b> Coursera, edX y otras utilizan IA para personalizar tu ruta de aprendizaje según tu progreso y estilo.</li><li><b>Herramientas de resumen y extracción de información:</b> Aplicaciones como SummarizeBot o QuillBot pueden ayudarte a procesar grandes volúmenes de texto de manera eficiente.</li></ul><p>¡Aprende de forma más inteligente, no más difícil!</p>"
             }
         ];
 
@@ -1085,7 +1115,11 @@
                 <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${course.course_id}, this)">★</button>
                 <a href="${course.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
                     <div class="card-content"><h4>${course.course_title}</h4></div>
-                    <div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${ '⭐'.repeat(course.num_subscribers)}</span></div>
+                    <div class="card-footer">
+                        <span class="platform-badge">${course.site}</span>
+                        <span class="star-rating">${ '⭐'.repeat(course.num_subscribers)}</span>
+                        <button class="reviews-btn" onclick="openReviewsModal(${course.course_id})">Reseñas</button>
+                    </div>
                 </a>
             `;
             return card;
@@ -1222,6 +1256,63 @@
             document.getElementById('info-menu').classList.remove('open');
         }
 
+        function openReviewsModal(courseId) {
+            document.getElementById('review-course-id').value = courseId;
+            const modal = document.getElementById('reviews-modal');
+            const titleElement = document.getElementById('reviews-modal-title');
+            
+            const card = document.querySelector(`[onclick="openReviewsModal(${courseId})"]`).closest('.course-card');
+            const courseTitle = card.querySelector('h4').textContent;
+            titleElement.textContent = `Reseñas para: ${courseTitle}`;
+
+            fetch(`/api/courses/${courseId}/reviews`)
+                .then(response => response.json())
+                .then(reviews => {
+                    displayReviews(reviews);
+                    openModal('reviews-modal');
+                });
+        }
+
+        function displayReviews(reviews) {
+            const reviewsList = document.getElementById('reviews-list');
+            reviewsList.innerHTML = '';
+            if (reviews && reviews.length > 0) {
+                reviews.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review';
+                    reviewElement.innerHTML = `
+                        <p><strong>Calificación:</strong> ${ '⭐'.repeat(review.rating)}</p>
+                        <p>${review.comment}</p>
+                        <small>Usuario: ${review.user_id} - ${new Date(review.timestamp).toLocaleDateString()}</small>
+                    `;
+                    reviewsList.appendChild(reviewElement);
+                });
+            } else {
+                reviewsList.innerHTML = '<p>No hay reseñas para este curso todavía.</p>';
+            }
+        }
+
+        async function handleReviewSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const courseId = form.querySelector('#review-course-id').value;
+            const rating = form.querySelector('#review-rating').value;
+            const comment = form.querySelector('#review-comment').value;
+
+            const response = await fetch(`/api/courses/${courseId}/reviews`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating, comment })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                closeModal('reviews-modal');
+            } else {
+                alert(data.message);
+            }
+        }
+
         // --- Lógica de Modales y Menús ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -1269,6 +1360,7 @@
             // Formularios
             document.getElementById('login-form').addEventListener('submit', handleLogin);
             document.getElementById('register-form').addEventListener('submit', handleRegister);
+            document.getElementById('review-form').addEventListener('submit', handleReviewSubmit);
             // Close menu when a link is clicked
             document.querySelectorAll('.close-menu-link').forEach(link => {
                 link.addEventListener('click', () => {
