@@ -32,6 +32,14 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User {self.email}>'
 
+class Favorite(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    course_id = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f'<Favorite user_id={self.user_id} course_id={self.course_id}>'
+
 with app.app_context():
     db.create_all()
 
@@ -243,6 +251,56 @@ def check_session():
         return jsonify({'logged_in': True, 'email': current_user.email})
     return jsonify({'logged_in': False})
 
+# --- Rutas de Favoritos ---
+
+@app.route('/api/favorites', methods=['GET'])
+@login_required
+def get_favorites():
+    favorites = Favorite.query.filter_by(user_id=current_user.id).all()
+    favorite_course_ids = [f.course_id for f in favorites]
+    
+    if not favorite_course_ids:
+        return jsonify(cursos=[])
+
+    favorite_courses = master_df[master_df['course_id'].isin(favorite_course_ids)]
+    return jsonify(cursos=favorite_courses.to_dict(orient='records'))
+
+@app.route('/api/favorites/add', methods=['POST'])
+@login_required
+def add_favorite():
+    data = request.get_json()
+    course_id = data.get('course_id')
+
+    if not course_id:
+        return jsonify({'message': 'Falta el ID del curso'}), 400
+
+    existing_favorite = Favorite.query.filter_by(user_id=current_user.id, course_id=course_id).first()
+    if existing_favorite:
+        return jsonify({'message': 'El curso ya está en favoritos'}), 409
+
+    new_favorite = Favorite(user_id=current_user.id, course_id=course_id)
+    db.session.add(new_favorite)
+    db.session.commit()
+    
+    return jsonify({'message': 'Curso añadido a favoritos'}), 201
+
+@app.route('/api/favorites/remove', methods=['POST'])
+@login_required
+def remove_favorite():
+    data = request.get_json()
+    course_id = data.get('course_id')
+
+    if not course_id:
+        return jsonify({'message': 'Falta el ID del curso'}), 400
+
+    favorite_to_remove = Favorite.query.filter_by(user_id=current_user.id, course_id=course_id).first()
+    if not favorite_to_remove:
+        return jsonify({'message': 'El curso no está en favoritos'}), 404
+
+    db.session.delete(favorite_to_remove)
+    db.session.commit()
+    
+    return jsonify({'message': 'Curso eliminado de favoritos'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

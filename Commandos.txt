@@ -1,5 +1,0 @@
-git add .
-
-git commit -m "Implementa ruta de aprendizaje basada en datos"
-
-git push

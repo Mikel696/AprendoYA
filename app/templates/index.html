@@ -242,6 +242,7 @@
             color: var(--text-color);
             transition: transform 0.3s, box-shadow 0.3s;
             border-top: 4px solid var(--primary-color);
+            position: relative;
         }
 
         .course-card:hover {
@@ -279,6 +280,21 @@
 
         .star-rating {
             font-size: 1.1rem;
+            color: #f39c12;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ccc;
+        }
+
+        .favorite-btn.favorited {
             color: #f39c12;
         }
 
@@ -733,7 +749,7 @@
         <span id="close-menu-btn" class="close-menu-btn">&times;</span>
         <nav>
             <a href="#" class="close-menu-link">Inicio</a>
-            
+            <a id="favorites-btn" style="cursor: pointer;">Mis Favoritos</a>
             <a id="blog-btn" style="cursor: pointer;">Blog</a>
             <a id="faq-menu-btn" style="cursor: pointer;" class="close-menu-link">Preguntas Frecuentes</a>
             <a href="#footer-contact" class="close-menu-link">Contacto</a>
@@ -962,6 +978,8 @@
     </footer>
 
     <script>
+        let userFavorites = [];
+
         // --- Lógica del Blog ---
         const blogArticlesData = [
             {
@@ -1035,13 +1053,18 @@
             noResultsMessage.style.display = 'none';
             if (courses && courses.length > 0) {
                 courses.forEach(course => {
-                    const card = document.createElement('a');
+                    const card = document.createElement('div');
                     card.className = 'course-card';
-                    card.href = course.url;
-                    card.target = '_blank';
-                    card.rel = 'noopener noreferrer';
-                    const stars = '⭐'.repeat(course.num_subscribers);
-                    card.innerHTML = `<div class="card-content"><h4>${course.course_title}</h4></div><div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${stars}</span></div>`;
+                    
+                    const isFavorited = userFavorites.includes(course.course_id);
+
+                    card.innerHTML = `
+                        <button class="favorite-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavorite(${course.course_id}, this)">★</button>
+                        <a href="${course.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                            <div class="card-content"><h4>${course.course_title}</h4></div>
+                            <div class="card-footer"><span class="platform-badge">${course.site}</span><span class="star-rating">${ '⭐'.repeat(course.num_subscribers)}</span></div>
+                        </a>
+                    `;
                     resultsGrid.appendChild(card);
                 });
             } else { noResultsMessage.style.display = 'block'; }
@@ -1092,6 +1115,42 @@
             return `<div class="path-section"><h3>${title}</h3><ul>${listItems}</ul></div>`;
         }
 
+        async function toggleFavorite(courseId, starElement) {
+            const response = await fetch('/api/check_session');
+            const data = await response.json();
+            if (!data.logged_in) {
+                openModal('login-modal');
+                return;
+            }
+
+            const isFavorited = starElement.classList.contains('favorited');
+            const endpoint = isFavorited ? '/api/favorites/remove' : '/api/favorites/add';
+
+            await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ course_id: courseId })
+            });
+
+            starElement.classList.toggle('favorited');
+            if (isFavorited) {
+                userFavorites = userFavorites.filter(id => id !== courseId);
+            } else {
+                userFavorites.push(courseId);
+            }
+        }
+
+        async function showFavorites() {
+            const response = await fetch('/api/check_session');
+            const data = await response.json();
+            if (!data.logged_in) {
+                openModal('login-modal');
+                return;
+            }
+            fetchAndDisplay('/api/favorites', { method: 'GET' }, 'Mis Cursos Favoritos');
+            document.getElementById('info-menu').classList.remove('open');
+        }
+
         // --- Lógica de Modales y Menús ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -1115,6 +1174,7 @@
             document.getElementById('register-btn').addEventListener('click', () => openModal('register-modal'));
             document.getElementById('faq-menu-btn').addEventListener('click', () => openModal('faq-modal'));
             document.getElementById('blog-btn').addEventListener('click', () => { openModal('blog-modal'); loadBlogArticles(); });
+            document.getElementById('favorites-btn').addEventListener('click', showFavorites);
             
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
@@ -1175,9 +1235,6 @@
         });
 
         // --- Lógica de Autenticación ---
-        // La lógica de autenticación ya está implementada en este script y en el backend (main.py).
-        // Si experimentas problemas, por favor, revisa la consola del navegador para errores de JavaScript
-        // y los logs del servidor Flask para errores del lado del servidor.
         function updateAuthState(isLoggedIn, userEmail = '') {
             const anonymousView = document.getElementById('anonymous-view');
             const userView = document.getElementById('user-view');
@@ -1200,12 +1257,17 @@
                 const data = await response.json();
                 if (data.logged_in) {
                     updateAuthState(true, data.email);
+                    const favResponse = await fetch('/api/favorites');
+                    const favData = await favResponse.json();
+                    userFavorites = favData.cursos.map(c => c.course_id);
                 } else {
                     updateAuthState(false);
+                    userFavorites = [];
                 }
             } catch (error) {
                 console.error('Error checking session:', error);
                 updateAuthState(false);
+                userFavorites = [];
             }
         }
 
@@ -1233,7 +1295,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    updateAuthState(true, data.email);
+                    await checkSession(); // Fetch favorites on login
                     closeModal('login-modal');
                     form.reset();
                 } else {
@@ -1282,7 +1344,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    updateAuthState(true, data.email);
+                    await checkSession(); // Fetch favorites on register
                     closeModal('register-modal');
                     form.reset();
                 } else {
@@ -1303,6 +1365,7 @@
             const response = await fetch('/api/logout');
             if (response.ok) {
                 updateAuthState(false);
+                userFavorites = [];
             } else {
                 alert('Error al cerrar sesión.');
             }
