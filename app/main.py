@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data', 'users.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data', 'users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -52,8 +52,7 @@ class Review(db.Model):
     def __repr__(self):
         return f'<Review user_id={self.user_id} course_id={self.course_id} rating={self.rating}>'
 
-with app.app_context():
-    db.create_all()
+# Removed db.create_all() from here. It should be handled by migrations or manually.
 
 def get_topics_from_keywords():
     """
