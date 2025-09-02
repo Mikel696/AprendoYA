@@ -80,6 +80,8 @@ def load_data():
     try:
         path = os.path.join(basedir, "data", "cursos_calificados_final.csv")
         df = pd.read_csv(path, encoding='utf-8-sig') # Changed encoding to utf-8-sig
+        print(f"DEBUG: Columns after loading CSV: {df.columns.tolist()}") # Debug print
+        print(f"DEBUG: First 5 rows after loading CSV:\n{df.head()}") # Debug print
         df['title_lower'] = df['course_title'].str.lower()
         print(f"Archivo 'cursos_calificados_final.csv' cargado con {len(df)} cursos.")
         return df
